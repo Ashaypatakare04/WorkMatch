@@ -6,14 +6,15 @@ import { ApplicationRepository } from '../repositories/ApplicationRepository.js'
 import { Proposal } from '../models/Proposal.js';
 
 describe('Multi-User Architecture and Data Isolation', () => {
-  const userA = 'user_alpha_01';
-  const userB = 'user_beta_02';
-
   test('should guarantee complete data isolation between separate users', () => {
+    const timestamp = Date.now();
+    const userA = `user_alpha_${timestamp}`;
+    const userB = `user_beta_${timestamp}`;
+
     // 1. Create User A and User B
     UserRepository.create({
       id: userA,
-      email: 'alpha@example.com',
+      email: `alpha_${timestamp}@example.com`,
       full_name: 'Alice Alpha',
       is_admin: false,
       plan_type: 'personal'
@@ -21,7 +22,7 @@ describe('Multi-User Architecture and Data Isolation', () => {
 
     UserRepository.create({
       id: userB,
-      email: 'beta@example.com',
+      email: `beta_${timestamp}@example.com`,
       full_name: 'Bob Beta',
       is_admin: false,
       plan_type: 'personal'
