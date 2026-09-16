@@ -10,3 +10,5 @@ backend/data/*.sqlite*
 .DS_Store
 Thumbs.db
 .vercel
+package-lock.json
+**/package-lock.json
