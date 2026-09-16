@@ -1,13 +1,19 @@
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
 import fs from 'node:fs';
+import os from 'node:os';
 
-const DB_DIR = path.resolve(process.cwd(), 'data');
+const isVercel = Boolean(process.env.VERCEL);
+const DB_PATH = process.env.DATABASE_PATH || (isVercel ? path.join(os.tmpdir(), 'workmatch.sqlite') : path.resolve(process.cwd(), 'data', 'workmatch.sqlite'));
+const DB_DIR = path.dirname(DB_PATH);
+
 if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
+  try {
+    fs.mkdirSync(DB_DIR, { recursive: true });
+  } catch (err) {
+    console.warn(`[Database] Directory creation notice for ${DB_DIR}:`, err);
+  }
 }
-
-const DB_PATH = process.env.DATABASE_PATH || path.join(DB_DIR, 'workmatch.sqlite');
 
 export class Database {
   private static instance: DatabaseSync | null = null;

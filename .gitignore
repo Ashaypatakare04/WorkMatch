@@ -1,6 +1,12 @@
 node_modules/
+**/node_modules/
 dist/
-data/*.sqlite*
+**/dist/
+*.sqlite*
+**/*.sqlite*
+backend/data/*.sqlite*
 .env
+.env.*
 .DS_Store
 Thumbs.db
+.vercel
