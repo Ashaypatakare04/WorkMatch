@@ -19,7 +19,7 @@ export class AnalyticsRepository {
     const possibleMatches = possibleMatchesRow ? possibleMatchesRow.cnt : 0;
 
     const savedRow = Database.queryOne<{ cnt: number }>(
-      'SELECT COUNT(*) as cnt FROM saved_jobs WHERE user_id = ? AND status = "saved"',
+      "SELECT COUNT(*) as cnt FROM saved_jobs WHERE user_id = ? AND status = 'saved'",
       [userId]
     );
     const savedJobs = savedRow ? savedRow.cnt : 0;

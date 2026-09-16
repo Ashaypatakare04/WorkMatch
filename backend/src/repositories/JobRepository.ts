@@ -143,11 +143,11 @@ export class JobRepository {
 
     // Filter by status (saved / ignored / active)
     if (filter.status === 'saved') {
-      whereClauses.push('sj.status = "saved"');
+      whereClauses.push("sj.status = 'saved'");
     } else if (filter.status === 'ignored') {
-      whereClauses.push('sj.status = "ignored"');
+      whereClauses.push("sj.status = 'ignored'");
     } else if (filter.status === 'active') {
-      whereClauses.push('(sj.status IS NULL OR sj.status != "ignored")');
+      whereClauses.push("(sj.status IS NULL OR sj.status != 'ignored')");
     }
 
     // Filter by score thresholds
