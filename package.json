@@ -1,0 +1,13 @@
+{
+  "name": "workmatch-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend",
+    "test": "npm run test --prefix backend",
+    "migrate": "npm run migrate --prefix backend",
+    "seed": "npm run seed --prefix backend"
+  }
+}
