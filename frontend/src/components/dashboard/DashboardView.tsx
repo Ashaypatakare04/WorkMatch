@@ -94,12 +94,12 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* 1-Click Demo & Mode Selector */}
-        <div className="flex items-center gap-3 flex-wrap relative z-10">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 relative z-10 w-full md:w-auto">
           {jobs.length === 0 && (
             <button
               onClick={onLoadDemo}
               disabled={isLoadingDemo}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all disabled:opacity-50 active:scale-95"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all disabled:opacity-50 active:scale-95 text-center"
             >
               <Sparkles className="w-4 h-4 text-slate-950 fill-current" />
               <span>{isLoadingDemo ? 'Populating Demo Data...' : 'Load 1-Click Demo Dataset'}</span>
@@ -107,21 +107,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           )}
 
           {/* Mode Selector */}
-          <div className="flex items-center bg-surface-900/90 p-1.5 rounded-2xl border border-white/[0.08] text-xs">
+          <div className="flex items-center bg-surface-900/90 p-1 rounded-2xl border border-white/[0.08] text-xs w-full sm:w-auto justify-between sm:justify-start">
             <button
               onClick={() => onUpdateMode('MANUAL')}
-              className={`px-3.5 py-1.5 rounded-xl font-medium transition-all ${
+              className={`flex-1 sm:flex-none px-2.5 sm:px-3.5 py-1.5 rounded-xl font-medium transition-all text-center text-[11px] sm:text-xs ${
                 automationSettings?.application_mode === 'MANUAL'
                   ? 'bg-surface-750 text-white font-semibold shadow-sm border border-white/[0.1]'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
               title="Manual: Inspect opportunities and proposals yourself"
             >
-              Manual (Review)
+              Manual
             </button>
             <button
               onClick={() => onUpdateMode('ASSISTED')}
-              className={`px-3.5 py-1.5 rounded-xl font-medium transition-all ${
+              className={`flex-1 sm:flex-none px-2.5 sm:px-3.5 py-1.5 rounded-xl font-medium transition-all text-center text-[11px] sm:text-xs ${
                 automationSettings?.application_mode === 'ASSISTED'
                   ? 'bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -132,7 +132,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </button>
             <button
               onClick={() => onUpdateMode('AUTOMATIC')}
-              className={`px-3.5 py-1.5 rounded-xl font-medium transition-all ${
+              className={`flex-1 sm:flex-none px-2.5 sm:px-3.5 py-1.5 rounded-xl font-medium transition-all text-center text-[11px] sm:text-xs ${
                 automationSettings?.application_mode === 'AUTOMATIC'
                   ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold shadow-glow-emerald'
                   : 'text-slate-400 hover:text-slate-200'

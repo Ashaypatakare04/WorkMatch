@@ -172,8 +172,8 @@ export const JobsView: React.FC<JobsViewProps> = ({
         </div>
 
         {/* Quick Filter Pills */}
-        <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-white/[0.06] text-xs">
-          <span className="text-slate-400 text-[11px] font-mono font-medium flex items-center gap-1.5 mr-1">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-3 border-t border-white/[0.06] text-xs whitespace-nowrap pb-1">
+          <span className="text-slate-400 text-[11px] font-mono font-medium flex items-center gap-1.5 mr-1 shrink-0">
             <Filter className="w-3.5 h-3.5 text-emerald-400" /> Filters:
           </span>
 
@@ -380,22 +380,22 @@ export const JobsView: React.FC<JobsViewProps> = ({
                     <span>Skill Match: <strong className="text-emerald-400 font-mono">{job.score?.skill_score || 80}%</strong></span>
                   </div>
 
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                     {job.user_action !== 'ignored' && (
                       <button
                         onClick={() => setIgnoringJobId(job.id)}
-                        className="px-3 py-1.5 rounded-xl text-slate-400 hover:text-red-400 text-xs transition active:scale-95"
+                        className="px-3 py-2 rounded-xl text-slate-400 hover:text-red-400 text-xs transition active:scale-95 text-center"
                       >
-                        Ignore
+                        Dismiss
                       </button>
                     )}
 
                     <button
                       onClick={() => onViewJob(job)}
-                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-display font-bold text-xs transition-all flex items-center gap-1.5 shadow-glow-emerald active:scale-95"
+                      className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-display font-bold text-xs transition-all flex items-center justify-center gap-1.5 shadow-glow-emerald active:scale-95 text-center"
                     >
                       <Eye className="w-3.5 h-3.5" />
-                      <span>Inspect & Draft Proposal</span>
+                      <span>Inspect &amp; Draft</span>
                     </button>
                   </div>
                 </div>

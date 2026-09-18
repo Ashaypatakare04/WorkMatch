@@ -82,3 +82,13 @@
 .mono-font {
   font-family: 'JetBrains Mono', monospace;
 }
+
+/* Hide scrollbar for horizontal mobile pill scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

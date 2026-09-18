@@ -60,46 +60,46 @@ export const ReportsView: React.FC = () => {
         </div>
 
         {/* Date Filter Pills & Export CSV */}
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center bg-surface-900/90 p-1 rounded-2xl border border-white/10 text-xs shadow-sm">
-            {[
-              { id: 'today', label: 'Today' },
-              { id: 'yesterday', label: 'Yesterday' },
-              { id: '7d', label: 'Last 7 Days' },
-              { id: '30d', label: 'Last 30 Days' }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setRange(tab.id)}
-                className={`px-3.5 py-1.5 rounded-xl font-semibold transition ${
-                  range === tab.id
-                    ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-surface-950 shadow-md shadow-emerald-500/15'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <button
-            onClick={handleExportCsv}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-900 hover:bg-surface-800 text-slate-200 text-xs font-semibold border border-white/10 transition shadow-sm active:scale-[0.98]"
-          >
-            <Download className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Export CSV</span>
-          </button>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+        <div className="flex items-center bg-surface-900/90 p-1 rounded-2xl border border-white/10 text-xs shadow-sm overflow-x-auto no-scrollbar max-w-full">
+          {[
+            { id: 'today', label: 'Today' },
+            { id: 'yesterday', label: 'Yesterday' },
+            { id: '7d', label: 'Last 7 Days' },
+            { id: '30d', label: 'Last 30 Days' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setRange(tab.id)}
+              className={`px-3 sm:px-3.5 py-1.5 rounded-xl font-semibold transition whitespace-nowrap text-xs ${
+                range === tab.id
+                  ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-surface-950 shadow-md shadow-emerald-500/15'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
+
+        <button
+          onClick={handleExportCsv}
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface-900 hover:bg-surface-800 text-slate-200 text-xs font-semibold border border-white/10 transition shadow-sm active:scale-[0.98] w-full sm:w-auto"
+        >
+          <Download className="w-3.5 h-3.5 text-cyan-400" />
+          <span>Export CSV</span>
+        </button>
       </div>
+    </div>
 
-      {/* Statement Sheet Simulation */}
-      {isLoading ? (
-        <div className="glass-card rounded-3xl p-16 text-center border border-white/10 space-y-3">
-          <div className="w-8 h-8 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin mx-auto" />
-          <p className="text-xs text-slate-400 font-mono">Compiling Statement Audit Transcript...</p>
-        </div>
-      ) : report ? (
-        <div className="glass-card rounded-3xl p-6 sm:p-9 border border-white/10 space-y-8 shadow-2xl relative overflow-hidden">
+    {/* Statement Sheet Simulation */}
+    {isLoading ? (
+      <div className="glass-card rounded-3xl p-12 sm:p-16 text-center border border-white/10 space-y-3">
+        <div className="w-8 h-8 rounded-full border-2 border-emerald-400 border-t-transparent animate-spin mx-auto" />
+        <p className="text-xs text-slate-400 font-mono">Compiling Statement Audit Transcript...</p>
+      </div>
+    ) : report ? (
+      <div className="glass-card rounded-3xl p-4 sm:p-6 md:p-9 border border-white/10 space-y-6 sm:space-y-8 shadow-2xl relative overflow-hidden">
           {/* Subtle background glow */}
           <div className="absolute top-0 right-0 w-96 h-48 bg-gradient-to-bl from-emerald-500/5 via-cyan-500/5 to-transparent pointer-events-none" />
 
@@ -137,34 +137,34 @@ export const ReportsView: React.FC = () => {
           </div>
 
           {/* Statement Overview Numbers */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-surface-950/50 border border-white/[0.06] space-y-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-950/50 border border-white/[0.06] space-y-1">
               <span className="text-[11px] text-slate-400 font-medium">Jobs Discovered</span>
-              <div className="text-2xl font-bold font-mono text-white tracking-tight">
+              <div className="text-xl sm:text-2xl font-bold font-mono text-white tracking-tight">
                 {report.metrics.jobs_discovered}
               </div>
               <span className="text-[10px] text-slate-500">Cross-platform scans</span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-surface-950/50 border border-white/[0.06] space-y-1">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-950/50 border border-white/[0.06] space-y-1">
               <span className="text-[11px] text-slate-400 font-medium">High Match Opportunities</span>
-              <div className="text-2xl font-bold font-mono text-amber-400 tracking-tight">
+              <div className="text-xl sm:text-2xl font-bold font-mono text-amber-400 tracking-tight">
                 {report.metrics.high_matches}
               </div>
               <span className="text-[10px] text-amber-500/80">≥ 80% capability fit</span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-surface-950/50 border border-white/[0.06] space-y-1">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-950/50 border border-white/[0.06] space-y-1">
               <span className="text-[11px] text-slate-400 font-medium">Proposals Dispatched</span>
-              <div className="text-2xl font-bold font-mono text-cyan-400 tracking-tight">
+              <div className="text-xl sm:text-2xl font-bold font-mono text-cyan-400 tracking-tight">
                 {report.metrics.applications}
               </div>
               <span className="text-[10px] text-cyan-500/80">Claim audit passed</span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-surface-950/50 border border-white/[0.06] space-y-1">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-surface-950/50 border border-white/[0.06] space-y-1">
               <span className="text-[11px] text-slate-400 font-medium">Interviews Secured</span>
-              <div className="text-2xl font-bold font-mono text-emerald-400 tracking-tight">
+              <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-400 tracking-tight">
                 {report.metrics.interviews}
               </div>
               <span className="text-[10px] text-emerald-500/80">Direct client replies</span>

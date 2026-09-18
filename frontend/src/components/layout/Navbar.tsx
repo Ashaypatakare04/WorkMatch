@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldAlert, RefreshCw, Bell, Sparkles, CheckCircle2, AlertTriangle, User } from 'lucide-react';
+import { ShieldAlert, RefreshCw, Bell, Sparkles, CheckCircle2, AlertTriangle, User, Menu } from 'lucide-react';
 import { NotificationItem, AutomationSettings } from '../../types/index.js';
 
 interface NavbarProps {
@@ -9,6 +9,7 @@ interface NavbarProps {
   onSync: () => void;
   isSyncing: boolean;
   onNavigate: (tab: string) => void;
+  onToggleMobileMenu?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -17,18 +18,19 @@ export const Navbar: React.FC<NavbarProps> = ({
   onEmergencyStop,
   onSync,
   isSyncing,
-  onNavigate
+  onNavigate,
+  onToggleMobileMenu
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const unreadCount = notifications.filter(n => !n.read_at).length;
 
   return (
-    <header className="sticky top-0 z-40 glass-header px-5 md:px-8 py-3 flex items-center justify-between transition-all">
+    <header className="sticky top-0 z-40 glass-header px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 flex items-center justify-between transition-all">
       {/* Brand & Tagline */}
-      <div className="flex items-center gap-3.5 cursor-pointer group select-none" onClick={() => onNavigate('dashboard')}>
-        <div className="relative h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-500 via-cyan-500 to-blue-500 p-[1.5px] shadow-glow-emerald transition-transform duration-200 group-hover:scale-105">
+      <div className="flex items-center gap-3 cursor-pointer group select-none" onClick={() => onNavigate('dashboard')}>
+        <div className="relative h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-gradient-to-tr from-emerald-500 via-cyan-500 to-blue-500 p-[1.5px] shadow-glow-emerald transition-transform duration-200 group-hover:scale-105 shrink-0">
           <div className="h-full w-full bg-[#0d1117] rounded-[10px] flex items-center justify-center overflow-hidden">
-            <svg className="w-5 h-5" viewBox="0 0 64 64" fill="none">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 64 64" fill="none">
               <circle cx="32" cy="32" r="23" stroke="rgba(6, 182, 212, 0.25)" strokeWidth="1.5" strokeDasharray="3 3" />
               <path d="M15 20L22 44L28 28L32 36L36 28L42 44L49 20" stroke="url(#navWm)" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" />
               <circle cx="32" cy="18" r="3.5" fill="#10B981" />
@@ -43,20 +45,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
         <div>
-          <div className="flex items-center gap-2">
-            <span className="font-display font-extrabold text-lg text-white tracking-tight group-hover:text-emerald-300 transition-colors">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="font-display font-extrabold text-base sm:text-lg text-white tracking-tight group-hover:text-emerald-300 transition-colors">
               WorkMatch<span className="text-emerald-400 font-semibold ml-0.5">AI</span>
             </span>
-            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+            <span className="text-[9px] sm:text-[10px] font-mono font-semibold uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
               PRO
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 hidden sm:block tracking-wide">Multi-Platform Work Opportunity Discovery & Proposal Suite</p>
+          <p className="text-[11px] text-slate-400 hidden lg:block tracking-wide">
+            Multi-Platform Work Opportunity Discovery &amp; Proposal Suite
+          </p>
         </div>
       </div>
 
-      {/* Center: Emergency Kill Switch & Automation State */}
-      <div className="flex items-center gap-3">
+      {/* Center: Emergency Kill Switch & Automation State (Desktop & Tablet) */}
+      <div className="hidden md:flex items-center gap-3">
         {automationSettings?.emergency_stop ? (
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/15 border border-red-500/40 text-red-300 text-xs font-semibold animate-pulse shadow-lg shadow-red-950/50">
             <ShieldAlert className="w-4 h-4 text-red-400" />
@@ -87,25 +91,25 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
       </div>
 
-      {/* Right: Sync, Notifications, Profile */}
-      <div className="flex items-center gap-2.5">
+      {/* Right: Sync, Notifications, Profile, and Mobile Menu Toggle */}
+      <div className="flex items-center gap-2 sm:gap-2.5">
         {/* Sync Platforms Button */}
         <button
           onClick={onSync}
           disabled={isSyncing}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-800/80 hover:bg-surface-750 text-slate-200 text-xs font-medium transition-all border border-white/[0.08] hover:border-emerald-500/30 disabled:opacity-50 active:scale-95"
+          className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 rounded-xl bg-surface-800/80 hover:bg-surface-750 text-slate-200 text-xs font-medium transition-all border border-white/[0.08] hover:border-emerald-500/30 disabled:opacity-50 active:scale-95"
           title="Synchronize connected work platforms"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-400' : 'text-slate-400'}`} />
-          <span className="hidden sm:inline">{isSyncing ? 'Syncing...' : 'Sync Platforms'}</span>
+          <span className="hidden sm:inline">{isSyncing ? 'Syncing...' : 'Sync'}</span>
         </button>
 
         {/* Notifications Popover Trigger */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 rounded-lg bg-surface-800/80 hover:bg-surface-750 text-slate-300 transition-all border border-white/[0.08] hover:border-white/[0.18]"
-            title="Notifications & Job Alerts"
+            className="relative p-2 rounded-xl bg-surface-800/80 hover:bg-surface-750 text-slate-300 transition-all border border-white/[0.08] hover:border-white/[0.18] active:scale-95"
+            title="Notifications &amp; Job Alerts"
           >
             <Bell className="w-4 h-4 text-slate-300" />
             {unreadCount > 0 && (
@@ -116,11 +120,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2.5 w-80 sm:w-96 glass-card rounded-2xl p-4 z-50 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute right-0 mt-2.5 w-80 sm:w-96 max-w-[calc(100vw-2rem)] glass-card rounded-2xl p-4 z-50 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                 <div className="flex items-center gap-2">
                   <Bell className="w-4 h-4 text-emerald-400" />
-                  <span className="font-display font-bold text-sm text-white">Job Alerts & Insights</span>
+                  <span className="font-display font-bold text-sm text-white">Job Alerts &amp; Insights</span>
                 </div>
                 <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-white/[0.05] text-slate-400">{notifications.length} alerts</span>
               </div>
@@ -153,28 +157,39 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 onClick={() => {
                   setShowNotifications(false);
-                  onNavigate('notifications');
+                  onNavigate('profile');
                 }}
                 className="w-full text-center text-xs text-emerald-400 hover:text-emerald-300 pt-2.5 border-t border-white/[0.08] block font-medium transition"
               >
-                View all notifications & preferences →
+                View capability profile &amp; criteria &rarr;
               </button>
             </div>
           )}
         </div>
 
-        {/* Profile Link */}
+        {/* Profile Link (Desktop) */}
         <button
           onClick={() => onNavigate('profile')}
-          className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg bg-surface-800/80 hover:bg-surface-750 text-slate-200 text-xs font-medium border border-white/[0.08] hover:border-emerald-500/30 transition-all active:scale-95"
+          className="hidden sm:flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-surface-800/80 hover:bg-surface-750 text-slate-200 text-xs font-medium border border-white/[0.08] hover:border-emerald-500/30 transition-all active:scale-95"
         >
           <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 p-[1px]">
             <div className="w-full h-full rounded-full bg-[#0d1117] flex items-center justify-center">
               <User className="w-3.5 h-3.5 text-emerald-400" />
             </div>
           </div>
-          <span className="font-medium hidden sm:inline">Profile</span>
+          <span className="font-medium hidden md:inline">Profile</span>
         </button>
+
+        {/* Mobile Drawer Hamburger Button */}
+        {onToggleMobileMenu && (
+          <button
+            onClick={onToggleMobileMenu}
+            className="md:hidden p-2 rounded-xl bg-surface-800/80 hover:bg-surface-750 text-slate-200 border border-white/[0.08] transition active:scale-95"
+            aria-label="Open mobile menu"
+          >
+            <Menu className="w-4 h-4 text-emerald-400" />
+          </button>
+        )}
       </div>
     </header>
   );

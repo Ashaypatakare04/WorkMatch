@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/layout/Navbar.js';
 import { Sidebar } from './components/layout/Sidebar.js';
+import { MobileNav } from './components/layout/MobileNav.js';
 import { DashboardView } from './components/dashboard/DashboardView.js';
 import { JobsView } from './components/jobs/JobsView.js';
 import { ApplicationsView } from './components/applications/ApplicationsView.js';
@@ -38,6 +39,7 @@ export function App() {
   const [selectedJob, setSelectedJob] = useState<NormalizedJob | null>(null);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [isLoadingDemo, setIsLoadingDemo] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // Initial Data Fetch
   const loadInitialData = async () => {
@@ -198,6 +200,7 @@ export function App() {
         onSync={handleSync}
         isSyncing={isSyncing}
         onNavigate={setCurrentTab}
+        onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       />
 
       {/* Main Container */}
@@ -212,7 +215,7 @@ export function App() {
         />
 
         {/* Content View Area */}
-        <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full overflow-x-hidden">
+        <main className="flex-1 p-3.5 sm:p-6 md:p-8 pb-28 md:pb-8 max-w-7xl mx-auto w-full overflow-x-hidden">
           {currentTab === 'dashboard' && (
             <DashboardView
               jobs={jobs}
@@ -333,6 +336,19 @@ export function App() {
           applicationMode={automationSettings?.application_mode}
         />
       )}
+
+      {/* Mobile Navigation Bar & Slide-out Drawer */}
+      <MobileNav
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        highMatchCount={highMatchCount}
+        activeAppCount={activeAppCount}
+        isOpen={isMobileMenuOpen}
+        onToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        onClose={() => setIsMobileMenuOpen(false)}
+        automationSettings={automationSettings}
+        onEmergencyStop={handleEmergencyStop}
+      />
     </div>
   );
 }

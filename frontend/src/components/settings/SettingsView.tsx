@@ -60,7 +60,7 @@ export const SettingsView: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Notification Channels & Rules */}
-        <div className="glass-card rounded-3xl p-6 sm:p-7 border border-white/10 space-y-5">
+        <div className="glass-card rounded-3xl p-4 sm:p-7 border border-white/10 space-y-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bell className="w-4 h-4 text-cyan-400" />
@@ -181,7 +181,7 @@ export const SettingsView: React.FC = () => {
         </div>
 
         {/* AI Engine & Provider Configuration */}
-        <div className="glass-card rounded-3xl p-6 sm:p-7 border border-white/10 space-y-5 flex flex-col justify-between">
+        <div className="glass-card rounded-3xl p-4 sm:p-7 border border-white/10 space-y-5 flex flex-col justify-between">
           <div className="space-y-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -272,7 +272,7 @@ export const SettingsView: React.FC = () => {
           <div className="pt-6 border-t border-white/[0.06] flex justify-end">
             <button
               onClick={handleSave}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-surface-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition active:scale-[0.98]"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-surface-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition active:scale-[0.98]"
             >
               {saveSuccess ? <Check className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
               <span>{saveSuccess ? 'Settings Saved!' : 'Save System Settings'}</span>

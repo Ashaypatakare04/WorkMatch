@@ -32,19 +32,20 @@ export const ApplicationsView: React.FC<ApplicationsViewProps> = ({
   onUpdateStatus
 }) => {
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [mobileActiveStage, setMobileActiveStage] = useState<string>('all');
 
   const totalConnects = applications.reduce((acc, a) => acc + (a.connect_cost || 0), 0);
   const activeApps = applications.filter(a => a.status === 'applied' || a.status === 'viewed' || a.status === 'interview');
   const hiredApps = applications.filter(a => a.status === 'hired');
 
   return (
-    <div className="space-y-7 pb-12">
+    <div className="space-y-6 pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-display font-extrabold text-white tracking-tight">
-              Application Pipeline
+              Application Pipeline Kanban
             </h1>
             <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
               {applications.length} Tracked
@@ -56,25 +57,59 @@ export const ApplicationsView: React.FC<ApplicationsViewProps> = ({
         </div>
 
         {/* Quick KPI stats */}
-        <div className="flex items-center gap-3 text-xs flex-wrap">
-          <div className="px-3.5 py-1.5 rounded-xl glass-card border border-white/[0.08] flex items-center gap-2">
+        <div className="flex items-center gap-2.5 text-xs flex-wrap">
+          <div className="px-3 py-1.5 rounded-xl glass-card border border-white/[0.08] flex items-center gap-2">
             <span className="text-slate-400">In Flight: </span>
             <span className="font-extrabold text-white font-mono">{activeApps.length}</span>
           </div>
-          <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-2 shadow-glow-emerald">
-            <span className="font-medium">Contracts Won: </span>
+          <div className="px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-2 shadow-glow-emerald">
+            <span className="font-medium">Won: </span>
             <span className="font-extrabold font-mono text-emerald-300">{hiredApps.length}</span>
           </div>
-          <div className="px-3.5 py-1.5 rounded-xl glass-card border border-white/[0.08] flex items-center gap-2">
-            <span className="text-slate-400">Total Connects: </span>
+          <div className="px-3 py-1.5 rounded-xl glass-card border border-white/[0.08] flex items-center gap-2">
+            <span className="text-slate-400">Connects: </span>
             <span className="font-extrabold text-white font-mono">{totalConnects}</span>
           </div>
         </div>
       </div>
 
-      {/* Kanban Board Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3.5 min-h-[520px]">
+      {/* Mobile Stage Switcher Pills */}
+      <div className="sm:hidden flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+        <button
+          onClick={() => setMobileActiveStage('all')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition ${
+            mobileActiveStage === 'all'
+              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+              : 'bg-surface-900 text-slate-400 border border-white/[0.06]'
+          }`}
+        >
+          All Stages ({applications.length})
+        </button>
         {PIPELINE_COLUMNS.map(col => {
+          const count = applications.filter(a => a.status === col.id).length;
+          return (
+            <button
+              key={col.id}
+              onClick={() => setMobileActiveStage(col.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition flex items-center gap-1.5 ${
+                mobileActiveStage === col.id
+                  ? 'bg-surface-750 text-white border border-white/20'
+                  : 'bg-surface-900 text-slate-400 border border-white/[0.06]'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${col.dotColor}`} />
+              <span>{col.label}</span>
+              <span className="font-mono text-[10px] text-slate-400">({count})</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Kanban Board Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 min-h-[420px]">
+        {PIPELINE_COLUMNS
+          .filter(col => mobileActiveStage === 'all' || col.id === mobileActiveStage)
+          .map(col => {
           const colApps = applications.filter(a => a.status === col.id);
           return (
             <div

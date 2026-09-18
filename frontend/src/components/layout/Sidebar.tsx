@@ -54,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="w-64 bg-surface-900/50 backdrop-blur-xl border-r border-white/[0.06] flex flex-col justify-between py-6 px-3.5 min-h-[calc(100vh-61px)] select-none">
+    <aside className="hidden md:flex md:w-64 bg-surface-900/50 backdrop-blur-xl border-r border-white/[0.06] flex-col justify-between py-6 px-3.5 min-h-[calc(100vh-61px)] select-none shrink-0">
       <div className="space-y-1.5">
         <div className="px-3 pb-2.5 text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400/80">
           Intelligence Workspace

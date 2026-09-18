@@ -75,28 +75,38 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
   const currentProposal = proposals[selectedVariant];
 
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto animate-in fade-in duration-150">
-      <div className="glass-card border border-white/[0.12] rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden my-auto relative">
+    <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto animate-in fade-in duration-150">
+      <div className="glass-card border border-white/[0.12] rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[96vh] sm:max-h-[90vh] flex flex-col shadow-2xl overflow-hidden my-auto relative">
         {/* Subtle top ambient glow */}
         <div className="absolute -right-20 -top-20 w-60 h-60 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-white/[0.08] flex items-center justify-between bg-surface-900/90 backdrop-blur-xl sticky top-0 z-10">
-          <div className="flex items-center gap-3">
-            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${
-              job.platform === 'upwork' ? 'badge-upwork' : job.platform === 'fiverr' ? 'badge-fiverr' : 'bg-indigo-500/15 text-indigo-300 border-indigo-500/25'
-            }`}>
-              {job.platform}
-            </span>
-            <span className="text-xs text-slate-300 bg-surface-800 px-2.5 py-0.5 rounded-md border border-white/[0.06]">{job.category}</span>
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-900/95 backdrop-blur-xl sticky top-0 z-10">
+          <div className="flex items-center justify-between sm:justify-start gap-2.5 w-full sm:w-auto">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${
+                job.platform === 'upwork' ? 'badge-upwork' : job.platform === 'fiverr' ? 'badge-fiverr' : 'bg-indigo-500/15 text-indigo-300 border-indigo-500/25'
+              }`}>
+                {job.platform}
+              </span>
+              <span className="text-xs text-slate-300 bg-surface-800 px-2.5 py-0.5 rounded-md border border-white/[0.06]">{job.category}</span>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="sm:hidden p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-surface-800 transition"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
             {/* Tab switch */}
-            <div className="flex items-center bg-surface-950 p-1 rounded-xl border border-white/[0.08] text-xs">
+            <div className="flex items-center bg-surface-950 p-1 rounded-xl border border-white/[0.08] text-xs w-full sm:w-auto justify-center">
               <button
                 onClick={() => setActiveTab('details')}
-                className={`px-3.5 py-1.5 rounded-lg font-medium transition-all ${
+                className={`flex-1 sm:flex-none px-3 sm:px-3.5 py-1.5 rounded-lg font-medium transition-all text-center ${
                   activeTab === 'details' ? 'bg-surface-750 text-white font-semibold shadow-sm border border-white/[0.1]' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -110,7 +120,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                     setActiveTab('proposals');
                   }
                 }}
-                className={`px-3.5 py-1.5 rounded-lg font-medium transition-all flex items-center gap-1.5 ${
+                className={`flex-1 sm:flex-none px-3 sm:px-3.5 py-1.5 rounded-lg font-medium transition-all flex items-center justify-center gap-1.5 ${
                   activeTab === 'proposals' ? 'bg-gradient-to-r from-emerald-500 to-teal-600 text-slate-950 font-bold shadow-glow-emerald' : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -121,7 +131,8 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-surface-800 transition-all ml-2"
+              className="hidden sm:block p-2 rounded-xl text-slate-400 hover:text-white hover:bg-surface-800 transition ml-1"
+              aria-label="Close modal"
             >
               <X className="w-5 h-5" />
             </button>
@@ -129,7 +140,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto flex-1 space-y-6">
+        <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
           {activeTab === 'details' ? (
             <>
               {/* Title & Key Specs */}
@@ -482,19 +493,19 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="px-6 py-4 border-t border-white/[0.08] bg-surface-900/90 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-t border-white/[0.08] bg-surface-900/95 backdrop-blur-xl flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2.5">
           <button
             onClick={() => onSaveJob(job.id)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-800 hover:bg-surface-750 text-slate-200 text-xs font-medium border border-white/[0.08] hover:border-white/[0.18] transition active:scale-95"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-surface-800 hover:bg-surface-750 text-slate-200 text-xs font-medium border border-white/[0.08] hover:border-white/[0.18] transition active:scale-95"
           >
             <Bookmark className="w-4 h-4 text-amber-400" />
             <span>Save Opportunity</span>
           </button>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-surface-800 text-slate-300 text-xs font-medium hover:bg-surface-750 transition"
+              className="w-1/3 sm:w-auto px-4 py-2.5 rounded-xl bg-surface-800 text-slate-300 text-xs font-medium hover:bg-surface-750 transition text-center"
             >
               Close
             </button>
@@ -503,10 +514,10 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
               <button
                 onClick={handleGenerateProposals}
                 disabled={isGenerating}
-                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all disabled:opacity-50 active:scale-95"
+                className="w-2/3 sm:w-auto flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all disabled:opacity-50 active:scale-95"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>{isGenerating ? 'Drafting Proposal...' : 'Generate Personalized Proposal'}</span>
+                <span>{isGenerating ? 'Drafting...' : 'Draft Proposal'}</span>
               </button>
             ) : (
               <button
@@ -514,10 +525,10 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                   onApply(job.id, currentProposal?.id);
                   onClose();
                 }}
-                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all active:scale-95"
+                className="w-2/3 sm:w-auto flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all active:scale-95"
               >
                 <Send className="w-3.5 h-3.5" />
-                <span>Submit & Track Application</span>
+                <span>Submit &amp; Track</span>
               </button>
             )}
           </div>

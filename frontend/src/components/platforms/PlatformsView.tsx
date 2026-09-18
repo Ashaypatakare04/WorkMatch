@@ -229,25 +229,25 @@ export const PlatformsView: React.FC<PlatformsViewProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-5 mt-4 border-t border-white/[0.06] flex items-center justify-between gap-3">
+              <div className="pt-5 mt-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <span className="text-[11px] text-slate-400 leading-tight">
                   {p.platformId === 'fiverr'
                     ? 'Proposals require 1-click clipboard transfer'
                     : 'Native submission & simulation supported'}
                 </span>
 
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-shrink-0">
                   {isConnected ? (
                     <button
                       onClick={() => onDisconnect(p.platformId)}
-                      className="px-3.5 py-1.5 rounded-xl bg-surface-900 hover:bg-red-500/15 text-slate-400 hover:text-red-400 border border-white/10 hover:border-red-500/30 text-xs font-semibold transition shadow-sm"
+                      className="w-full sm:w-auto text-center px-3.5 py-1.5 rounded-xl bg-surface-900 hover:bg-red-500/15 text-slate-400 hover:text-red-400 border border-white/10 hover:border-red-500/30 text-xs font-semibold transition shadow-sm"
                     >
                       Disconnect
                     </button>
                   ) : (
                     <button
                       onClick={() => setSelectedPlatform(p)}
-                      className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-surface-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] flex items-center gap-1.5"
+                      className="w-full sm:w-auto justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-surface-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition-all active:scale-[0.98] flex items-center gap-1.5"
                     >
                       <span>Connect</span>
                       <ArrowRight className="w-3.5 h-3.5" />
