@@ -401,6 +401,36 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* High-Fidelity Cockpit Studio Render */}
+            <div className="mt-8 pt-6 border-t border-white/10 relative rounded-2xl overflow-hidden group">
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <img
+                  src="/images/hero-cockpit.jpg"
+                  alt="WorkMatch Autonomous Freelance OS Command Cockpit"
+                  className="w-full h-auto max-h-[460px] object-cover object-top transition-transform duration-700 group-hover:scale-[1.01]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-950/90 via-surface-950/20 to-transparent pointer-events-none" />
+
+                <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl glass-card backdrop-blur-xl border border-white/15">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-glow-emerald" />
+                    <div>
+                      <span className="font-semibold text-white text-xs block">Live Multi-Marketplace Command Center</span>
+                      <span className="text-[11px] text-slate-400">Continuous 24/7 scanning, instant scoring, and truthful proposal studio</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={onLoadDemoAndLaunch}
+                    className="self-start sm:self-auto px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-surface-950 text-xs font-bold shadow-md transition active:scale-95 flex items-center gap-1.5"
+                  >
+                    <span>Launch Live Interactive Demo</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -474,7 +504,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Card 2: 9-Factor Difficulty Engine (Span 1) */}
-          <div className="glass-card glass-card-hover rounded-3xl p-6 sm:p-8 border border-white/10 flex flex-col justify-between">
+          <div className="glass-card glass-card-hover rounded-3xl p-6 sm:p-8 border border-white/10 flex flex-col justify-between overflow-hidden">
             <div className="space-y-4">
               <div className="w-10 h-10 rounded-2xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
                 <Sliders className="w-5 h-5" />
@@ -487,7 +517,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </p>
             </div>
 
-            <div className="mt-6 space-y-2 text-xs font-mono">
+            {/* AI Radar Image Preview */}
+            <div className="my-4 rounded-2xl overflow-hidden border border-white/10 relative h-36 group">
+              <img
+                src="/images/ai-radar.jpg"
+                alt="Multidimensional Job Matching Neural Radar"
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-950/80 via-transparent to-transparent pointer-events-none" />
+              <span className="absolute bottom-2 left-2 text-[10px] font-mono px-2 py-0.5 rounded bg-surface-950/80 text-cyan-300 border border-cyan-500/30">
+                Neural Match Radar
+              </span>
+            </div>
+
+            <div className="space-y-2 text-xs font-mono">
               <div className="flex justify-between text-slate-300">
                 <span>Capability Alignment</span>
                 <span className="text-emerald-400">Weight: 25%</span>
@@ -499,7 +542,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Card 3: Deterministic Truth Audit (Span 1) */}
-          <div className="glass-card glass-card-hover rounded-3xl p-6 sm:p-8 border border-white/10 flex flex-col justify-between">
+          <div className="glass-card glass-card-hover rounded-3xl p-6 sm:p-8 border border-white/10 flex flex-col justify-between overflow-hidden">
             <div className="space-y-4">
               <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
                 <ShieldCheck className="w-5 h-5" />
@@ -512,7 +555,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </p>
             </div>
 
-            <div className="mt-6 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 font-mono">
+            {/* Truth Security Shield Image Preview */}
+            <div className="my-4 rounded-2xl overflow-hidden border border-white/10 relative h-36 group">
+              <img
+                src="/images/truth-shield.jpg"
+                alt="Cryptographic Claim Verification & Security Shield"
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-950/80 via-transparent to-transparent pointer-events-none" />
+              <span className="absolute bottom-2 left-2 text-[10px] font-mono px-2 py-0.5 rounded bg-surface-950/80 text-emerald-300 border border-emerald-500/30">
+                100% Truthful Guarantee
+              </span>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 font-mono">
               ✓ Automated claim extraction &amp; sanitizer
             </div>
           </div>
@@ -551,7 +607,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </p>
             </div>
 
-            <div className="mt-8 flex items-center gap-4 text-xs font-mono">
+            {/* Financial Ledger Image Preview */}
+            <div className="my-5 rounded-2xl overflow-hidden border border-white/10 relative h-48 group">
+              <img
+                src="/images/financial-ledger.jpg"
+                alt="Quantum Advantage Activity & Connects Ledger"
+                className="w-full h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/20 to-transparent pointer-events-none" />
+              <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-surface-950/80 text-cyan-300 border border-cyan-500/30">
+                  Immutable Spend &amp; Return Metrics
+                </span>
+                <span className="text-[10px] font-mono text-emerald-400 font-bold bg-surface-950/80 px-2 py-0.5 rounded">
+                  +24.8% Real-Time ROI
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 text-xs font-mono">
               <div className="p-3 rounded-xl bg-surface-950/70 border border-white/[0.06]">
                 <span className="text-slate-400 block text-[10px]">Estimated Direct Cost</span>
                 <span className="font-bold text-emerald-400">$0.15 / Connect Tracked</span>
