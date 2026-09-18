@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "npm run dev --prefix backend",
     "dev:frontend": "npm run dev --prefix frontend",
-    "build:backend": "npx esbuild backend/src/server.ts --bundle --platform=node --target=node22 --format=esm --outfile=api/index.js --external:node:sqlite",
+    "build:backend": "npx esbuild backend/src/server.ts --bundle --platform=node --target=node22 --format=esm --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\" --outfile=api/index.js --external:node:sqlite",
     "build:frontend": "npm run build --prefix frontend",
     "build": "npm run build:backend && npm run build:frontend",
     "test": "npm run test --prefix backend",
