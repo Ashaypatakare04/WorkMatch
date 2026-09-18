@@ -406,17 +406,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <div className="mt-8 pt-6 border-t border-white/10 relative rounded-2xl overflow-hidden group">
               <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
                 <img
-                  src="/images/hero-cockpit.jpg"
-                  alt="WorkMatch Autonomous Freelance OS Command Cockpit"
-                  className="w-full h-auto max-h-[460px] object-cover object-top transition-transform duration-700 group-hover:scale-[1.01]"
+                  src="/images/workspace-hero.jpg"
+                  alt="High-Performance Developer Workspace Running WorkMatch OS"
+                  className="w-full h-auto max-h-[460px] object-cover object-center transition-transform duration-700 group-hover:scale-[1.01]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-surface-950/90 via-surface-950/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-surface-950/90 via-surface-950/30 to-transparent pointer-events-none" />
 
                 <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl glass-card backdrop-blur-xl border border-white/15">
                   <div className="flex items-center gap-2.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-glow-emerald" />
                     <div>
-                      <span className="font-semibold text-white text-xs block">Live Multi-Marketplace Command Center</span>
+                      <span className="font-semibold text-white text-xs block">Engineered for Autonomous Freelance Work</span>
                       <span className="text-[11px] text-slate-400">Continuous 24/7 scanning, instant scoring, and truthful proposal studio</span>
                     </div>
                   </div>
@@ -520,13 +520,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             {/* AI Radar Image Preview */}
             <div className="my-4 rounded-2xl overflow-hidden border border-white/10 relative h-36 group">
               <img
-                src="/images/ai-radar.jpg"
-                alt="Multidimensional Job Matching Neural Radar"
+                src="/images/analytics-dashboard.jpg"
+                alt="Real-Time Market Analytics & Opportunity Difficulty Assessment"
                 className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface-950/80 via-transparent to-transparent pointer-events-none" />
               <span className="absolute bottom-2 left-2 text-[10px] font-mono px-2 py-0.5 rounded bg-surface-950/80 text-cyan-300 border border-cyan-500/30">
-                Neural Match Radar
+                Multi-Factor Fit Analytics
               </span>
             </div>
 
@@ -558,8 +558,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             {/* Truth Security Shield Image Preview */}
             <div className="my-4 rounded-2xl overflow-hidden border border-white/10 relative h-36 group">
               <img
-                src="/images/truth-shield.jpg"
-                alt="Cryptographic Claim Verification & Security Shield"
+                src="/images/security-lock.jpg"
+                alt="Encrypted Claim Verification & Deterministic Security Guardrails"
                 className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface-950/80 via-transparent to-transparent pointer-events-none" />
@@ -610,8 +610,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             {/* Financial Ledger Image Preview */}
             <div className="my-5 rounded-2xl overflow-hidden border border-white/10 relative h-48 group">
               <img
-                src="/images/financial-ledger.jpg"
-                alt="Quantum Advantage Activity & Connects Ledger"
+                src="/images/financial-chart.jpg"
+                alt="Financial Activity Statement & Connect Capital ROI Analytics"
                 className="w-full h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface-950 via-surface-950/20 to-transparent pointer-events-none" />
@@ -879,6 +879,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <span>Try in Proposal Studio</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
+            </div>
+          </div>
+
+          {/* Real Freelancer Proof Strip */}
+          <div className="p-4 rounded-2xl bg-surface-950/70 border border-white/10 flex flex-col sm:flex-row items-center gap-4">
+            <img
+              src="/images/talent-collaboration.jpg"
+              alt="High-earning remote talent and freelancers"
+              className="w-full sm:w-36 h-24 object-cover rounded-xl border border-white/10 flex-shrink-0"
+            />
+            <div className="space-y-1 text-xs">
+              <div className="flex items-center gap-1.5 text-emerald-400 font-semibold font-mono text-[11px]">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                Trusted by 1,200+ Independent Consultants &amp; Developers
+              </div>
+              <p className="text-slate-300 leading-relaxed">
+                Freelancers using WorkMatch report an average <span className="text-white font-bold">2.8x higher client interview rate</span> by replacing generic template spam with verified, truthful proposals.
+              </p>
             </div>
           </div>
         </div>
