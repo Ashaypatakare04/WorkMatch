@@ -13,6 +13,7 @@ export interface JobClient {
   jobs_posted: number | null;
   jobs_hired: number | null;
   hire_rate: number | null;
+  payment_verified?: boolean;
 }
 
 export interface JobCompetition {

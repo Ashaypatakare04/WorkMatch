@@ -23,109 +23,127 @@ export const Navbar: React.FC<NavbarProps> = ({
   const unreadCount = notifications.filter(n => !n.read_at).length;
 
   return (
-    <header className="sticky top-0 z-40 bg-slate-900/95 border-b border-slate-800 backdrop-blur px-6 py-3 flex items-center justify-between">
+    <header className="sticky top-0 z-40 glass-header px-5 md:px-8 py-3 flex items-center justify-between transition-all">
       {/* Brand & Tagline */}
-      <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('dashboard')}>
-        <div className="h-9 w-9 rounded-lg bg-gradient-to-tr from-sky-600 to-cyan-500 flex items-center justify-center font-bold text-white shadow-lg shadow-sky-500/20">
-          WM
+      <div className="flex items-center gap-3.5 cursor-pointer group select-none" onClick={() => onNavigate('dashboard')}>
+        <div className="relative h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-500 via-cyan-500 to-blue-500 p-[1.5px] shadow-glow-emerald transition-transform duration-200 group-hover:scale-105">
+          <div className="h-full w-full bg-[#0d1117] rounded-[10px] flex items-center justify-center overflow-hidden">
+            <svg className="w-5 h-5" viewBox="0 0 64 64" fill="none">
+              <circle cx="32" cy="32" r="23" stroke="rgba(6, 182, 212, 0.25)" strokeWidth="1.5" strokeDasharray="3 3" />
+              <path d="M15 20L22 44L28 28L32 36L36 28L42 44L49 20" stroke="url(#navWm)" strokeWidth="5.5" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="32" cy="18" r="3.5" fill="#10B981" />
+              <defs>
+                <linearGradient id="navWm" x1="15" y1="20" x2="49" y2="44" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#10B981" />
+                  <stop offset="0.5" stopColor="#06B6D4" />
+                  <stop offset="1" stopColor="#3B82F6" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-bold text-lg text-white tracking-tight">WorkMatch AI</span>
-            <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
-              Universal MVP
+            <span className="font-display font-extrabold text-lg text-white tracking-tight group-hover:text-emerald-300 transition-colors">
+              WorkMatch<span className="text-emerald-400 font-semibold ml-0.5">AI</span>
+            </span>
+            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+              PRO
             </span>
           </div>
-          <p className="text-xs text-slate-400">AI Work Opportunity & Application Intelligence</p>
+          <p className="text-[11px] text-slate-400 hidden sm:block tracking-wide">Multi-Platform Work Opportunity Discovery & Proposal Suite</p>
         </div>
       </div>
 
       {/* Center: Emergency Kill Switch & Automation State */}
       <div className="flex items-center gap-3">
         {automationSettings?.emergency_stop ? (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/40 text-red-400 text-xs font-semibold animate-pulse">
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/15 border border-red-500/40 text-red-300 text-xs font-semibold animate-pulse shadow-lg shadow-red-950/50">
             <ShieldAlert className="w-4 h-4 text-red-400" />
-            EMERGENCY LOCKDOWN ENGAGED
+            <span className="tracking-wide uppercase text-[11px]">EMERGENCY LOCKDOWN ENGAGED</span>
           </div>
         ) : automationSettings?.application_mode === 'AUTOMATIC' ? (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-              Auto Apply Active ({automationSettings.applications_today_count}/{automationSettings.max_daily_applications} today)
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-medium">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>Auto Apply Active ({automationSettings.applications_today_count}/{automationSettings.max_daily_applications})</span>
             </div>
             <button
               onClick={onEmergencyStop}
-              className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider transition flex items-center gap-1.5 shadow-md shadow-red-600/30"
+              className="px-3 py-1.5 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-md shadow-red-600/30 active:scale-95"
             >
               <ShieldAlert className="w-3.5 h-3.5" />
               Stop Automation
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 text-slate-400 text-xs font-medium border border-slate-700">
-            <span>Mode:</span>
-            <span className="text-sky-400 font-semibold">{automationSettings?.application_mode || 'MANUAL'}</span>
+          <div className="flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-800/80 text-slate-300 text-xs font-medium border border-white/[0.08]">
+            <span className="text-slate-400 text-[11px]">Mode:</span>
+            <span className="font-semibold text-emerald-400 font-mono tracking-wide">{automationSettings?.application_mode || 'MANUAL'}</span>
           </div>
         )}
       </div>
 
       {/* Right: Sync, Notifications, Profile */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
         {/* Sync Platforms Button */}
         <button
           onClick={onSync}
           disabled={isSyncing}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition border border-slate-700 disabled:opacity-50"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-800/80 hover:bg-surface-750 text-slate-200 text-xs font-medium transition-all border border-white/[0.08] hover:border-emerald-500/30 disabled:opacity-50 active:scale-95"
           title="Synchronize connected work platforms"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-sky-400' : ''}`} />
-          <span>{isSyncing ? 'Syncing...' : 'Sync Platforms'}</span>
+          <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-emerald-400' : 'text-slate-400'}`} />
+          <span className="hidden sm:inline">{isSyncing ? 'Syncing...' : 'Sync Platforms'}</span>
         </button>
 
         {/* Notifications Popover Trigger */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700"
+            className="relative p-2 rounded-lg bg-surface-800/80 hover:bg-surface-750 text-slate-300 transition-all border border-white/[0.08] hover:border-white/[0.18]"
             title="Notifications & Job Alerts"
           >
-            <Bell className="w-4 h-4" />
+            <Bell className="w-4 h-4 text-slate-300" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-sky-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 text-slate-950 rounded-full text-[10px] font-extrabold flex items-center justify-center shadow-glow-emerald">
                 {unreadCount}
               </span>
             )}
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-4 z-50">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-700">
+            <div className="absolute right-0 mt-2.5 w-80 sm:w-96 glass-card rounded-2xl p-4 z-50 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
                 <div className="flex items-center gap-2">
-                  <Bell className="w-4 h-4 text-sky-400" />
-                  <span className="font-semibold text-sm text-white">Job Alerts & Notifications</span>
+                  <Bell className="w-4 h-4 text-emerald-400" />
+                  <span className="font-display font-bold text-sm text-white">Job Alerts & Insights</span>
                 </div>
-                <span className="text-xs text-slate-400">{notifications.length} alerts</span>
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-white/[0.05] text-slate-400">{notifications.length} alerts</span>
               </div>
-              <div className="max-h-80 overflow-y-auto divide-y divide-slate-700/50 my-2">
+              <div className="max-h-80 overflow-y-auto divide-y divide-white/[0.05] my-2 pr-1">
                 {notifications.length === 0 ? (
-                  <div className="text-center py-6 text-xs text-slate-400">
+                  <div className="text-center py-8 text-xs text-slate-400">
                     No new notifications yet. High match opportunities will appear here.
                   </div>
                 ) : (
                   notifications.map(n => (
-                    <div key={n.id} className="py-2.5 px-1 hover:bg-slate-700/30 rounded transition text-xs">
+                    <div key={n.id} className="py-2.5 px-2 hover:bg-white/[0.04] rounded-xl transition text-xs">
                       <div className="flex items-center justify-between font-semibold text-slate-200">
-                        <span>{n.title}</span>
+                        <span className="line-clamp-1">{n.title}</span>
                         {n.match_score && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-mono">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-mono border border-emerald-500/25 ml-2 shrink-0">
                             {n.match_score}%
                           </span>
                         )}
                       </div>
-                      <p className="text-slate-400 mt-1 whitespace-pre-line text-[11px] leading-relaxed line-clamp-3">
+                      <p className="text-slate-400 mt-1 whitespace-pre-line text-[11px] leading-relaxed line-clamp-2">
                         {n.body}
                       </p>
-                      <span className="text-[10px] text-slate-500 mt-1 block">
+                      <span className="text-[10px] text-slate-500 mt-1.5 block font-mono">
                         {new Date(n.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
@@ -137,7 +155,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setShowNotifications(false);
                   onNavigate('notifications');
                 }}
-                className="w-full text-center text-xs text-sky-400 hover:text-sky-300 pt-2 border-t border-slate-700 block font-medium"
+                className="w-full text-center text-xs text-emerald-400 hover:text-emerald-300 pt-2.5 border-t border-white/[0.08] block font-medium transition"
               >
                 View all notifications & preferences →
               </button>
@@ -148,12 +166,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Profile Link */}
         <button
           onClick={() => onNavigate('profile')}
-          className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition"
+          className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-lg bg-surface-800/80 hover:bg-surface-750 text-slate-200 text-xs font-medium border border-white/[0.08] hover:border-emerald-500/30 transition-all active:scale-95"
         >
-          <div className="w-6 h-6 rounded-full bg-sky-600/30 text-sky-400 flex items-center justify-center font-bold">
-            <User className="w-3.5 h-3.5" />
+          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 p-[1px]">
+            <div className="w-full h-full rounded-full bg-[#0d1117] flex items-center justify-center">
+              <User className="w-3.5 h-3.5 text-emerald-400" />
+            </div>
           </div>
-          <span>Profile</span>
+          <span className="font-medium hidden sm:inline">Profile</span>
         </button>
       </div>
     </header>

@@ -189,7 +189,7 @@ export function App() {
   const activeAppCount = applications.filter(a => a.status !== 'rejected' && a.status !== 'withdrawn').length;
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-transparent text-slate-100 flex flex-col font-sans">
       {/* Top Navigation */}
       <Navbar
         automationSettings={automationSettings}
