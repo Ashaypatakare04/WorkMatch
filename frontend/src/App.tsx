@@ -12,6 +12,7 @@ import { ProfileView } from './components/profile/ProfileView.js';
 import { AutomationView } from './components/automation/AutomationView.js';
 import { SettingsView } from './components/settings/SettingsView.js';
 import { JobDetailsModal } from './components/jobs/JobDetailsModal.js';
+import { LandingPage } from './components/landing/LandingPage.js';
 
 import {
   NormalizedJob,
@@ -24,8 +25,18 @@ import {
 } from './types/index.js';
 import { api } from './services/api.js';
 
+const getInitialTab = (): string => {
+  if (typeof window !== 'undefined') {
+    const hash = window.location.hash.replace('#', '');
+    if (['dashboard', 'jobs', 'saved', 'applications', 'analytics', 'reports', 'platforms', 'profile', 'automation', 'settings'].includes(hash)) {
+      return hash;
+    }
+  }
+  return 'landing';
+};
+
 export function App() {
-  const [currentTab, setCurrentTab] = useState<string>('dashboard');
+  const [currentTab, setCurrentTab] = useState<string>(getInitialTab);
   const [jobs, setJobs] = useState<NormalizedJob[]>([]);
   const [platforms, setPlatforms] = useState<PlatformConnectionState[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
@@ -71,7 +82,28 @@ export function App() {
 
   useEffect(() => {
     loadInitialData();
+    const onHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && ['landing', 'dashboard', 'jobs', 'saved', 'applications', 'analytics', 'reports', 'platforms', 'profile', 'automation', 'settings'].includes(hash)) {
+        setCurrentTab(hash);
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+
+  const handleNavigateTab = (tab: string) => {
+    setCurrentTab(tab);
+    if (typeof window !== 'undefined') {
+      window.location.hash = tab;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleLoadDemoAndLaunch = async () => {
+    await handleLoadDemo();
+    handleNavigateTab('dashboard');
+  };
 
   // 1-Click Demo Seed
   const handleLoadDemo = async () => {
@@ -190,6 +222,16 @@ export function App() {
   }).length;
   const activeAppCount = applications.filter(a => a.status !== 'rejected' && a.status !== 'withdrawn').length;
 
+  if (currentTab === 'landing') {
+    return (
+      <LandingPage
+        onLaunchApp={() => handleNavigateTab('dashboard')}
+        onLoadDemoAndLaunch={handleLoadDemoAndLaunch}
+        isLoadingDemo={isLoadingDemo}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-transparent text-slate-100 flex flex-col font-sans">
       {/* Top Navigation */}
@@ -199,7 +241,7 @@ export function App() {
         onEmergencyStop={handleEmergencyStop}
         onSync={handleSync}
         isSyncing={isSyncing}
-        onNavigate={setCurrentTab}
+        onNavigate={handleNavigateTab}
         onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
       />
 
@@ -208,7 +250,7 @@ export function App() {
         {/* Left Sidebar */}
         <Sidebar
           currentTab={currentTab}
-          onTabChange={setCurrentTab}
+          onTabChange={handleNavigateTab}
           highMatchCount={highMatchCount}
           possibleMatchCount={possibleMatchCount}
           activeAppCount={activeAppCount}
@@ -223,7 +265,7 @@ export function App() {
               automationSettings={automationSettings}
               analytics={analytics}
               onViewJob={setSelectedJob}
-              onNavigate={setCurrentTab}
+              onNavigate={handleNavigateTab}
               onLoadDemo={handleLoadDemo}
               onUpdateMode={handleUpdateMode}
               isLoadingDemo={isLoadingDemo}
@@ -262,7 +304,7 @@ export function App() {
           {currentTab === 'analytics' && (
             <AnalyticsView
               analytics={analytics}
-              onNavigateToReports={() => setCurrentTab('reports')}
+              onNavigateToReports={() => handleNavigateTab('reports')}
             />
           )}
 
@@ -340,7 +382,7 @@ export function App() {
       {/* Mobile Navigation Bar & Slide-out Drawer */}
       <MobileNav
         currentTab={currentTab}
-        onTabChange={setCurrentTab}
+        onTabChange={handleNavigateTab}
         highMatchCount={highMatchCount}
         activeAppCount={activeAppCount}
         isOpen={isMobileMenuOpen}

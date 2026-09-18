@@ -10,7 +10,8 @@ import {
   Bot,
   UserCheck,
   Settings,
-  ShieldAlert
+  ShieldAlert,
+  Globe
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -51,6 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'automation', label: 'Automation & Safety', icon: Bot },
     { id: 'profile', label: 'Capability Profile', icon: UserCheck },
     { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'landing', label: 'Landing Page', icon: Globe },
   ];
 
   return (

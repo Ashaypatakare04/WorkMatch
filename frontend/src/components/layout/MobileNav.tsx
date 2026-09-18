@@ -14,7 +14,8 @@ import {
   Settings,
   ShieldAlert,
   Radio,
-  Sparkles
+  Sparkles,
+  Globe
 } from 'lucide-react';
 import { AutomationSettings } from '../../types/index.js';
 
@@ -81,7 +82,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     { id: 'platforms', label: 'Marketplace Connectors', icon: Network },
     { id: 'automation', label: 'Automation & Boundaries', icon: Bot },
     { id: 'profile', label: 'Capability Profile', icon: UserCheck },
-    { id: 'settings', label: 'Dispatch & AI Engine', icon: Settings }
+    { id: 'settings', label: 'Dispatch & AI Engine', icon: Settings },
+    { id: 'landing', label: 'Public Landing Page', icon: Globe }
   ];
 
   const handleSelectTab = (id: string) => {

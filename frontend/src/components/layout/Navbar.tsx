@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldAlert, RefreshCw, Bell, Sparkles, CheckCircle2, AlertTriangle, User, Menu } from 'lucide-react';
+import { ShieldAlert, RefreshCw, Bell, Sparkles, CheckCircle2, AlertTriangle, User, Menu, Globe } from 'lucide-react';
 import { NotificationItem, AutomationSettings } from '../../types/index.js';
 
 interface NavbarProps {
@@ -78,21 +78,34 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onEmergencyStop}
               className="px-3 py-1.5 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-[11px] font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-md shadow-red-600/30 active:scale-95"
+              title="Activate Emergency Kill Switch"
             >
               <ShieldAlert className="w-3.5 h-3.5" />
-              Stop Automation
+              <span>KILL SWITCH</span>
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-2 px-3.5 py-1 rounded-full bg-surface-800/80 text-slate-300 text-xs font-medium border border-white/[0.08]">
-            <span className="text-slate-400 text-[11px]">Mode:</span>
-            <span className="font-semibold text-emerald-400 font-mono tracking-wide">{automationSettings?.application_mode || 'MANUAL'}</span>
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-800/80 border border-white/[0.08] text-slate-300 text-xs">
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="text-[11px] font-medium text-slate-300">
+              Mode: <span className="text-cyan-400 font-bold">{automationSettings?.application_mode || 'MANUAL'}</span>
+            </span>
           </div>
         )}
       </div>
 
       {/* Right: Sync, Notifications, Profile, and Mobile Menu Toggle */}
       <div className="flex items-center gap-2 sm:gap-2.5">
+        {/* Landing Page Button */}
+        <button
+          onClick={() => onNavigate('landing')}
+          className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface-800/80 hover:bg-surface-750 text-slate-300 hover:text-white text-xs font-medium transition-all border border-white/[0.08] hover:border-cyan-500/30 active:scale-95"
+          title="Return to Public Landing Page"
+        >
+          <Globe className="w-3.5 h-3.5 text-cyan-400" />
+          <span className="hidden md:inline">Landing Page</span>
+        </button>
+
         {/* Sync Platforms Button */}
         <button
           onClick={onSync}
