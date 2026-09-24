@@ -19,13 +19,29 @@ import {
   Activity,
   Layers,
   Clock,
-  DollarSign
+  DollarSign,
+  Copy,
+  Check
 } from 'lucide-react';
 
 interface LandingPageProps {
   onLaunchApp: () => void;
   onLoadDemoAndLaunch: () => void;
   isLoadingDemo?: boolean;
+}
+
+interface SampleOpportunity {
+  id: string;
+  tabLabel: string;
+  platform: string;
+  matchScore: number;
+  timeAgo: string;
+  title: string;
+  description: string;
+  skillOverlap: string;
+  budget: string;
+  clientRep: string;
+  verifiedSkills: string;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
@@ -35,17 +51,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Mouse Spotlight Glow State
+  const [mousePos, setMousePos] = useState<{ x: number; y: number }>({ x: -1000, y: -1000 });
+
   // Interactive Simulator State
   const [simSkillFit, setSimSkillFit] = useState<number>(94);
   const [simHourlyRate, setSimHourlyRate] = useState<number>(85);
   const [simClientRating, setSimClientRating] = useState<number>(4.9);
   const [simComplexity, setSimComplexity] = useState<'Simple' | 'Medium' | 'Complex'>('Simple');
 
-  // Interactive Cockpit Mode
+  // Interactive Cockpit Mode & Live Opportunity State
   const [cockpitMode, setCockpitMode] = useState<'MANUAL' | 'ASSISTED' | 'AUTOMATIC'>('AUTOMATIC');
+  const [selectedOppIdx, setSelectedOppIdx] = useState<number>(0);
 
-  // Proposal Persona Studio State
+  // Proposal Persona Studio State & Copy Feedback
   const [activePersona, setActivePersona] = useState<'direct' | 'technical' | 'consultative'>('direct');
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   // ROI Calculator State
   const [monthlyProposals, setMonthlyProposals] = useState<number>(35);
@@ -58,6 +79,64 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     command: '/images/tech-command-center.jpg',
     neural: '/images/neural-grid.jpg'
   };
+
+  const sampleOpportunities: SampleOpportunity[] = [
+    {
+      id: 'ts-react',
+      tabLabel: 'TypeScript Architect',
+      platform: 'Upwork Enterprise',
+      matchScore: 98,
+      timeAgo: '4m ago',
+      title: 'Senior TypeScript & React Architect for High-Throughput Analytics Dashboard',
+      description: 'Looking for an elite full-stack engineer experienced in Vite, SQLite, real-time WebSockets, and modern data visualization. Must have proven capability shipping production apps.',
+      skillOverlap: '100% Fit',
+      budget: '$95 – $125/hr',
+      clientRep: '★ 4.98 ($120k+ spent)',
+      verifiedSkills: 'Exact match with 3 verified profile skills (TypeScript, React, Performance Optimization)'
+    },
+    {
+      id: 'ai-agent',
+      tabLabel: 'AI Workflow Lead',
+      platform: 'Fiverr Pro',
+      matchScore: 96,
+      timeAgo: '12m ago',
+      title: 'Autonomous Multi-Agent Orchestration & LLM Pipeline Architecture',
+      description: 'Seeking a senior engineer to design reliable agent workflows with strict hallucination guards, tool calling, and deterministic state trees. Production experience required.',
+      skillOverlap: '97% Fit',
+      budget: '$4,200 Fixed',
+      clientRep: '★ 5.0 (Top Rated Plus)',
+      verifiedSkills: 'Exact match with 4 verified profile skills (LLM Orchestration, Python, REST, Tool-use)'
+    },
+    {
+      id: 'nextjs-lead',
+      tabLabel: 'Next.js 15 Lead',
+      platform: 'Direct Inbound',
+      matchScore: 94,
+      timeAgo: '18m ago',
+      title: 'Next.js 15 App Router & Server Actions Performance Refactor',
+      description: 'Refactor high-traffic web application to Next.js 15 App Router. Improve Core Web Vitals, server components caching strategy, and reduce bundle footprint.',
+      skillOverlap: '95% Fit',
+      budget: '$110/hr',
+      clientRep: '★ 4.95 ($85k+ spent)',
+      verifiedSkills: 'Exact match with 3 verified profile skills (Next.js, Tailwind CSS, SSR Architecture)'
+    }
+  ];
+
+  const proposalTexts: Record<string, string> = {
+    direct: `Hi [Client], I reviewed your dashboard performance bottlenecks. You need sub-100ms analytics queries with real-time UI updates without blocking the main event thread.\n\nI have direct production experience architecting React with TypeScript and optimizing SQLite query indexing. In a recent project, we achieved a 65% reduction in dashboard latency using memoized selector hooks and virtualized scrolling.\n\nI can take this on starting tomorrow. Here is the first step I would take on day one...`,
+    technical: `Greetings, regarding your specification for high-throughput state handling: your architecture requires strict decoupled state management to prevent unnecessary DOM re-renders.\n\nMy verified technical scope covers React 18 concurrency, TypeScript strict mode, and memory-efficient data caching. I avoid heavy third-party bundles in favor of lean native primitives.\n\nHappy to discuss schema migrations and API endpoint contracts on a quick technical sync.`,
+    consultative: `Hello, looking at your project roadmap, the primary objective is ensuring your analytics scale cleanly as your user base doubles over the next quarter.\n\nBeyond just writing the code, I focus on delivering clean maintainable architecture that your team can easily extend. We will structure the dashboard modules with zero hard dependencies and full automated test coverage.\n\nLet's align on your key business milestones and release dates.`
+  };
+
+  const handleCopyProposal = (text: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2200);
+    }
+  };
+
+  const currentOpp = sampleOpportunities[selectedOppIdx] || sampleOpportunities[0];
 
   // FAQ State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -125,8 +204,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   return (
     <div
       ref={containerRef}
+      onMouseMove={e => setMousePos({ x: e.clientX, y: e.clientY })}
       className="relative min-h-screen bg-[#02040a] text-white selection:bg-white/30 overflow-hidden font-sans"
     >
+      {/* Interactive Cursor-Following Ambient Spotlight Glow */}
+      <div
+        className="fixed inset-0 pointer-events-none z-30 transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(650px circle at ${mousePos.x}px ${mousePos.y}px, rgba(52, 211, 153, 0.08), transparent 70%)`
+        }}
+      />
+
       {/* Subtle 35mm Film Grain Texture Layer */}
       <div className="fixed inset-0 pointer-events-none cinematic-grain z-40 opacity-20" />
 
@@ -362,16 +450,47 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         </div>
 
-        {/* Hero Headline (ParkFlow massive typography) */}
-        <h1 className="hero-text text-5xl sm:text-7xl md:text-8xl font-bold tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/70 leading-[1.04]">
-          Stop Chasing Jobs. <br />
-          <span className="text-white drop-shadow-[0_0_35px_rgba(255,255,255,0.35)]">Let AI Win Them.</span>
-        </h1>
+        {/* Floating Telemetry Micro-Badges & Hero Headline */}
+        <div className="relative w-full max-w-4xl mx-auto">
+          {/* Micro-Badge Left: Live Match Ping */}
+          <div className="hidden lg:flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/[0.08] border border-white/15 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(52,211,153,0.2)] absolute -top-6 -left-10 z-20 pointer-events-none animate-float text-left">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.4)]">
+              <Zap className="w-4 h-4 fill-current" />
+            </div>
+            <div>
+              <div className="text-[11px] font-mono font-bold text-white flex items-center gap-1.5">
+                <span>$125/hr Match Found</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              </div>
+              <div className="text-[10px] text-slate-400 font-mono">Upwork Enterprise • 98% Fit</div>
+            </div>
+          </div>
 
-        {/* Hero Subtitle */}
-        <p className="hero-text text-lg sm:text-xl md:text-2xl text-slate-300 max-w-2xl mb-12 font-normal tracking-normal leading-relaxed">
-          Experience autonomous, serverless freelance management. Real-time marketplace aggregation, multi-factor fit scoring, and zero-hallucination proposal dispatch.
-        </p>
+          {/* Micro-Badge Right: Truth Verification */}
+          <div className="hidden lg:flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/[0.08] border border-white/15 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(34,211,238,0.2)] absolute top-28 -right-10 z-20 pointer-events-none animate-float-reverse text-left">
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.4)]">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="text-[11px] font-mono font-bold text-white flex items-center gap-1.5">
+                <span>100% Truth Enforced</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono">AUDITED</span>
+              </div>
+              <div className="text-[10px] text-slate-400 font-mono">Zero Hallucinations Verified</div>
+            </div>
+          </div>
+
+          {/* Hero Headline (ParkFlow massive typography) */}
+          <h1 className="hero-text text-5xl sm:text-7xl md:text-8xl font-bold tracking-tighter mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/70 leading-[1.04]">
+            Stop Chasing Jobs. <br />
+            <span className="text-white drop-shadow-[0_0_35px_rgba(255,255,255,0.35)]">Let AI Win Them.</span>
+          </h1>
+
+          {/* Hero Subtitle */}
+          <p className="hero-text text-lg sm:text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-12 font-normal tracking-normal leading-relaxed">
+            Experience autonomous, serverless freelance management. Real-time marketplace aggregation, multi-factor fit scoring, and zero-hallucination proposal dispatch.
+          </p>
+        </div>
 
         {/* Hero Dual CTA Buttons (ParkFlow's exact signature buttons) */}
         <div className="hero-text flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
@@ -483,58 +602,91 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
             </div>
 
+            {/* Live Opportunity Stream Selector Bar */}
+            <div className="relative z-10 mt-5 flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mr-1">
+                  <Activity className="w-3 h-3 text-emerald-400" />
+                  Live Opportunities:
+                </span>
+                {sampleOpportunities.map((opp, idx) => (
+                  <button
+                    key={opp.id}
+                    onClick={() => setSelectedOppIdx(idx)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-mono font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                      selectedOppIdx === idx
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_12px_rgba(52,211,153,0.3)]'
+                        : 'bg-white/[0.04] text-slate-400 hover:text-white border border-white/10'
+                    }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full ${selectedOppIdx === idx ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
+                    <span>{opp.tabLabel}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white font-mono">{opp.matchScore}%</span>
+                  </button>
+                ))}
+              </div>
+              <span className="text-[10px] font-mono text-slate-400 hidden sm:inline-block">
+                Click tab to inspect live scan
+              </span>
+            </div>
+
             {/* Cockpit Visual Grid */}
-            <div className="relative z-10 mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5 text-left">
-              {/* Opportunity Card Preview */}
-              <div className="lg:col-span-2 p-5 rounded-2xl bg-[#070c17]/80 border border-white/12 space-y-4 relative overflow-hidden shadow-xl">
-                <div className="flex items-start justify-between gap-3">
+            <div className="relative z-10 mt-4 grid grid-cols-1 lg:grid-cols-3 gap-5 text-left">
+              {/* Opportunity Card Preview with Scanline Radar Beam */}
+              <div className="lg:col-span-2 p-5 rounded-2xl bg-[#070c17]/85 border border-white/12 space-y-4 relative overflow-hidden shadow-xl transition-all">
+                {/* Radar Scanner Beam (animate-scanline) */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl z-20">
+                  <div className="w-full h-1 bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent animate-scanline blur-[1px]" />
+                </div>
+
+                <div className="flex items-start justify-between gap-3 relative z-10">
                   <div>
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/10 text-white border border-white/15">
-                        Upwork Enterprise
+                        {currentOpp.platform}
                       </span>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
                         ⚡ Top 1% Match
                       </span>
-                      <span className="text-[10px] text-slate-400 font-mono">Posted 4m ago</span>
+                      <span className="text-[10px] text-slate-400 font-mono">Posted {currentOpp.timeAgo}</span>
                     </div>
                     <h3 className="text-base font-bold text-white">
-                      Senior TypeScript &amp; React Architect for High-Throughput Analytics Dashboard
+                      {currentOpp.title}
                     </h3>
                   </div>
 
                   {/* Radial Match Indicator */}
                   <div className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/[0.06] border border-white/12 min-w-[70px] text-center shadow-[0_0_15px_rgba(52,211,153,0.15)]">
-                    <span className="text-2xl font-black font-mono text-emerald-400">98%</span>
+                    <span className="text-2xl font-black font-mono text-emerald-400">{currentOpp.matchScore}%</span>
                     <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400 font-mono">Match</span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
-                  Looking for an elite full-stack engineer experienced in Vite, SQLite, real-time WebSockets, and modern data visualization. Must have proven capability shipping production apps.
+                <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed relative z-10">
+                  {currentOpp.description}
                 </p>
 
                 {/* Criteria Grid */}
-                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-[11px]">
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-[11px] relative z-10">
                   <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/10">
                     <span className="text-slate-400 block text-[10px]">Skill Overlap</span>
-                    <span className="font-mono text-emerald-400 font-bold">100% Fit</span>
+                    <span className="font-mono text-emerald-400 font-bold">{currentOpp.skillOverlap}</span>
                   </div>
                   <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/10">
                     <span className="text-slate-400 block text-[10px]">Budget Quality</span>
-                    <span className="font-mono text-white font-bold">$95 – $125/hr</span>
+                    <span className="font-mono text-white font-bold">{currentOpp.budget}</span>
                   </div>
                   <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/10">
                     <span className="text-slate-400 block text-[10px]">Client Trust</span>
-                    <span className="font-mono text-cyan-400 font-bold">★ 4.98 ($120k+)</span>
+                    <span className="font-mono text-cyan-400 font-bold">{currentOpp.clientRep}</span>
                   </div>
                 </div>
 
                 {/* Insight Strip */}
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs flex items-center justify-between gap-2">
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs flex items-center justify-between gap-2 relative z-10">
                   <div className="flex items-center gap-2 text-emerald-300">
                     <Sparkles className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <span>Exact match with 3 verified profile skills (TypeScript, React, Performance Optimization)</span>
+                    <span>{currentOpp.verifiedSkills}</span>
                   </div>
                   <span className="text-[10px] font-mono text-slate-400 whitespace-nowrap">0 Connect Waste</span>
                 </div>
@@ -616,133 +768,107 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* Bento Grid: 5 Core Architectural Pillars (ParkFlow Glass Style) */}
+      {/* 3 Core Pillars: Streamlined, Visual & User-Friendly */}
       <section id="features" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="px-3.5 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-white/[0.06] text-slate-300 border border-white/15">
             Engine Architecture
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mt-4">
-            Built for High-Earner Freelancers
+            Autonomous Precision. Zero Slop.
           </h2>
           <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-            Generic AI spam bots flood clients with garbage. WorkMatch was engineered from the ground up to guarantee relevance, precision, and reputation safety.
+            Engineered for elite freelancers. Every subsystem is tuned to eliminate connect waste, safeguard your reputation, and win high-ticket contracts.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Multi-Platform Aggregation (Span 2) */}
-          <div className="md:col-span-2 p-6 sm:p-8 rounded-2xl parkflow-card flex flex-col justify-between transition-all">
+          {/* Pillar 1: Radar Scout */}
+          <div className="p-6 sm:p-8 rounded-2xl parkflow-card flex flex-col justify-between transition-all hover:-translate-y-1">
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.18)]">
-                <Radio className="w-5 h-5 animate-pulse" />
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center text-emerald-400 shadow-[0_0_15px_rgba(52,211,153,0.2)]">
+                <Radio className="w-6 h-6 animate-pulse" />
               </div>
-              <h3 className="text-xl font-bold text-white">
-                Universal Multi-Marketplace Sync
-              </h3>
-              <p className="text-sm text-slate-300 max-w-xl leading-relaxed">
-                Connect your Upwork, Fiverr, and global marketplace accounts through unified bi-directional adapters. Stream opportunities into one inbox, normalized with deduplication and client payment reputation metrics.
-              </p>
-            </div>
-
-            <div className="mt-8 flex items-center gap-3 flex-wrap">
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/20">
-                ✓ Upwork Partner OAuth &amp; Sync
-              </span>
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/10 text-white border border-white/20">
-                ✓ Fiverr Buyer Request Scanner
-              </span>
-              <span className="px-3 py-1 rounded-full bg-[#070c17]/80 border border-white/15 text-slate-300 text-xs font-mono">
-                REST v2 Native Webhooks
-              </span>
-            </div>
-          </div>
-
-          {/* Card 2: 9-Factor Difficulty Engine */}
-          <div className="p-6 sm:p-8 rounded-2xl parkflow-card flex flex-col justify-between transition-all">
-            <div className="space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/25 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.18)]">
-                <Sliders className="w-5 h-5" />
-              </div>
-              <h3 className="text-xl font-bold text-white">
-                9-Factor Difficulty Formula
-              </h3>
+              <h3 className="text-xl font-bold text-white">Universal Radar Scout</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                We evaluate opportunities beyond mere keywords: skill overlap, technical simplicity, turnaround, client review score, and compensation ratio.
+                Connect Upwork, Fiverr, and global marketplaces through unified websocket adapters. Instant deduplication, real-time alerts, and zero-latency job intake.
               </p>
             </div>
 
-            <div className="mt-6 space-y-2 text-xs font-mono">
-              <div className="flex justify-between text-slate-300">
-                <span>Capability Alignment</span>
-                <span className="text-emerald-400 font-bold">Weight: 25%</span>
+            <div className="mt-8 space-y-2.5 pt-4 border-t border-white/10">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-slate-400">Sync Latency</span>
+                <span className="text-emerald-400 font-bold">&lt; 15ms</span>
               </div>
-              <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
-                <div className="bg-emerald-400 h-full w-[85%] shadow-[0_0_10px_rgba(52,211,153,0.6)]" />
+              <div className="flex flex-wrap gap-2 pt-1">
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/10 text-white border border-white/15">
+                  ✓ Upwork Partner Sync
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/10 text-white border border-white/15">
+                  ✓ Fiverr Scanner
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Card 3: Deterministic Truth Audit */}
-          <div className="p-6 sm:p-8 rounded-2xl parkflow-card flex flex-col justify-between transition-all">
+          {/* Pillar 2: 9-Factor Fit Engine */}
+          <div className="p-6 sm:p-8 rounded-2xl parkflow-card flex flex-col justify-between transition-all hover:-translate-y-1">
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.18)]">
-                <ShieldCheck className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-400/25 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+                <Sliders className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-white">
-                Deterministic Truth Audit
-              </h3>
+              <h3 className="text-xl font-bold text-white">9-Factor Fit Scoring</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                WorkMatch strictly restricts proposals to verified skills in your capability inventory. Never risk your reputation by claiming frameworks you do not possess.
+                Evaluate every listing before spending a single connect. Mathematical scoring computes skill overlap, client spend history, hourly yield, and turnaround.
               </p>
             </div>
 
-            <div className="mt-6 p-3 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-slate-300 font-mono">
-              ✓ Automated claim extraction &amp; sanitizer
+            <div className="mt-8 space-y-2.5 pt-4 border-t border-white/10">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-slate-400">Min Score Filter</span>
+                <span className="text-cyan-400 font-bold">85%+ Required</span>
+              </div>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/10 text-white border border-white/15">
+                  ✓ Skill Match
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/10 text-white border border-white/15">
+                  ✓ Budget Yield
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/10 text-white border border-white/15">
+                  ✓ Client Rating
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Card 4: Hard Fail-Safe Throttles */}
-          <div className="p-6 sm:p-8 rounded-2xl parkflow-card flex flex-col justify-between transition-all">
+          {/* Pillar 3: Truth Guard & Safety */}
+          <div className="p-6 sm:p-8 rounded-2xl parkflow-card flex flex-col justify-between transition-all hover:-translate-y-1">
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-400/25 flex items-center justify-center text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.18)]">
-                <ShieldAlert className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/15 border border-emerald-400/25 flex items-center justify-center text-emerald-300 shadow-[0_0_15px_rgba(52,211,153,0.2)]">
+                <ShieldCheck className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-white">
-                Hard Fail-Safe Throttles
-              </h3>
+              <h3 className="text-xl font-bold text-white">Truth Guard &amp; Kill Switch</h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Declare maximum daily applications, cost caps per proposal, and risk filters. A global 1-click Emergency Kill Switch halts automated activity instantly.
+                Strict profile-bounded generation prevents hallucinated claims. Backed by a 1-click panic Kill Switch and an institutional bank-style connect accounting ledger.
               </p>
             </div>
 
-            <div className="mt-6 p-3 rounded-xl bg-rose-500/15 border border-rose-500/25 text-xs text-rose-300 font-mono">
-              🛑 1-Click Global Emergency Stop
-            </div>
-          </div>
-
-          {/* Card 5: Bank-Statement Audit Ledger (Span 2) */}
-          <div className="md:col-span-2 p-6 sm:p-8 rounded-2xl parkflow-card flex flex-col justify-between transition-all">
-            <div className="space-y-4">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-400/25 flex items-center justify-center text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.18)]">
-                <FileText className="w-5 h-5" />
+            <div className="mt-8 space-y-2.5 pt-4 border-t border-white/10">
+              <div className="flex items-center justify-between text-xs font-mono">
+                <span className="text-slate-400">Safety Guard</span>
+                <span className="text-emerald-400 font-bold">100% Enforced</span>
               </div>
-              <h3 className="text-xl font-bold text-white">
-                Bank-Statement Audit Ledger
-              </h3>
-              <p className="text-sm text-slate-300 max-w-xl leading-relaxed">
-                Every connect invested, job evaluated, and proposal dispatched is recorded into an institutional statement ledger. Export CSV reports to audit ROI and connect capital with exact dollar accuracy.
-              </p>
-            </div>
-
-            <div className="mt-6 flex items-center gap-4 text-xs font-mono">
-              <div className="p-3 rounded-xl bg-[#070c17]/80 border border-white/12 shadow-sm">
-                <span className="text-slate-400 block text-[10px]">Estimated Direct Cost</span>
-                <span className="font-bold text-emerald-400">$0.15 / Connect Tracked</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#070c17]/80 border border-white/12 shadow-sm">
-                <span className="text-slate-400 block text-[10px]">Audit Export</span>
-                <span className="font-bold text-cyan-400">CSV &amp; PDF Compliant</span>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/10 text-white border border-white/15">
+                  ✓ 0 Hallucinations
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                  🛑 Panic Stop
+                </span>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-mono bg-white/10 text-white border border-white/15">
+                  📑 CSV Ledger
+                </span>
               </div>
             </div>
           </div>
@@ -925,12 +1051,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Proposal Box */}
           <div className="p-5 sm:p-7 rounded-2xl bg-[#070c17]/85 border border-white/15 space-y-4 shadow-xl">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-2">
               <span className="text-xs font-mono text-emerald-400 flex items-center gap-1.5 font-semibold">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Truth Audit: 100% Validated Against Profile Skills
               </span>
-              <span className="text-[10px] font-mono text-slate-400">128 Words • Sub-1min Reading Time</span>
+
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-mono text-slate-400 hidden sm:inline-block">128 Words • Sub-1min Read</span>
+                <button
+                  onClick={() => handleCopyProposal(proposalTexts[activePersona])}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-semibold transition active:scale-95 border ${
+                    isCopied
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_rgba(52,211,153,0.3)]'
+                      : 'bg-white/10 hover:bg-white/20 text-white border-white/15'
+                  }`}
+                >
+                  {isCopied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-slate-300" />
+                      <span>Copy Proposal</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div className="text-xs sm:text-sm text-slate-300 leading-relaxed space-y-3 bg-white/[0.03] p-5 rounded-xl border border-white/10">
@@ -990,7 +1139,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </section>
 
-      {/* Comparison Matrix: Anti-Slop Table */}
+      {/* Comparison Matrix: Anti-Slop (Card-Based, Fast Scannability) */}
       <section id="comparison" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/12">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="px-3.5 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-white/[0.06] text-slate-300 border border-white/15">
@@ -1000,54 +1149,108 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             How WorkMatch Compares
           </h2>
           <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-            See why high-ticket freelancers choose deterministic truth over spam bots and manual searching.
+            See why serious freelancers choose deterministic truth over robotic spam bots and manual searching.
           </p>
         </div>
 
-        <div className="rounded-3xl parkflow-card overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-white/[0.06] text-slate-300 border-b border-white/12">
-                <tr>
-                  <th className="py-4 px-6 font-bold uppercase tracking-wider text-white">Capability</th>
-                  <th className="py-4 px-6 font-bold uppercase tracking-wider text-slate-400">Manual Job Search</th>
-                  <th className="py-4 px-6 font-bold uppercase tracking-wider text-rose-400">Generic AI Bots</th>
-                  <th className="py-4 px-6 font-bold uppercase tracking-wider text-white bg-emerald-500/[0.08] border-x border-emerald-500/15">WorkMatch OS</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 text-slate-300">
-                <tr className="hover:bg-white/[0.03] transition">
-                  <td className="py-4 px-6 font-semibold text-white">Monitoring Speed</td>
-                  <td className="py-4 px-6 text-slate-400">Hours spent refreshing feeds</td>
-                  <td className="py-4 px-6 text-slate-400">Generic keyword scraping</td>
-                  <td className="py-4 px-6 font-semibold text-white bg-emerald-500/[0.08] border-x border-emerald-500/15">24/7 Sub-second live sync</td>
-                </tr>
-                <tr className="hover:bg-white/[0.03] transition">
-                  <td className="py-4 px-6 font-semibold text-white">Opportunity Scoring</td>
-                  <td className="py-4 px-6 text-slate-400">Subjective gut feeling</td>
-                  <td className="py-4 px-6 text-rose-400 font-medium">None (applies blindly)</td>
-                  <td className="py-4 px-6 font-semibold text-white bg-emerald-500/[0.08] border-x border-emerald-500/15">9-Factor multi-criteria formula</td>
-                </tr>
-                <tr className="hover:bg-white/[0.03] transition">
-                  <td className="py-4 px-6 font-semibold text-white">Proposal Truthfulness</td>
-                  <td className="py-4 px-6 text-slate-400">High effort, slow writing</td>
-                  <td className="py-4 px-6 text-rose-400 font-medium">Hallucinated skills &amp; fake claims</td>
-                  <td className="py-4 px-6 font-semibold text-white bg-emerald-500/[0.08] border-x border-emerald-500/15">100% Enforced truthful audit</td>
-                </tr>
-                <tr className="hover:bg-white/[0.03] transition">
-                  <td className="py-4 px-6 font-semibold text-white">Marketplace Safety</td>
-                  <td className="py-4 px-6 text-slate-400">Safe but exhausting</td>
-                  <td className="py-4 px-6 text-rose-400 font-medium">High risk of account ban</td>
-                  <td className="py-4 px-6 font-semibold text-white bg-emerald-500/[0.08] border-x border-emerald-500/15">Circuit breakers + Instant Kill Switch</td>
-                </tr>
-                <tr className="hover:bg-white/[0.03] transition">
-                  <td className="py-4 px-6 font-semibold text-white">Financial Accountability</td>
-                  <td className="py-4 px-6 text-slate-400">Untracked connect waste</td>
-                  <td className="py-4 px-6 text-rose-400 font-medium">Connects drained in hours</td>
-                  <td className="py-4 px-6 font-semibold text-white bg-emerald-500/[0.08] border-x border-emerald-500/15">Official Bank-Style Audit Ledger</td>
-                </tr>
-              </tbody>
-            </table>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: Manual */}
+          <div className="p-6 sm:p-8 rounded-3xl parkflow-card space-y-5 text-left border border-white/10 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">Old Way</span>
+                <span className="text-lg">⏳</span>
+              </div>
+              <h3 className="text-xl font-bold text-slate-200">Manual Job Search</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Exhausting, slow, and relies on gut feelings rather than empirical profitability data.
+              </p>
+              <ul className="space-y-3 text-xs text-slate-300 pt-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold">✕</span>
+                  <span>Hours lost refreshing multiple browser tabs</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold">✕</span>
+                  <span>Unscientific gut-feeling applications</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold">✕</span>
+                  <span>Slow drafting leads to missed early-bid windows</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold">✕</span>
+                  <span>Untracked connect waste &amp; freelancer burnout</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Card 2: Generic AI Bots */}
+          <div className="p-6 sm:p-8 rounded-3xl parkflow-card space-y-5 text-left border border-rose-500/20 bg-rose-950/10 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-rose-400">High Risk</span>
+                <span className="text-lg">⚠️</span>
+              </div>
+              <h3 className="text-xl font-bold text-white">Generic AI Spam Bots</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Cheap scrapers that flood clients with robotic templates, ruining client trust and risking account suspensions.
+              </p>
+              <ul className="space-y-3 text-xs text-slate-300 pt-2">
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold">✕</span>
+                  <span>Canned generic templates flagged as spam</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold">✕</span>
+                  <span>Hallucinates skills &amp; experience you don&apos;t possess</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold">✕</span>
+                  <span>Severe risk of permanent Upwork account ban</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-rose-400 font-bold">✕</span>
+                  <span>Drains hundreds of connects on low-paying jobs</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Card 3: WorkMatch OS (The Standard) */}
+          <div className="p-6 sm:p-8 rounded-3xl parkflow-card space-y-5 text-left border-2 border-emerald-500/40 bg-gradient-to-b from-emerald-500/[0.08] to-transparent shadow-[0_0_40px_rgba(52,211,153,0.12)] relative flex flex-col justify-between">
+            <div className="absolute -top-3.5 right-6 px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-400 text-black shadow-[0_0_15px_rgba(52,211,153,0.6)]">
+              The Pro Standard
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">Autonomous OS</span>
+                <span className="text-lg">⚡</span>
+              </div>
+              <h3 className="text-xl font-bold text-white">WorkMatch OS</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Institutional precision, mathematically verified fit scores, and 100% deterministic truth enforcement.
+              </p>
+              <ul className="space-y-3 text-xs text-slate-200 pt-2">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <span>24/7 Sub-second live marketplace intake &amp; alerts</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <span>9-Factor multi-dimensional match formula (≥ 85% rule)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <span>100% Truthful audit bounded to verified skills</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <span>1-Click Emergency Kill Switch + Bank Audit Ledger</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
