@@ -127,19 +127,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       ref={containerRef}
       className="relative min-h-screen bg-[#000000] text-white selection:bg-white/30 overflow-hidden font-sans"
     >
+      {/* 35mm Cinematic Film Grain Texture Layer */}
+      <div className="fixed inset-0 pointer-events-none cinematic-grain z-40 opacity-70" />
+
       {/* Background Atmosphere & Ambient Lighting (ParkFlow style) */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        {/* Architectural background image overlay */}
+        {/* Architectural background image overlay with slow cinematic camera dolly */}
         <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-700 pointer-events-none"
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000 pointer-events-none animate-cinematic-dolly origin-center"
           style={{
             backgroundImage: `url(${backdropImages[activeBackdrop]})`,
-            opacity: activeBackdrop === 'neural' ? 0.22 : 0.35,
+            opacity: activeBackdrop === 'neural' ? 0.25 : 0.38,
             mixBlendMode: activeBackdrop === 'neural' ? 'screen' : 'luminosity',
-            filter: 'brightness(1.08)'
+            filter: 'brightness(1.1) contrast(1.08)'
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#000000] z-0 pointer-events-none" />
+
+        {/* Cinematic Deep Vignette */}
+        <div className="absolute inset-0 cinematic-vignette pointer-events-none z-0" />
 
         {/* Dual High-Diffusion Ambient Blur Orbs */}
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/25 rounded-full blur-[150px] mix-blend-screen opacity-40 ambient-orb" />
@@ -149,6 +155,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         {/* Dark Vignette & Grid */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/70 to-black pointer-events-none" />
         <div className="absolute inset-0 bg-grid-pattern opacity-20 radial-mask pointer-events-none" />
+
+        {/* Ambient floating luminescent embers / data particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+          <div className="absolute top-[65%] left-[18%] w-1.5 h-1.5 rounded-full bg-emerald-400/70 blur-[1px] particle-drift-1" />
+          <div className="absolute top-[80%] left-[72%] w-1 h-1 rounded-full bg-cyan-400/80 blur-[1px] particle-drift-2" />
+          <div className="absolute top-[70%] left-[48%] w-2 h-2 rounded-full bg-emerald-300/40 blur-[2px] particle-drift-3" />
+          <div className="absolute top-[85%] left-[32%] w-1 h-1 rounded-full bg-cyan-300/60 blur-[1px] particle-drift-1" />
+          <div className="absolute top-[75%] left-[84%] w-1.5 h-1.5 rounded-full bg-emerald-400/60 blur-[1px] particle-drift-2" />
+        </div>
       </div>
 
       {/* Traveling Neural Dispatcher Signal (ParkFlow .flying-car effect) */}
@@ -168,8 +183,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       </div>
 
+      {/* Cinematic Top Letterbox HUD Telemetry */}
+      <div className="relative z-50 max-w-6xl mx-auto px-6 pt-3 pb-1 flex items-center justify-between text-[10px] font-mono text-white/30 tracking-[0.2em] uppercase select-none">
+        <div className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+          <span>REC ● 24.00 FPS</span>
+          <span className="text-white/15">|</span>
+          <span>ISO 800</span>
+          <span className="text-white/15">|</span>
+          <span>2.39:1 ANAMORPHIC</span>
+        </div>
+        <div className="hidden sm:flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <span className="w-0.5 h-2 bg-emerald-400/80 animate-pulse" />
+            <span className="w-0.5 h-3 bg-emerald-400/80 animate-pulse delay-75" />
+            <span className="w-0.5 h-1.5 bg-emerald-400/80 animate-pulse delay-150" />
+          </div>
+          <span>NEURAL SCAN STREAM // LIVE</span>
+          <span className="text-white/15">|</span>
+          <span className="text-emerald-400/80 font-semibold">100% SIGNAL</span>
+        </div>
+      </div>
+
       {/* Floating Glass Pill Navigation Header */}
-      <header className="relative z-50 pt-5 px-4 sm:px-6 max-w-6xl mx-auto">
+      <header className="relative z-50 pt-2 px-4 sm:px-6 max-w-6xl mx-auto">
         <div className="rounded-full bg-white/[0.04] border border-white/10 px-5 sm:px-7 py-3 backdrop-blur-xl flex items-center justify-between shadow-[0_0_30px_rgba(0,0,0,0.5)]">
           {/* Brand Logo */}
           <div
@@ -285,6 +322,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
       {/* Hero Section (ParkFlow Massive Typography & Centered Structure) */}
       <section className="relative z-10 flex flex-col items-center justify-center min-h-[85vh] text-center px-4 sm:px-6 pt-16 pb-20 max-w-5xl mx-auto">
+        {/* Cinematic Viewfinder Corner Brackets */}
+        <div className="hidden md:block absolute top-10 left-2 w-5 h-5 border-t border-l border-white/20 pointer-events-none" />
+        <div className="hidden md:block absolute top-10 right-2 w-5 h-5 border-t border-r border-white/20 pointer-events-none" />
+        <div className="hidden md:block absolute bottom-10 left-2 w-5 h-5 border-b border-l border-white/20 pointer-events-none" />
+        <div className="hidden md:block absolute bottom-10 right-2 w-5 h-5 border-b border-r border-white/20 pointer-events-none" />
+
+        {/* Anamorphic Lens Flare Line & Horizon Bloom */}
+        <div className="absolute top-[46%] left-0 right-0 pointer-events-none z-0 overflow-hidden">
+          <div className="anamorphic-flare" />
+          <div className="anamorphic-bloom -translate-y-1/2" />
+        </div>
+
         {/* Release Pill Badge & Atmosphere Selector */}
         <div className="hero-text flex flex-wrap items-center justify-center gap-3 mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/80 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.05)]">
