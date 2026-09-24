@@ -50,6 +50,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   // ROI Calculator State
   const [monthlyProposals, setMonthlyProposals] = useState<number>(35);
 
+  // Atmosphere Background Selector State
+  const [activeBackdrop, setActiveBackdrop] = useState<'cockpit' | 'command' | 'neural'>('cockpit');
+
+  const backdropImages = {
+    cockpit: '/images/hero-cockpit.jpg',
+    command: '/images/tech-command-center.jpg',
+    neural: '/images/neural-grid.jpg'
+  };
+
   // FAQ State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
@@ -120,9 +129,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     >
       {/* Background Atmosphere & Ambient Lighting (ParkFlow style) */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        {/* Subtle background image overlay */}
-        <div className="absolute inset-0 bg-[url('/images/workspace-hero.jpg')] bg-cover bg-center opacity-10 mix-blend-luminosity brightness-105 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#000000] z-0" />
+        {/* Architectural background image overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-all duration-700 pointer-events-none"
+          style={{
+            backgroundImage: `url(${backdropImages[activeBackdrop]})`,
+            opacity: activeBackdrop === 'neural' ? 0.22 : 0.35,
+            mixBlendMode: activeBackdrop === 'neural' ? 'screen' : 'luminosity',
+            filter: 'brightness(1.08)'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-[#000000] z-0 pointer-events-none" />
 
         {/* Dual High-Diffusion Ambient Blur Orbs */}
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-500/25 rounded-full blur-[150px] mix-blend-screen opacity-40 ambient-orb" />
@@ -268,12 +285,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
       {/* Hero Section (ParkFlow Massive Typography & Centered Structure) */}
       <section className="relative z-10 flex flex-col items-center justify-center min-h-[85vh] text-center px-4 sm:px-6 pt-16 pb-20 max-w-5xl mx-auto">
-        {/* Release Pill Badge */}
-        <div className="hero-text inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/80 mb-8 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.05)]">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-semibold text-white">WorkMatch OS 2.0</span>
-          <span className="text-white/30">•</span>
-          <span className="text-white/70">Autonomous Freelance Operating System</span>
+        {/* Release Pill Badge & Atmosphere Selector */}
+        <div className="hero-text flex flex-wrap items-center justify-center gap-3 mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-white/80 backdrop-blur-md shadow-[0_0_15px_rgba(255,255,255,0.05)]">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-semibold text-white">WorkMatch OS 2.0</span>
+            <span className="text-white/30">•</span>
+            <span className="text-white/70">Autonomous Freelance OS</span>
+          </div>
+
+          <div className="inline-flex items-center gap-1 p-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md">
+            {(['cockpit', 'command', 'neural'] as const).map(mode => (
+              <button
+                key={mode}
+                onClick={() => setActiveBackdrop(mode)}
+                className={`px-3 py-1 rounded-full text-[11px] font-mono capitalize transition-all ${
+                  activeBackdrop === mode
+                    ? 'bg-white text-black font-semibold shadow-sm'
+                    : 'text-white/50 hover:text-white'
+                }`}
+              >
+                {mode === 'cockpit' ? 'Minimal Cockpit' : mode === 'command' ? 'Command Deck' : 'Neural Mesh'}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Hero Headline (ParkFlow massive typography) */}
@@ -357,7 +392,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         {/* Interactive Floating Live Cockpit Showcase */}
         <div className="mt-16 w-full max-w-5xl mx-auto">
-          <div className="relative rounded-3xl bg-white/[0.03] border border-white/10 p-5 sm:p-8 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+          <div className="relative rounded-3xl bg-white/[0.03] border border-white/10 p-5 sm:p-8 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden">
+            {/* Command center architectural background layer */}
+            <div className="absolute inset-0 bg-[url('/images/tech-command-center.jpg')] bg-cover bg-center opacity-15 mix-blend-luminosity pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none" />
             {/* Cockpit Window Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-white/10 text-left">
               <div className="flex items-center gap-3">
@@ -1066,6 +1104,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* Final High-Impact Conversion CTA (ParkFlow White Glow Button) */}
       <section className="relative z-10 py-28 px-4 sm:px-6 max-w-5xl mx-auto">
         <div className="relative rounded-3xl p-8 sm:p-14 bg-white/[0.03] border border-white/10 text-center overflow-hidden shadow-2xl backdrop-blur-xl">
+          {/* Cyber neural grid background layer */}
+          <div className="absolute inset-0 bg-[url('/images/neural-grid.jpg')] bg-cover bg-center opacity-25 mix-blend-screen pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
           <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[120px] pointer-events-none" />
 
           <div className="relative space-y-6 max-w-2xl mx-auto">
