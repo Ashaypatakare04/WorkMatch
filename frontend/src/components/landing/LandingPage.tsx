@@ -14,6 +14,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  ChevronRight,
   Bot,
   Search,
   Activity,
@@ -66,7 +67,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Interactive Simulator State
-  const [simSkillFit, setSimSkillFit] = useState<number>(92);
+  const [simSkillFit, setSimSkillFit] = useState<number>(87);
   const [simExperience, setSimExperience] = useState<number>(94);
   const [simHourlyRate, setSimHourlyRate] = useState<number>(85);
   const [simComplexity, setSimComplexity] = useState<'Simple' | 'Medium' | 'Complex'>('Medium');
@@ -105,7 +106,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         skills: 100,
         rate: 96,
         reputation: 98,
-        scope: 95,
+        scope: 94,
         timeline: 98
       }
     },
@@ -156,9 +157,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const proposalTexts: Record<string, string> = {
     direct: `Hi [Client],
 
-I reviewed your dashboard performance requirements. You need sub-100ms analytics queries with real-time UI updates without blocking the main event thread.
+I noticed you're looking for sub-100ms analytics queries with real-time UI updates without blocking the main event thread.
 
-I have direct production experience architecting React 18 with TypeScript and optimizing SQLite query indexing. In a recent production deployment, we achieved a 65% reduction in dashboard latency using memoized selector hooks and virtualized data table rendering.
+I have direct production experience architecting React 18 with TypeScript and optimizing SQLite query indexing. In a recent deployment, we achieved a 65% reduction in dashboard latency using memoized selector hooks and virtualized data table rendering.
 
 I can take this on starting tomorrow. Here is the first step I would take on day one:
 1. Profile event-loop bottlenecks using Chrome DevTools Performance panel.
@@ -224,7 +225,7 @@ Let's align on your key business milestones and release schedule.`
   );
 
   // SVG Radial Gauge Calculation
-  const gaugeRadius = 52;
+  const gaugeRadius = 54;
   const gaugeCircumference = 2 * Math.PI * gaugeRadius;
   const gaugeStrokeDashoffset = gaugeCircumference - (computedScore / 100) * gaugeCircumference;
 
@@ -248,8 +249,8 @@ Let's align on your key business milestones and release schedule.`
     const ctx = gsap.context(() => {
       gsap.fromTo(
         '.hero-animate',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.12, ease: 'power2.out' }
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power2.out' }
       );
     }, containerRef);
 
@@ -261,18 +262,18 @@ Let's align on your key business milestones and release schedule.`
       ref={containerRef}
       className="relative min-h-screen bg-[#06080e] text-slate-100 selection:bg-emerald-500 selection:text-white overflow-x-hidden font-sans"
     >
-      {/* Background Ambience: Subtle, elegant, quiet depth */}
+      {/* Background Ambience: Calm, restrained, high-end SaaS depth */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Soft Radial Ambient Glow */}
-        <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-[900px] h-[500px] bg-gradient-to-b from-emerald-500/10 via-teal-500/5 to-transparent rounded-full blur-[120px]" />
-        <div className="absolute top-[800px] right-[-100px] w-[600px] h-[600px] bg-cyan-500/[0.04] rounded-full blur-[140px]" />
-        <div className="absolute top-[2200px] left-[-100px] w-[600px] h-[600px] bg-emerald-500/[0.04] rounded-full blur-[140px]" />
+        {/* Softened, subtle radial glow */}
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-gradient-to-b from-emerald-500/5 via-teal-500/2 to-transparent rounded-full blur-[140px]" />
+        <div className="absolute top-[850px] right-[-120px] w-[500px] h-[500px] bg-cyan-500/[0.02] rounded-full blur-[150px]" />
+        <div className="absolute top-[2200px] left-[-120px] w-[500px] h-[500px] bg-emerald-500/[0.02] rounded-full blur-[150px]" />
 
-        {/* Crisp grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-15 radial-mask" />
+        {/* Quiet, low-contrast grid pattern */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-10 radial-mask" />
       </div>
 
-      {/* Telemetry Status Bar: Enterprise-grade operational bar */}
+      {/* Telemetry Status Bar: Enterprise-grade operational bar with demo data transparency */}
       <div className="relative z-50 border-b border-white/[0.06] bg-[#070a12]/80 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-1.5 flex items-center justify-between text-[11px] font-mono text-slate-400">
           <div className="flex items-center gap-2.5">
@@ -280,9 +281,13 @@ Let's align on your key business milestones and release schedule.`
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="text-slate-300 font-medium">SYS: OPERATIONAL</span>
+            <span className="text-slate-300 font-medium">SYSTEM: OPERATIONAL</span>
             <span className="text-white/20 hidden sm:inline">•</span>
-            <span className="hidden sm:inline text-slate-400">DUAL-CHANNEL AGGREGATION ACTIVE</span>
+            <span className="hidden sm:inline text-slate-400">MULTI-MARKETPLACE INTAKE ACTIVE</span>
+            <span className="text-white/20 hidden md:inline">•</span>
+            <span className="hidden md:inline px-1.5 py-0.5 rounded bg-white/[0.04] text-[10px] text-slate-400 border border-white/[0.06]">
+              SIMULATED DEMO ENVIRONMENT
+            </span>
           </div>
 
           <div className="flex items-center gap-4 text-slate-400">
@@ -292,7 +297,7 @@ Let's align on your key business milestones and release schedule.`
             </div>
             <span className="text-white/20 hidden md:inline">•</span>
             <div className="hidden md:flex items-center gap-1.5">
-              <span className="text-slate-500">TRUTH GUARD:</span>
+              <span className="text-slate-500">PROFILE AUDIT:</span>
               <span className="text-slate-300 font-semibold">STRICT</span>
             </div>
           </div>
@@ -307,7 +312,7 @@ Let's align on your key business milestones and release schedule.`
             className="flex items-center gap-2.5 cursor-pointer group select-none"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform shadow-[0_0_12px_rgba(16,185,129,0.15)]">
               <Bot className="w-4 h-4" />
             </div>
             <div className="flex items-center gap-2">
@@ -326,16 +331,16 @@ Let's align on your key business milestones and release schedule.`
               Features
             </button>
             <button onClick={() => handleScrollTo('cockpit')} className="hover:text-white transition-colors">
-              Live Radar
+              Opportunity Match
             </button>
             <button onClick={() => handleScrollTo('simulator')} className="hover:text-white transition-colors">
-              Fit Simulator
+              Formula Simulator
             </button>
             <button onClick={() => handleScrollTo('studio')} className="hover:text-white transition-colors">
               Proposal Studio
             </button>
             <button onClick={() => handleScrollTo('comparison')} className="hover:text-white transition-colors">
-              Truth vs Slop
+              Comparison
             </button>
             <button onClick={() => handleScrollTo('roi')} className="hover:text-white transition-colors">
               ROI
@@ -388,16 +393,16 @@ Let's align on your key business milestones and release schedule.`
               Features
             </button>
             <button onClick={() => handleScrollTo('cockpit')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              Live Radar
+              Opportunity Match
             </button>
             <button onClick={() => handleScrollTo('simulator')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              Fit Simulator
+              Formula Simulator
             </button>
             <button onClick={() => handleScrollTo('studio')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
               Proposal Studio
             </button>
             <button onClick={() => handleScrollTo('comparison')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              Truth vs Slop
+              Comparison
             </button>
             <button onClick={() => handleScrollTo('roi')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
               ROI
@@ -423,11 +428,11 @@ Let's align on your key business milestones and release schedule.`
         )}
       </header>
 
-      {/* 1. HERO SECTION: Clean Visual Hierarchy, High Contrast */}
-      <section className="relative z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-16 md:pt-24 pb-16 max-w-5xl mx-auto">
+      {/* 1. HERO SECTION: Clean Visual Hierarchy, High Contrast, Spacious */}
+      <section className="relative z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-20 md:pt-28 pb-16 max-w-5xl mx-auto">
         {/* Release Pill Badge */}
         <div className="hero-animate mb-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.12)]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="font-semibold text-white">WorkMatch OS 2.0</span>
             <span className="text-white/20">•</span>
@@ -435,7 +440,7 @@ Let's align on your key business milestones and release schedule.`
           </div>
         </div>
 
-        {/* Hero Headline: Primary Focal Point */}
+        {/* Hero Headline: Primary Visual Focal Point */}
         <h1 className="hero-animate text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.08] max-w-4xl">
           Stop Chasing Jobs. <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
@@ -453,7 +458,7 @@ Let's align on your key business milestones and release schedule.`
           <button
             onClick={onLoadDemoAndLaunch}
             disabled={isLoadingDemo}
-            className="w-full sm:w-auto bg-white text-slate-950 hover:bg-slate-100 text-sm md:text-base px-7 py-3 rounded-full shadow-[0_0_25px_rgba(255,255,255,0.2)] font-semibold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto bg-white text-slate-950 hover:bg-slate-100 text-sm md:text-base px-7 py-3 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.3),0_0_16px_rgba(255,255,255,0.12)] font-semibold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
           >
             {isLoadingDemo ? (
               <div className="w-4 h-4 rounded-full border-2 border-slate-950 border-t-transparent animate-spin" />
@@ -477,7 +482,7 @@ Let's align on your key business milestones and release schedule.`
         <div className="hero-animate mt-8 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs text-slate-400 font-mono">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>100% Verified Claims</span>
+            <span>100% Verified Profile Claims</span>
           </div>
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
@@ -485,30 +490,30 @@ Let's align on your key business milestones and release schedule.`
           </div>
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Emergency Kill Switch</span>
+            <span>Safety Controls (Kill Switch Armed)</span>
           </div>
         </div>
       </section>
 
-      {/* 2. LIVE OPPORTUNITY MATCH SECTION (AI Command Cockpit) */}
+      {/* 2. LIVE OPPORTUNITY MATCH SECTION (AI Command Cockpit with Connected Workflow) */}
       <section id="cockpit" className="relative z-10 py-12 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="rounded-3xl card-primary p-5 sm:p-7 shadow-[0_8px_40px_rgba(0,0,0,0.5)] border border-white/[0.08]">
-          {/* Header Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-white/[0.08]">
+        <div className="rounded-3xl card-primary p-5 sm:p-7 shadow-[0_8px_32px_rgba(0,0,0,0.45)] border border-white/[0.08]">
+          {/* Cockpit Header Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.8)] animate-pulse" />
+              <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.7)] animate-pulse" />
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">
-                    Live Opportunity Radar
+                    Live Opportunity Match
                   </span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    REAL-TIME SYNC
+                    REAL-TIME RADAR
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400 hidden md:inline">
+                    (Sample Listing #8942)
                   </span>
                 </div>
-                <span className="text-[11px] text-slate-400">
-                  Visual Flow: Job Intake → Truth Audit → Multi-Factor Scoring → Action
-                </span>
               </div>
             </div>
 
@@ -530,8 +535,36 @@ Let's align on your key business milestones and release schedule.`
             </div>
           </div>
 
+          {/* Connected Visual Pipeline Indicator (Requirement 5) */}
+          <div className="py-3 border-b border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-slate-400 overflow-x-auto no-scrollbar gap-2">
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
+              <span className="w-4 h-4 rounded-full bg-white/10 text-white flex items-center justify-center text-[9px] font-bold">1</span>
+              <span className="text-white font-medium">Job Intake</span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
+              <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[9px] font-bold">2</span>
+              <span className="text-emerald-400 font-medium">Truth Check</span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
+              <span className="w-4 h-4 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-[9px] font-bold">3</span>
+              <span className="text-teal-400 font-medium">Match Factors</span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
+              <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[9px] font-bold">4</span>
+              <span className="text-white font-semibold">98% Fit Score</span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
+              <span className="w-4 h-4 rounded-full bg-white/10 text-white flex items-center justify-center text-[9px] font-bold">5</span>
+              <span className="text-emerald-300 font-medium">Action & Dispatch</span>
+            </div>
+          </div>
+
           {/* Opportunity Selector Tabs */}
-          <div className="mt-5 flex items-center justify-between gap-3 flex-wrap">
+          <div className="mt-4 flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
               <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mr-1">
                 <Activity className="w-3.5 h-3.5 text-emerald-400" />
@@ -543,7 +576,7 @@ Let's align on your key business milestones and release schedule.`
                   onClick={() => setSelectedOppIdx(idx)}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
                     selectedOppIdx === idx
-                      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/35 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+                      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/35 shadow-sm'
                       : 'bg-white/[0.03] text-slate-400 hover:text-slate-200 border border-white/[0.06]'
                   }`}
                 >
@@ -554,13 +587,13 @@ Let's align on your key business milestones and release schedule.`
               ))}
             </div>
             <span className="text-[11px] font-mono text-slate-400 hidden md:inline-block">
-              Intake latency: 12ms
+              Simulated WebSocket Intake
             </span>
           </div>
 
-          {/* Product Dashboard Visual Flow: JOB → AI ANALYSIS → MATCH FACTORS → MATCH SCORE → ACTION */}
+          {/* Product Dashboard Visual Flow: JOB INTEL → MATCH FACTORS → AI ACTION */}
           <div className="mt-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
-            {/* Column 1: Job Intel & Verification (lg:col-span-5) */}
+            {/* Column 1: Job Intake & Verification (lg:col-span-5) */}
             <div className="lg:col-span-5 p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] space-y-4 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -579,27 +612,27 @@ Let's align on your key business milestones and release schedule.`
                 </p>
 
                 {/* Key Metrics */}
-                <div className="grid grid-cols-2 gap-2 pt-2 text-[11px]">
+                <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
                   <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-                    <span className="text-slate-400 block text-[10px] uppercase font-mono">Budget / Yield</span>
+                    <span className="text-slate-400 block text-[10px] uppercase font-mono">Offered Rate</span>
                     <span className="font-mono text-white font-bold">{currentOpp.budget}</span>
                   </div>
                   <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-                    <span className="text-slate-400 block text-[10px] uppercase font-mono">Client Reputation</span>
+                    <span className="text-slate-400 block text-[10px] uppercase font-mono">Client Trust</span>
                     <span className="font-mono text-emerald-400 font-bold">{currentOpp.clientRep}</span>
                   </div>
                 </div>
               </div>
 
-              {/* AI Truth & Risk Audit Box */}
-              <div className="p-3.5 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/20 space-y-2">
+              {/* Client & Job Verification Box (Requirement 3: Human-readable primary, technical secondary) */}
+              <div className="p-3.5 rounded-xl bg-emerald-500/[0.05] border border-emerald-500/20 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-mono text-emerald-400 font-semibold flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    Deterministic Truth Audit
+                  <span className="font-semibold text-white flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                    Client &amp; Job Verification
                   </span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
-                    PASSED
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-medium">
+                    TRUTH GUARD: STRICT
                   </span>
                 </div>
                 <div className="text-[11px] text-slate-300 space-y-1">
@@ -615,110 +648,121 @@ Let's align on your key business milestones and release schedule.`
               </div>
             </div>
 
-            {/* Column 2: Match Factors & Focal Radial Score (lg:col-span-4) */}
+            {/* Column 2: Match Factors & Star Match Score (lg:col-span-4) */}
             <div className="lg:col-span-4 p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] flex flex-col justify-between space-y-4">
               <div>
-                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-3">
-                  Match Scoring Factors
-                </span>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                    Match Analysis
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-400">9-Factor Formula</span>
+                </div>
+
+                {/* Star Match Score Display (Requirement 6) */}
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center mb-4">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 block mb-0.5">
+                    MATCH SCORE
+                  </span>
+                  <div className="text-4xl font-extrabold font-mono text-emerald-400 tracking-tight">
+                    {currentOpp.matchScore}%
+                  </div>
+                  <span className="inline-block text-[10px] font-mono text-emerald-300 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full mt-1">
+                    Excellent Match • Top 1% Lead
+                  </span>
+                </div>
 
                 {/* Individual Scoring Bars */}
                 <div className="space-y-2.5 text-xs">
                   <div>
                     <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono">Skills Overlap</span>
+                      <span className="font-mono text-[11px]">Skills Overlap</span>
                       <span className="font-mono text-emerald-400 font-semibold">{currentOpp.factors.skills}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.skills}%` }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono">Rate Alignment</span>
+                      <span className="font-mono text-[11px]">Rate Alignment</span>
                       <span className="font-mono text-emerald-400 font-semibold">{currentOpp.factors.rate}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.rate}%` }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono">Client Trust Index</span>
+                      <span className="font-mono text-[11px]">Client Trust Index</span>
                       <span className="font-mono text-teal-400 font-semibold">{currentOpp.factors.reputation}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
                       <div className="h-full bg-teal-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.reputation}%` }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono">Scope Clarity</span>
+                      <span className="font-mono text-[11px]">Scope Clarity</span>
                       <span className="font-mono text-cyan-400 font-semibold">{currentOpp.factors.scope}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
                       <div className="h-full bg-cyan-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.scope}%` }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono">Turnaround Feasibility</span>
+                      <span className="font-mono text-[11px]">Turnaround Feasibility</span>
                       <span className="font-mono text-emerald-400 font-semibold">{currentOpp.factors.timeline}%</span>
                     </div>
-                    <div className="w-full h-1.5 bg-white/[0.08] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.timeline}%` }} />
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Radial Focal Score Gauge */}
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
-                <div>
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest block">
-                    Composite Score
-                  </span>
-                  <div className="text-3xl font-extrabold font-mono text-emerald-400">
-                    {currentOpp.matchScore}%
-                  </div>
-                  <span className="text-[10px] font-mono text-emerald-300">Top 1% Opportunity</span>
-                </div>
-
-                <div className="w-14 h-14 rounded-full border-4 border-emerald-500/20 border-t-emerald-400 flex items-center justify-center font-mono text-xs font-bold text-emerald-400">
-                  FIT
-                </div>
+              <div className="text-[10px] font-mono text-slate-500 text-center">
+                Empirical Multi-Factor Breakdown
               </div>
             </div>
 
             {/* Column 3: AI Recommendation & Action (lg:col-span-3) */}
             <div className="lg:col-span-3 p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] flex flex-col justify-between space-y-4">
               <div className="space-y-3">
-                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-                  Action Recommendation
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                    Action Workflow
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-400 font-semibold">
+                    CO-PILOT: APPROVED
+                  </span>
+                </div>
 
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-2">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
+                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1.5">
+                  <div className="text-xs font-semibold text-white flex items-center gap-1.5">
                     <Zap className="w-3.5 h-3.5 text-emerald-400 fill-current" />
-                    <span>Auto-Approved for Co-Pilot</span>
+                    <span>AI Recommendation</span>
                   </div>
                   <p className="text-[11px] text-slate-400 leading-relaxed">
-                    Exceeds the 85% multi-factor threshold. Tailored proposal generated strictly from verified skills.
+                    Opportunity exceeds the 85% match standard. Personalized proposal drafted with zero fabricated claims.
                   </p>
                 </div>
 
                 <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1 text-xs">
-                  <span className="text-slate-400 text-[10px] font-mono block">MODE PROTOCOL:</span>
-                  <span className="text-white font-mono font-medium block">
+                  <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
+                    <span>SAFETY CONTROLS:</span>
+                    <span className="text-emerald-400 font-semibold">KILL SWITCH: ARMED</span>
+                  </div>
+                  <span className="text-white font-mono text-[11px] block">
                     {cockpitMode === 'MANUAL'
-                      ? 'Instant Alert Dispatched'
+                      ? 'Manual Review Required'
                       : cockpitMode === 'ASSISTED'
-                      ? 'Ready for 1-Click Approval'
-                      : 'Auto-Dispatch Bounded (12 Connects)'}
+                      ? '1-Click Review & Submit'
+                      : 'Auto-Submit within 12 Connects'}
                   </span>
                 </div>
               </div>
@@ -744,9 +788,13 @@ Let's align on your key business milestones and release schedule.`
         </div>
       </section>
 
-      {/* Quantitative Proof Strip */}
+      {/* Quantitative Proof Strip with Demo Data Transparency (Requirement 9 & 10) */}
       <section className="relative z-10 border-y border-white/[0.06] bg-[#070a12]/60 py-7">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.04] text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+            <span>Platform Capabilities</span>
+            <span className="text-emerald-400/80">SIMULATED BENCHMARK DATA</span>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
               <div className="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">$4.2M+</div>
@@ -754,7 +802,7 @@ Let's align on your key business milestones and release schedule.`
             </div>
             <div>
               <div className="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400 tracking-tight">100%</div>
-              <div className="text-xs text-slate-400 mt-1">Deterministic Truth Ratio</div>
+              <div className="text-xs text-slate-400 mt-1">Verified Profile Alignment</div>
             </div>
             <div>
               <div className="text-2xl sm:text-3xl font-extrabold font-mono text-teal-400 tracking-tight">&lt; 15ms</div>
@@ -762,17 +810,17 @@ Let's align on your key business milestones and release schedule.`
             </div>
             <div>
               <div className="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">0</div>
-              <div className="text-xs text-slate-400 mt-1">Account Suspensions or Bans</div>
+              <div className="text-xs text-slate-400 mt-1">Account Incidents or Bans</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3. MINIATURE PRODUCT INTERFACES: Feature Cards Transformed */}
+      {/* 3. MINIATURE PRODUCT INTERFACES (Features with Human-Readable Terms & Demo Transparency) */}
       <section id="features" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Engine Architecture
+            Core Capabilities
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-4">
             Autonomous Precision. Zero Slop.
@@ -783,7 +831,7 @@ Let's align on your key business milestones and release schedule.`
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Universal Radar Scout (Mini Product Interface) */}
+          {/* Card 1: Universal Radar Scout */}
           <div className="p-6 rounded-2xl card-primary flex flex-col justify-between border border-white/[0.08]">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -791,7 +839,7 @@ Let's align on your key business milestones and release schedule.`
                   <Radio className="w-5 h-5 animate-pulse" />
                 </div>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  STREAM LIVE
+                  LIVE SCANNING
                 </span>
               </div>
 
@@ -829,7 +877,7 @@ Let's align on your key business milestones and release schedule.`
 
                 <div className="pt-2 border-t border-white/[0.08] text-[10px] text-slate-400 flex items-center justify-between">
                   <span>Last scan: 12 sec ago</span>
-                  <span className="text-emerald-400">Active</span>
+                  <span className="text-emerald-400">Simulated Feed</span>
                 </div>
               </div>
             </div>
@@ -840,7 +888,7 @@ Let's align on your key business milestones and release schedule.`
             </div>
           </div>
 
-          {/* Card 2: Multi-Factor Fit Score (Mini Product Interface) */}
+          {/* Card 2: Multi-Factor Fit Score */}
           <div className="p-6 rounded-2xl card-primary flex flex-col justify-between border border-white/[0.08]">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -916,7 +964,7 @@ Let's align on your key business milestones and release schedule.`
             </div>
           </div>
 
-          {/* Card 3: Deterministic Truth Audit (Mini Product Interface) */}
+          {/* Card 3: Client & Job Verification (Requirement 3: Preferred human-readable naming) */}
           <div className="p-6 rounded-2xl card-primary flex flex-col justify-between border border-white/[0.08]">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -924,12 +972,12 @@ Let's align on your key business milestones and release schedule.`
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  TRUTH AUDIT
+                  TRUTH GUARD: STRICT
                 </span>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-white">Deterministic Truth Audit</h3>
+                <h3 className="text-lg font-bold text-white">Client &amp; Job Verification</h3>
                 <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
                   Strict profile constraints ensure AI never invents skills, preserving your account reputation.
                 </p>
@@ -938,8 +986,8 @@ Let's align on your key business milestones and release schedule.`
               {/* Mini Audit Interface */}
               <div className="p-3.5 rounded-xl card-terminal space-y-2 text-xs font-mono">
                 <div className="flex items-center justify-between pb-2 border-b border-white/[0.08] text-[11px]">
-                  <span className="text-slate-400">AUDIT TRIPWIRE</span>
-                  <span className="text-emerald-400 font-semibold">ENFORCED</span>
+                  <span className="text-slate-400">VERIFICATION CHECKS</span>
+                  <span className="text-emerald-400 font-semibold">PASSED</span>
                 </div>
 
                 <div className="space-y-1.5 text-[11px]">
@@ -962,8 +1010,8 @@ Let's align on your key business milestones and release schedule.`
                 </div>
 
                 <div className="pt-2 border-t border-white/[0.08] text-[10px] text-slate-400 flex items-center justify-between">
-                  <span>Emergency Kill Switch</span>
-                  <span className="text-rose-400">Armed</span>
+                  <span>Safety Controls</span>
+                  <span className="text-emerald-400 font-medium">Kill Switch: Armed</span>
                 </div>
               </div>
             </div>
@@ -976,11 +1024,11 @@ Let's align on your key business milestones and release schedule.`
         </div>
       </section>
 
-      {/* 4. INTERACTIVE MATCH FORMULA SIMULATOR */}
+      {/* 4. INTERACTIVE MATCH FORMULA SIMULATOR (Requirement 6: 90% Match Score is the Star) */}
       <section id="simulator" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Interactive Test Drive
+            Formula Simulator
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-4">
             Test the Opportunity Match Formula
@@ -1086,117 +1134,119 @@ Let's align on your key business milestones and release schedule.`
               </div>
             </div>
 
-            {/* Radial Result Card (5 cols) */}
+            {/* Radial Result Card (5 cols) - Star of the Section (Requirement 6) */}
             <div className="lg:col-span-5 p-6 rounded-2xl bg-[#070a12] border border-white/[0.08] text-center space-y-4">
-              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-widest block">
-                Calculated Opportunity Fit
-              </span>
-
               {/* Radial Score Gauge Focal Point */}
-              <div className="relative inline-flex items-center justify-center my-2">
-                <svg className="w-36 h-36 transform -rotate-90" viewBox="0 0 120 120">
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r={gaugeRadius}
-                    className="text-white/[0.08]"
-                    strokeWidth="8"
-                    stroke="currentColor"
-                    fill="transparent"
-                  />
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r={gaugeRadius}
-                    strokeWidth="8"
-                    strokeDasharray={gaugeCircumference}
-                    strokeDashoffset={gaugeStrokeDashoffset}
-                    strokeLinecap="round"
-                    stroke={computedScore >= 85 ? '#10b981' : computedScore >= 70 ? '#14b8a6' : '#f59e0b'}
-                    fill="transparent"
-                    className="transition-all duration-500 ease-out"
-                  />
-                </svg>
+              <div className="flex flex-col items-center justify-center my-2">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-2 font-medium">
+                  MATCH SCORE
+                </span>
 
-                {/* Score Number in Center */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className={`text-4xl font-extrabold font-mono tracking-tight ${
-                    computedScore >= 85 ? 'text-emerald-400' : computedScore >= 70 ? 'text-teal-400' : 'text-amber-400'
-                  }`}>
-                    {computedScore}%
-                  </span>
-                  <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">
-                    MATCH
-                  </span>
+                <div className="relative inline-flex items-center justify-center">
+                  <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 120 120">
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r={gaugeRadius}
+                      className="text-white/[0.06]"
+                      strokeWidth="7"
+                      stroke="currentColor"
+                      fill="transparent"
+                    />
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r={gaugeRadius}
+                      strokeWidth="7"
+                      strokeDasharray={gaugeCircumference}
+                      strokeDashoffset={gaugeStrokeDashoffset}
+                      strokeLinecap="round"
+                      stroke={computedScore >= 85 ? '#10b981' : computedScore >= 70 ? '#14b8a6' : '#f59e0b'}
+                      fill="transparent"
+                      className="transition-all duration-500 ease-out"
+                    />
+                  </svg>
+
+                  {/* Centered Score */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span className={`text-5xl font-extrabold font-mono tracking-tight leading-none ${
+                      computedScore >= 85 ? 'text-emerald-400' : computedScore >= 70 ? 'text-teal-400' : 'text-amber-400'
+                    }`}>
+                      {computedScore}%
+                    </span>
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-slate-400 mt-1">
+                      {computedScore >= 85 ? 'High Fit' : computedScore >= 70 ? 'Moderate' : 'Low Fit'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Rating Label directly below score */}
+                <div className="mt-3">
+                  {computedScore >= 85 ? (
+                    <span className="inline-block text-xs font-mono font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 px-3.5 py-1 rounded-full">
+                      Excellent Match • Auto-Approved
+                    </span>
+                  ) : computedScore >= 70 ? (
+                    <span className="inline-block text-xs font-mono font-semibold text-teal-300 bg-teal-500/10 border border-teal-500/25 px-3.5 py-1 rounded-full">
+                      Strong Match • Assisted Review
+                    </span>
+                  ) : (
+                    <span className="inline-block text-xs font-mono font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/25 px-3.5 py-1 rounded-full">
+                      Below Threshold • Auto-Filtered
+                    </span>
+                  )}
                 </div>
               </div>
 
-              {/* Decision Badge */}
-              <div>
-                {computedScore >= 85 ? (
-                  <span className="inline-block text-xs font-mono font-semibold text-emerald-300 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-full">
-                    High Match • Auto-Approved
-                  </span>
-                ) : computedScore >= 70 ? (
-                  <span className="inline-block text-xs font-mono font-semibold text-teal-300 bg-teal-500/15 border border-teal-500/30 px-3 py-1 rounded-full">
-                    Moderate Match • Assisted Review
-                  </span>
-                ) : (
-                  <span className="inline-block text-xs font-mono font-semibold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-full">
-                    Below Threshold • Filtered Out
-                  </span>
-                )}
-              </div>
-
-              {/* Dimensional Progress Breakdown */}
-              <div className="space-y-2 text-left text-xs font-mono pt-3 border-t border-white/[0.08]">
+              {/* Supporting Factor Bars */}
+              <div className="space-y-2 text-left text-xs font-mono pt-3 border-t border-white/[0.06]">
                 <div>
                   <div className="flex justify-between text-slate-400 mb-0.5">
-                    <span>Skills</span>
-                    <span className="text-emerald-400">{simSkillFit}%</span>
+                    <span>Skills Fit</span>
+                    <span className="text-emerald-400 font-semibold">{simSkillFit}%</span>
                   </div>
-                  <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${simSkillFit}%` }} />
+                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400 rounded-full transition-all duration-300" style={{ width: `${simSkillFit}%` }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-slate-400 mb-0.5">
                     <span>Experience</span>
-                    <span className="text-teal-400">{simExperience}%</span>
+                    <span className="text-teal-400 font-semibold">{simExperience}%</span>
                   </div>
-                  <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                    <div className="h-full bg-teal-400 rounded-full" style={{ width: `${simExperience}%` }} />
+                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div className="h-full bg-teal-400 rounded-full transition-all duration-300" style={{ width: `${simExperience}%` }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-slate-400 mb-0.5">
                     <span>Budget Yield</span>
-                    <span className="text-white">{budgetScore}%</span>
+                    <span className="text-white font-semibold">{budgetScore}%</span>
                   </div>
-                  <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                    <div className="h-full bg-white rounded-full" style={{ width: `${budgetScore}%` }} />
+                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div className="h-full bg-white/90 rounded-full transition-all duration-300" style={{ width: `${budgetScore}%` }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-slate-400 mb-0.5">
                     <span>Complexity</span>
-                    <span className="text-slate-300">{complexityScore}%</span>
+                    <span className="text-slate-300 font-semibold">{complexityScore}%</span>
                   </div>
-                  <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-400 rounded-full" style={{ width: `${complexityScore}%` }} />
+                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div className="h-full bg-slate-400 rounded-full transition-all duration-300" style={{ width: `${complexityScore}%` }} />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-slate-400 mb-0.5">
                     <span>Deadline</span>
-                    <span className="text-emerald-400">{deadlineScore}%</span>
+                    <span className="text-emerald-400 font-semibold">{deadlineScore}%</span>
                   </div>
-                  <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${deadlineScore}%` }} />
+                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
+                    <div className="h-full bg-emerald-400 rounded-full transition-all duration-300" style={{ width: `${deadlineScore}%` }} />
                   </div>
                 </div>
               </div>
@@ -1205,7 +1255,7 @@ Let's align on your key business milestones and release schedule.`
         </div>
       </section>
 
-      {/* 5. AI PROPOSAL STUDIO: Professional Editor Layout */}
+      {/* 5. AI PROPOSAL STUDIO: Professional Editor Layout (Requirement 8) */}
       <section id="studio" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -1265,26 +1315,31 @@ Let's align on your key business milestones and release schedule.`
               ))}
             </div>
 
-            {/* Realistic Editor Chrome */}
+            {/* Realistic Editor Chrome (Requirement 8) */}
             <div className="rounded-2xl card-terminal overflow-hidden border border-white/[0.08]">
-              {/* Editor Tab Bar */}
-              <div className="px-4 py-2 bg-[#090d16] border-b border-white/[0.08] flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              {/* Editor Header Bar with Match Status */}
+              <div className="px-5 py-3 bg-[#090d16] border-b border-white/[0.08] flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-3">
                   <div className="flex gap-1.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
                     <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
                   </div>
-                  <span className="text-[11px] font-mono text-slate-400 ml-2">proposal-tailored.md</span>
+                  <span className="text-xs font-mono text-slate-300 font-medium">proposal-draft.md</span>
                 </div>
 
-                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                  AI PROPOSAL EDITOR
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/25">
+                    Match: 98%
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400 hidden sm:inline">
+                    Simulated Preview
+                  </span>
+                </div>
               </div>
 
               {/* Proposal Content Body */}
-              <div className="p-5 sm:p-6 text-xs sm:text-sm text-slate-300 leading-relaxed font-mono whitespace-pre-wrap select-text">
+              <div className="p-5 sm:p-7 text-xs sm:text-sm text-slate-200 leading-relaxed font-mono whitespace-pre-wrap select-text">
                 {proposalTexts[activePersona]}
               </div>
 
@@ -1292,30 +1347,26 @@ Let's align on your key business milestones and release schedule.`
               <div className="px-5 py-3.5 bg-[#090d16] border-t border-white/[0.08] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
                 {/* Metadata Tags */}
                 <div className="flex items-center gap-4 text-slate-400 font-mono text-[11px] flex-wrap">
-                  <div>
-                    <span>Match: </span>
-                    <span className="text-emerald-400 font-semibold">98%</span>
+                  <div className="flex items-center gap-1.5 text-emerald-300">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Skills: Verified</span>
                   </div>
                   <div>
-                    <span>Tone: </span>
-                    <span className="text-white font-medium capitalize">{activePersona}</span>
+                    <span className="text-slate-500">Tone: </span>
+                    <span className="text-white capitalize">{activePersona}</span>
                   </div>
                   <div>
-                    <span>Length: </span>
+                    <span className="text-slate-500">Length: </span>
                     <span className="text-slate-300">128 words</span>
-                  </div>
-                  <div>
-                    <span>Skill Alignment: </span>
-                    <span className="text-emerald-400 font-semibold">100%</span>
                   </div>
                 </div>
 
                 {/* Copy Button */}
                 <button
                   onClick={() => handleCopyProposal(proposalTexts[activePersona])}
-                  className={`flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-mono font-semibold transition active:scale-95 border ${
+                  className={`flex items-center justify-center gap-1.5 px-5 py-2 rounded-xl text-xs font-mono font-semibold transition active:scale-95 border ${
                     isCopied
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.2)]'
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm'
                       : 'bg-white text-slate-950 hover:bg-slate-100 border-transparent shadow-sm'
                   }`}
                 >
@@ -1417,7 +1468,7 @@ Let's align on your key business milestones and release schedule.`
           </div>
 
           {/* Card 3: WorkMatch OS (The Standard) */}
-          <div className="p-6 sm:p-7 rounded-2xl card-primary space-y-4 border border-emerald-500/30 bg-[#091119] shadow-[0_0_30px_rgba(16,185,129,0.08)] flex flex-col justify-between relative">
+          <div className="p-6 sm:p-7 rounded-2xl card-primary space-y-4 border border-emerald-500/30 bg-[#091119] shadow-[0_0_20px_rgba(16,185,129,0.06)] flex flex-col justify-between relative">
             <div className="space-y-3">
               <div className="flex items-center justify-between pb-2 border-b border-emerald-500/20">
                 <span className="text-xs font-mono font-bold uppercase text-emerald-400">The Pro Standard</span>
@@ -1442,7 +1493,7 @@ Let's align on your key business milestones and release schedule.`
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <span>1-Click Emergency Kill Switch &amp; audit ledger</span>
+                  <span>Safety Controls &amp; institutional audit ledger</span>
                 </li>
               </ul>
             </div>
@@ -1532,7 +1583,7 @@ Let's align on your key business milestones and release schedule.`
               a: 'WorkMatch strictly cross-references every sentence generated against your declared skills inventory. If an opportunity mentions a technology you do not possess, it never fabricates experience—it focuses solely on your actual strengths or lowers the score.'
             },
             {
-              q: 'What is the Emergency Kill Switch?',
+              q: 'What are the Safety Controls & Kill Switch?',
               a: 'A prominent safety control available on all views. Pressing it activates an immediate system-wide tripwire that disables all automated proposals in sub-5ms across every connected channel.'
             }
           ].map((item, idx) => (
@@ -1562,7 +1613,7 @@ Let's align on your key business milestones and release schedule.`
       <section className="relative z-10 py-24 px-4 sm:px-6 max-w-5xl mx-auto">
         <div className="relative rounded-3xl p-8 sm:p-12 card-primary text-center overflow-hidden border border-white/[0.1] shadow-2xl">
           {/* Subtle Ambient Radial */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 blur-[100px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 blur-[120px] pointer-events-none" />
 
           <div className="relative space-y-6 max-w-2xl mx-auto">
             <span className="px-3.5 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
@@ -1579,7 +1630,7 @@ Let's align on your key business milestones and release schedule.`
               <button
                 onClick={onLoadDemoAndLaunch}
                 disabled={isLoadingDemo}
-                className="w-full sm:w-auto bg-white text-slate-950 hover:bg-slate-100 text-sm md:text-base px-8 py-3.5 rounded-full shadow-[0_0_25px_rgba(255,255,255,0.2)] font-semibold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-white text-slate-950 hover:bg-slate-100 text-sm md:text-base px-8 py-3.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.3),0_0_16px_rgba(255,255,255,0.12)] font-semibold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
               >
                 {isLoadingDemo ? (
                   <div className="w-4 h-4 rounded-full border-2 border-slate-950 border-t-transparent animate-spin" />
