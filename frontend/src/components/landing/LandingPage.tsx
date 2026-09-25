@@ -84,6 +84,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   // ROI Calculator State
   const [monthlyProposals, setMonthlyProposals] = useState<number>(35);
 
+  // Atmosphere Background Selector State
+  const [activeBackdrop, setActiveBackdrop] = useState<'cockpit' | 'command' | 'neural'>('cockpit');
+
+  const backdropImages = {
+    cockpit: '/images/hero-cockpit.jpg',
+    command: '/images/tech-command-center.jpg',
+    neural: '/images/neural-grid.jpg'
+  };
+
   // FAQ State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
@@ -262,10 +271,24 @@ Let's align on your key business milestones and release schedule.`
       ref={containerRef}
       className="relative min-h-screen bg-[#06080e] text-slate-100 selection:bg-emerald-500 selection:text-white overflow-x-hidden font-sans"
     >
-      {/* Background Ambience: Calm, restrained, high-end SaaS depth */}
+      {/* Background Ambience: Calm, restrained, high-end SaaS depth with architectural imagery */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Architectural background image overlay with smooth transition */}
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-all duration-700 pointer-events-none"
+          style={{
+            backgroundImage: `url(${backdropImages[activeBackdrop]})`,
+            opacity: activeBackdrop === 'neural' ? 0.22 : 0.28,
+            mixBlendMode: activeBackdrop === 'neural' ? 'screen' : 'luminosity',
+            filter: 'brightness(1.06) contrast(1.04)'
+          }}
+        />
+
+        {/* Deep gradient overlay to ensure perfect contrast and text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#06080e]/40 via-[#06080e]/85 to-[#06080e] z-0 pointer-events-none" />
+
         {/* Softened, subtle radial glow */}
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-gradient-to-b from-emerald-500/5 via-teal-500/2 to-transparent rounded-full blur-[140px]" />
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-gradient-to-b from-emerald-500/8 via-teal-500/3 to-transparent rounded-full blur-[140px]" />
         <div className="absolute top-[850px] right-[-120px] w-[500px] h-[500px] bg-cyan-500/[0.02] rounded-full blur-[150px]" />
         <div className="absolute top-[2200px] left-[-120px] w-[500px] h-[500px] bg-emerald-500/[0.02] rounded-full blur-[150px]" />
 
@@ -430,13 +453,29 @@ Let's align on your key business milestones and release schedule.`
 
       {/* 1. HERO SECTION: Clean Visual Hierarchy, High Contrast, Spacious */}
       <section className="relative z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-20 md:pt-28 pb-16 max-w-5xl mx-auto">
-        {/* Release Pill Badge */}
-        <div className="hero-animate mb-6">
+        {/* Release Pill Badge & Atmosphere Theme Switcher */}
+        <div className="hero-animate mb-6 flex flex-wrap items-center justify-center gap-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="font-semibold text-white">WorkMatch OS 2.0</span>
             <span className="text-white/20">•</span>
             <span className="text-emerald-400 font-medium">Autonomous Freelance Operating System</span>
+          </div>
+
+          <div className="inline-flex items-center bg-[#0d1322]/80 border border-white/[0.1] rounded-full p-1 backdrop-blur-md shadow-sm">
+            {(['cockpit', 'command', 'neural'] as const).map(mode => (
+              <button
+                key={mode}
+                onClick={() => setActiveBackdrop(mode)}
+                className={`px-3 py-1 rounded-full text-[11px] font-mono capitalize transition-all ${
+                  activeBackdrop === mode
+                    ? 'bg-white text-slate-950 font-semibold shadow-sm'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {mode === 'cockpit' ? 'Cockpit' : mode === 'command' ? 'Command Deck' : 'Neural Mesh'}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -497,7 +536,11 @@ Let's align on your key business milestones and release schedule.`
 
       {/* 2. LIVE OPPORTUNITY MATCH SECTION (AI Command Cockpit with Connected Workflow) */}
       <section id="cockpit" className="relative z-10 py-12 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="rounded-3xl card-primary p-5 sm:p-7 shadow-[0_8px_32px_rgba(0,0,0,0.45)] border border-white/[0.08]">
+        <div className="relative rounded-3xl card-primary p-5 sm:p-7 shadow-[0_8px_32px_rgba(0,0,0,0.45)] border border-white/[0.08] overflow-hidden">
+          {/* Subtle architectural background texture */}
+          <div className="absolute inset-0 bg-[url('/images/tech-command-center.jpg')] bg-cover bg-center opacity-15 mix-blend-luminosity pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/70 to-transparent pointer-events-none" />
+
           {/* Cockpit Header Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
             <div className="flex items-center gap-3">
@@ -1612,6 +1655,10 @@ Let's align on your key business milestones and release schedule.`
       {/* 9. FINAL HIGH-IMPACT CONVERSION CTA */}
       <section className="relative z-10 py-24 px-4 sm:px-6 max-w-5xl mx-auto">
         <div className="relative rounded-3xl p-8 sm:p-12 card-primary text-center overflow-hidden border border-white/[0.1] shadow-2xl">
+          {/* Cyber neural grid background layer */}
+          <div className="absolute inset-0 bg-[url('/images/neural-grid.jpg')] bg-cover bg-center opacity-15 mix-blend-screen pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/80 to-transparent pointer-events-none" />
+
           {/* Subtle Ambient Radial */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 blur-[120px] pointer-events-none" />
 
