@@ -1,34 +1,34 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import gsap from 'gsap';
 import {
-  Sparkles,
-  Zap,
-  ShieldCheck,
-  ShieldAlert,
   ArrowRight,
+  ArrowUpRight,
+  Check,
   CheckCircle2,
   Sliders,
-  Radio,
-  FileText,
-  Menu,
-  X,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  Bot,
+  SlidersHorizontal,
   Search,
-  Activity,
-  Layers,
+  Briefcase,
   Clock,
   DollarSign,
-  Copy,
-  Check,
-  Cpu,
-  Terminal,
-  Lock,
+  Layers,
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp,
   ExternalLink,
-  RefreshCw,
-  CheckCheck
+  Copy,
+  Menu,
+  X,
+  Zap,
+  Filter,
+  Eye,
+  Send,
+  Inbox,
+  FileCheck,
+  Building,
+  Target,
+  Sparkles,
+  RefreshCw
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -37,27 +37,126 @@ interface LandingPageProps {
   isLoadingDemo?: boolean;
 }
 
-interface SampleOpportunity {
+// Editorial Real Photography Assets (Unsplash verified)
+const siteImages = {
+  hero: '/images/workspace-hero.jpg',
+  workspace: '/images/freelancer-desk.jpg',
+  editorial: '/images/talent-collaboration.jpg',
+  craft: '/images/developer-code.jpg',
+  analytics: '/images/analytics-dashboard.jpg',
+  finance: '/images/financial-chart.jpg'
+};
+
+interface OpportunityData {
   id: string;
-  tabLabel: string;
-  platform: string;
-  matchScore: number;
-  timeAgo: string;
   title: string;
-  description: string;
-  skillOverlap: string;
+  role: string;
+  platform: 'Upwork' | 'Fiverr' | 'Direct Inbound';
   budget: string;
-  clientRep: string;
-  verifiedSkills: string;
-  riskAssessment: string;
+  rateRange: string;
+  hourlyRate: number;
+  timeEstimate: string;
+  hoursPerWeek: number;
+  complexity: 'Low' | 'Medium' | 'High';
+  skills: string[];
+  matchScore: number;
   factors: {
     skills: number;
-    rate: number;
+    budget: number;
+    experience: number;
+    time: number;
     reputation: number;
-    scope: number;
-    timeline: number;
   };
+  whyItFits: string[];
+  summary: string;
 }
+
+const sampleOpportunities: OpportunityData[] = [
+  {
+    id: 'frontend-lead',
+    title: 'Senior Frontend Architect — React & TypeScript',
+    role: 'Frontend Developer',
+    platform: 'Upwork',
+    budget: '$45–$65/hr',
+    rateRange: '$45–$65/hr',
+    hourlyRate: 55,
+    timeEstimate: '20 hrs/week · 3 months',
+    hoursPerWeek: 20,
+    complexity: 'Medium',
+    skills: ['React 18', 'TypeScript', 'Tailwind CSS', 'Vite'],
+    matchScore: 94,
+    factors: {
+      skills: 98,
+      budget: 94,
+      experience: 96,
+      time: 92,
+      reputation: 98
+    },
+    whyItFits: [
+      'Uses core technologies verified in your declared stack (React 18, TypeScript)',
+      'Budget ($45–$65/hr) comfortably exceeds your $40/hr target floor',
+      '20 hrs/week workload aligns with your active availability window',
+      'Client holds 4.98 rating across $120k+ in verified completed contracts'
+    ],
+    summary: 'Design and implement high-performance modular frontend interfaces for a real-time analytics dashboard.'
+  },
+  {
+    id: 'fullstack-analytics',
+    title: 'Full-Stack Dashboard Engineer — Node.js & Next.js',
+    role: 'Full Stack Engineer',
+    platform: 'Direct Inbound',
+    budget: '$50–$75/hr',
+    rateRange: '$50–$75/hr',
+    hourlyRate: 65,
+    timeEstimate: '15 hrs/week · Ongoing',
+    hoursPerWeek: 15,
+    complexity: 'Medium',
+    skills: ['Next.js 15', 'TypeScript', 'PostgreSQL', 'Tailwind'],
+    matchScore: 91,
+    factors: {
+      skills: 92,
+      budget: 96,
+      experience: 94,
+      time: 88,
+      reputation: 95
+    },
+    whyItFits: [
+      'Matches your full-stack capability with zero unverified requirements',
+      'High-tier hourly compensation with predictable bi-weekly escrow payouts',
+      'Flexible async workflow with under 2 hours of synchronous meetings per week',
+      'Clear technical milestone definitions with verified stakeholder sign-off'
+    ],
+    summary: 'Develop sub-100ms analytics queries, server actions, and chart visualizations for an executive operations portal.'
+  },
+  {
+    id: 'mobile-systems',
+    title: 'Mobile Systems Engineer — React Native & Expo',
+    role: 'Mobile Engineer',
+    platform: 'Fiverr',
+    budget: '$4,200 Fixed',
+    rateRange: '$60/hr equivalent',
+    hourlyRate: 60,
+    timeEstimate: '25 hrs/week · 4 weeks',
+    hoursPerWeek: 25,
+    complexity: 'High',
+    skills: ['React Native', 'Expo', 'TypeScript', 'REST APIs'],
+    matchScore: 88,
+    factors: {
+      skills: 90,
+      budget: 91,
+      experience: 88,
+      time: 84,
+      reputation: 92
+    },
+    whyItFits: [
+      'Strong architectural overlap with cross-platform mobile specifications',
+      'Fixed-milestone escrow backed by verified upfront deposit',
+      'Clean handoff documentation with established design tokens in Figma',
+      'Well-scoped 4-week delivery with pre-approved technical specifications'
+    ],
+    summary: 'Build an offline-first inventory management application for field technicians with camera scanning.'
+  }
+];
 
 export const LandingPage: React.FC<LandingPageProps> = ({
   onLaunchApp,
@@ -66,184 +165,36 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Interactive Simulator State
-  const [simSkillFit, setSimSkillFit] = useState<number>(87);
-  const [simExperience, setSimExperience] = useState<number>(94);
-  const [simHourlyRate, setSimHourlyRate] = useState<number>(85);
-  const [simComplexity, setSimComplexity] = useState<'Simple' | 'Medium' | 'Complex'>('Medium');
-  const [simDeadline, setSimDeadline] = useState<'Flexible' | 'Standard' | 'Urgent'>('Standard');
+  // Navigation State
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Interactive Cockpit Mode & Selected Opportunity
-  const [cockpitMode, setCockpitMode] = useState<'MANUAL' | 'ASSISTED' | 'AUTOMATIC'>('ASSISTED');
-  const [selectedOppIdx, setSelectedOppIdx] = useState<number>(0);
+  // Hero Interactive Preview State (Subtle technology demonstration without AI clichés)
+  const [heroBudget, setHeroBudget] = useState<number>(50);
+  const [heroComplexity, setHeroComplexity] = useState<'Low' | 'Medium' | 'High'>('Medium');
+  const [heroAvailability, setHeroAvailability] = useState<number>(20);
 
-  // Proposal Studio Persona & Copy Feedback
-  const [activePersona, setActivePersona] = useState<'direct' | 'technical' | 'consultative'>('direct');
+  // Match Analysis Selected Opportunity
+  const [selectedOppId, setSelectedOppId] = useState<string>('frontend-lead');
+
+  // Job Discovery Category Filter
+  const [activeCategory, setActiveCategory] = useState<'all' | 'frontend' | 'fullstack' | 'mobile'>('all');
+
+  // Interactive Personalization Controls
+  const [prefRateFloor, setPrefRateFloor] = useState<number>(40);
+  const [prefExperience, setPrefExperience] = useState<'Mid' | 'Senior' | 'Lead'>('Senior');
+  const [prefHours, setPrefHours] = useState<number>(20);
+  const [prefComplexity, setPrefComplexity] = useState<'Focused' | 'Moderate' | 'Architectural'>('Moderate');
+  const [prefAsyncOnly, setPrefAsyncOnly] = useState<boolean>(true);
+  const [prefRemoteOnly, setPrefRemoteOnly] = useState<boolean>(true);
+
+  // Proposal Studio Persona & Copy
+  const [proposalAngle, setProposalAngle] = useState<'direct' | 'technical' | 'consultative'>('direct');
   const [isCopied, setIsCopied] = useState<boolean>(false);
-
-  // ROI Calculator State
-  const [monthlyProposals, setMonthlyProposals] = useState<number>(35);
-
-  // Atmosphere Background Selector State
-  const [activeBackdrop, setActiveBackdrop] = useState<'cockpit' | 'command' | 'neural'>('cockpit');
-
-  const backdropImages = {
-    cockpit: '/images/hero-cockpit.jpg',
-    command: '/images/tech-command-center.jpg',
-    neural: '/images/neural-grid.jpg'
-  };
 
   // FAQ State
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
-  const sampleOpportunities: SampleOpportunity[] = [
-    {
-      id: 'ts-react',
-      tabLabel: 'TypeScript Architect',
-      platform: 'Upwork Enterprise',
-      matchScore: 98,
-      timeAgo: '4m ago',
-      title: 'Senior TypeScript & React Architect for High-Throughput Analytics Dashboard',
-      description: 'Looking for a senior full-stack engineer experienced in Vite, SQLite, real-time WebSockets, and modern data visualization. Must have proven capability shipping sub-100ms dashboard queries with zero main-thread jank.',
-      skillOverlap: '100% Fit',
-      budget: '$95 – $125/hr',
-      clientRep: '★ 4.98 ($120k+ spent)',
-      verifiedSkills: '3 verified profile skills (TypeScript, React 18, Database Optimization)',
-      riskAssessment: 'Low Risk • Verified Payment • 100% Hire Rate',
-      factors: {
-        skills: 100,
-        rate: 96,
-        reputation: 98,
-        scope: 94,
-        timeline: 98
-      }
-    },
-    {
-      id: 'ai-agent',
-      tabLabel: 'AI Workflow Lead',
-      platform: 'Fiverr Pro',
-      matchScore: 96,
-      timeAgo: '12m ago',
-      title: 'Autonomous Multi-Agent Orchestration & LLM Pipeline Architecture',
-      description: 'Seeking a senior engineer to design reliable agent workflows with strict hallucination guards, tool calling, and deterministic state trees. Production experience with structured output validation required.',
-      skillOverlap: '97% Fit',
-      budget: '$4,200 Fixed',
-      clientRep: '★ 5.0 (Top Rated Plus)',
-      verifiedSkills: '4 verified profile skills (LLM Orchestration, Python, REST APIs, Tool-use)',
-      riskAssessment: 'Low Risk • Verified Milestone Escrow • Clear Specification',
-      factors: {
-        skills: 97,
-        rate: 94,
-        reputation: 100,
-        scope: 92,
-        timeline: 96
-      }
-    },
-    {
-      id: 'nextjs-lead',
-      tabLabel: 'Next.js 15 Lead',
-      platform: 'Direct Inbound',
-      matchScore: 94,
-      timeAgo: '18m ago',
-      title: 'Next.js 15 App Router & Server Actions Performance Refactor',
-      description: 'Refactor high-traffic web application to Next.js 15 App Router. Improve Core Web Vitals, server components caching strategy, and reduce bundle footprint by memoizing data layers.',
-      skillOverlap: '95% Fit',
-      budget: '$110/hr',
-      clientRep: '★ 4.95 ($85k+ spent)',
-      verifiedSkills: '3 verified profile skills (Next.js, Tailwind CSS, SSR Architecture)',
-      riskAssessment: 'Low Risk • Repeat Enterprise Client • High Feedback Score',
-      factors: {
-        skills: 95,
-        rate: 92,
-        reputation: 96,
-        scope: 93,
-        timeline: 94
-      }
-    }
-  ];
-
-  const proposalTexts: Record<string, string> = {
-    direct: `Hi [Client],
-
-I noticed you're looking for sub-100ms analytics queries with real-time UI updates without blocking the main event thread.
-
-I have direct production experience architecting React 18 with TypeScript and optimizing SQLite query indexing. In a recent deployment, we achieved a 65% reduction in dashboard latency using memoized selector hooks and virtualized data table rendering.
-
-I can take this on starting tomorrow. Here is the first step I would take on day one:
-1. Profile event-loop bottlenecks using Chrome DevTools Performance panel.
-2. Decouple websocket data ingest into a dedicated Web Worker to eliminate main thread blocking.
-3. Establish benchmark latency metrics.
-
-Best regards,
-[Your Name]`,
-    technical: `Greetings,
-
-Regarding your specification for high-throughput state handling: your architecture requires strict decoupled state management to prevent unnecessary DOM re-renders during high-frequency websocket broadcasts.
-
-My verified technical scope covers React 18 concurrent features, TypeScript strict mode, and memory-efficient data caching. I avoid heavy third-party bundles in favor of lean native primitives and virtualized viewports.
-
-I would structure the ingestion pipeline as follows:
-- Worker thread for packet deserialization and delta computation
-- Memoized atomic selectors to isolate UI tree updates
-- IndexedDB fallback for fast offline session recovery
-
-Happy to review schema migrations and API endpoint contracts on a quick technical sync.`,
-    consultative: `Hello,
-
-Looking at your project roadmap, the primary objective is ensuring your analytics scale cleanly as your user base doubles over the next quarter.
-
-Beyond just writing the code, I focus on delivering clean maintainable architecture that your team can easily extend. We will structure the dashboard modules with zero hard dependencies, documented API contracts, and comprehensive automated test coverage.
-
-Our delivery milestones:
-- Week 1: Audit existing bottlenecks & implement worker-based websocket ingestion.
-- Week 2: Virtualized components & SQLite query optimization.
-- Week 3: Verification against production telemetry with sub-100ms guarantees.
-
-Let's align on your key business milestones and release schedule.`
-  };
-
-  const handleCopyProposal = (text: string) => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2200);
-    }
-  };
-
-  const currentOpp = sampleOpportunities[selectedOppIdx] || sampleOpportunities[0];
-
-  // Computed Simulator Score (Mathematical 5-factor fit)
-  const complexityWeight = simComplexity === 'Simple' ? 1.0 : simComplexity === 'Medium' ? 0.9 : 0.78;
-  const deadlineWeight = simDeadline === 'Flexible' ? 1.0 : simDeadline === 'Standard' ? 0.92 : 0.84;
-  const budgetRatio = Math.min(simHourlyRate, 130) / 130;
-
-  const budgetScore = Math.round(budgetRatio * 100);
-  const complexityScore = Math.round(complexityWeight * 100);
-  const deadlineScore = Math.round(deadlineWeight * 100);
-
-  const computedScore = Math.min(
-    99,
-    Math.round(
-      simSkillFit * 0.35 +
-      simExperience * 0.25 +
-      budgetScore * 0.20 +
-      complexityScore * 0.10 +
-      deadlineScore * 0.10
-    )
-  );
-
-  // SVG Radial Gauge Calculation
-  const gaugeRadius = 54;
-  const gaugeCircumference = 2 * Math.PI * gaugeRadius;
-  const gaugeStrokeDashoffset = gaugeCircumference - (computedScore / 100) * gaugeCircumference;
-
-  // Computed ROI
-  const hoursSaved = Math.round(monthlyProposals * 0.65);
-  const connectsSaved = Math.round(monthlyProposals * 6.5);
-  const estDollarConnects = (connectsSaved * 0.15).toFixed(2);
-  const estExtraEarnings = (hoursSaved * 50).toLocaleString();
-
+  // Smooth scroll helper
   const handleScrollTo = (id: string) => {
     setIsMobileMenuOpen(false);
     const element = document.getElementById(id);
@@ -252,902 +203,363 @@ Let's align on your key business milestones and release schedule.`
     }
   };
 
-  // GSAP Animations (Clean, subtle entrance)
+  // GSAP subtle entrance animation
   useEffect(() => {
     if (!containerRef.current) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.hero-animate',
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power2.out' }
+        '.editorial-reveal',
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.65, stagger: 0.08, ease: 'power2.out' }
       );
     }, containerRef);
-
     return () => ctx.revert();
   }, []);
+
+  // Compute live match score in hero preview based on user parameters
+  const heroLiveMatch = useMemo(() => {
+    let score = 94;
+    // Budget delta
+    if (heroBudget >= 60) score -= 3;
+    if (heroBudget <= 35) score += 2;
+    // Complexity alignment
+    if (heroComplexity === 'Medium') score += 2;
+    if (heroComplexity === 'High') score -= 5;
+    // Availability delta
+    if (heroAvailability === 20) score += 1;
+    if (heroAvailability > 25) score -= 4;
+    return Math.min(99, Math.max(76, score));
+  }, [heroBudget, heroComplexity, heroAvailability]);
+
+  // Selected opportunity for Match Analysis
+  const currentAnalysisOpp = useMemo(() => {
+    return sampleOpportunities.find(o => o.id === selectedOppId) || sampleOpportunities[0];
+  }, [selectedOppId]);
+
+  // Filtered opportunities for Job Discovery
+  const filteredOpportunities = useMemo(() => {
+    if (activeCategory === 'frontend') {
+      return sampleOpportunities.filter(o => o.role === 'Frontend Developer');
+    }
+    if (activeCategory === 'fullstack') {
+      return sampleOpportunities.filter(o => o.role === 'Full Stack Engineer');
+    }
+    if (activeCategory === 'mobile') {
+      return sampleOpportunities.filter(o => o.role === 'Mobile Engineer');
+    }
+    return sampleOpportunities;
+  }, [activeCategory]);
+
+  // Dynamic proposal preview based on selected angle
+  const proposalDraft = useMemo(() => {
+    if (proposalAngle === 'direct') {
+      return `Hi,\n\nI reviewed your requirements for the Senior Frontend Architect position. Over the past 4 years, I have engineered modular dashboard interfaces using React 18, TypeScript, and Vite—consistently keeping bundle footprints minimal and render loops under 16ms.\n\nYour 20 hrs/week timeline aligns cleanly with my open availability, and the $45–$65/hr budget fits my standard engagement range. I can begin reviewing your existing component architecture this week.\n\nBest regards,\nAlex Vance`;
+    }
+    if (proposalAngle === 'technical') {
+      return `Hi,\n\nYour analytics interface requirements call for deterministic state management, virtualized table rendering, and strict TypeScript boundaries. In my previous contract, I decoupled client-side data queries into optimized memoized slices, reducing dashboard load times by 42%.\n\nMy declared profile skills directly map to your stack (React 18, TypeScript, Tailwind). I structure components with strict separation between headless logic and presentational tokens for long-term maintainability.\n\nBest regards,\nAlex Vance`;
+    }
+    return `Hi,\n\nBuilding an executive dashboard is ultimately about decision speed and clarity. My focus is delivering production-ready, accessible UI components that allow your stakeholders to interact with real-time operational data without lag or ambiguity.\n\nI operate on an asynchronous-first cadence with crisp daily changelogs, verified test coverage, and transparent milestone tracking. Let's schedule a focused 15-minute briefing to align on your first delivery milestone.\n\nBest regards,\nAlex Vance`;
+  }, [proposalAngle]);
+
+  const handleCopyProposal = () => {
+    navigator.clipboard.writeText(proposalDraft);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
 
   return (
     <div
       ref={containerRef}
-      className="relative min-h-screen bg-[#06080e] text-slate-100 selection:bg-emerald-500 selection:text-white overflow-x-hidden font-sans"
+      className="min-h-screen bg-[#090b10] text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-200 overflow-x-hidden font-sans"
     >
-      {/* Background Ambience: Calm, restrained, high-end SaaS depth with architectural imagery */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Architectural background image overlay with smooth transition */}
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-all duration-700 pointer-events-none"
-          style={{
-            backgroundImage: `url(${backdropImages[activeBackdrop]})`,
-            opacity: activeBackdrop === 'neural' ? 0.22 : 0.28,
-            mixBlendMode: activeBackdrop === 'neural' ? 'screen' : 'luminosity',
-            filter: 'brightness(1.06) contrast(1.04)'
-          }}
-        />
-
-        {/* Deep gradient overlay to ensure perfect contrast and text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#06080e]/40 via-[#06080e]/85 to-[#06080e] z-0 pointer-events-none" />
-
-        {/* Softened, subtle radial glow */}
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-gradient-to-b from-emerald-500/8 via-teal-500/3 to-transparent rounded-full blur-[140px]" />
-        <div className="absolute top-[850px] right-[-120px] w-[500px] h-[500px] bg-cyan-500/[0.02] rounded-full blur-[150px]" />
-        <div className="absolute top-[2200px] left-[-120px] w-[500px] h-[500px] bg-emerald-500/[0.02] rounded-full blur-[150px]" />
-
-        {/* Quiet, low-contrast grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10 radial-mask" />
-      </div>
-
-      {/* Telemetry Status Bar: Enterprise-grade operational bar with demo data transparency */}
-      <div className="relative z-50 border-b border-white/[0.06] bg-[#070a12]/80 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-1.5 flex items-center justify-between text-[11px] font-mono text-slate-400">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-slate-300 font-medium">SYSTEM: OPERATIONAL</span>
-            <span className="text-white/20 hidden sm:inline">•</span>
-            <span className="hidden sm:inline text-slate-400">MULTI-MARKETPLACE INTAKE ACTIVE</span>
-            <span className="text-white/20 hidden md:inline">•</span>
-            <span className="hidden md:inline px-1.5 py-0.5 rounded bg-white/[0.04] text-[10px] text-slate-400 border border-white/[0.06]">
-              SIMULATED DEMO ENVIRONMENT
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4 text-slate-400">
-            <div className="flex items-center gap-1.5">
-              <span className="text-slate-500">LATENCY:</span>
-              <span className="text-emerald-400 font-semibold">&lt; 15MS</span>
-            </div>
-            <span className="text-white/20 hidden md:inline">•</span>
-            <div className="hidden md:flex items-center gap-1.5">
-              <span className="text-slate-500">PROFILE AUDIT:</span>
-              <span className="text-slate-300 font-semibold">STRICT</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Floating Pill Navigation Header */}
-      <header className="relative z-50 pt-4 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="rounded-full bg-[#0b0f19]/90 border border-white/[0.08] px-5 sm:px-6 py-2.5 backdrop-blur-xl flex items-center justify-between shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+      {/* ─────────────────────────────────────────────────────────────
+          1. NAVIGATION: Clean, Compact, Editorial
+      ────────────────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-50 bg-[#090b10]/90 backdrop-blur-md border-b border-white/[0.08]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Brand Logo */}
           <div
-            className="flex items-center gap-2.5 cursor-pointer group select-none"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-3 cursor-pointer select-none group"
           >
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform shadow-[0_0_12px_rgba(16,185,129,0.15)]">
-              <Bot className="w-4 h-4" />
+            <div className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/[0.12] flex items-center justify-center text-emerald-400 group-hover:border-emerald-500/40 transition-colors">
+              {/* Bespoke Geometric Brandmark */}
+              <div className="w-3.5 h-3.5 grid grid-cols-2 gap-0.5">
+                <span className="w-1.5 h-1.5 rounded-[1px] bg-emerald-400" />
+                <span className="w-1.5 h-1.5 rounded-[1px] bg-slate-400" />
+                <span className="w-1.5 h-1.5 rounded-[1px] bg-slate-500" />
+                <span className="w-1.5 h-1.5 rounded-[1px] bg-emerald-400" />
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-base tracking-tight text-white group-hover:text-emerald-300 transition-colors">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-base font-semibold tracking-tight text-white group-hover:text-emerald-300 transition-colors">
                 WorkMatch
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 font-semibold">
-                AI 2.0
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                Studio
               </span>
             </div>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-xs font-medium text-slate-300">
-            <button onClick={() => handleScrollTo('features')} className="hover:text-white transition-colors">
+          <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-slate-300">
+            <button
+              onClick={() => handleScrollTo('product-overview')}
+              className="hover:text-white transition-colors"
+            >
+              Product
+            </button>
+            <button
+              onClick={() => handleScrollTo('how-it-works')}
+              className="hover:text-white transition-colors"
+            >
+              How It Works
+            </button>
+            <button
+              onClick={() => handleScrollTo('match-analysis')}
+              className="hover:text-white transition-colors"
+            >
+              Decision Engine
+            </button>
+            <button
+              onClick={() => handleScrollTo('features')}
+              className="hover:text-white transition-colors"
+            >
               Features
             </button>
-            <button onClick={() => handleScrollTo('cockpit')} className="hover:text-white transition-colors">
-              Opportunity Match
-            </button>
-            <button onClick={() => handleScrollTo('simulator')} className="hover:text-white transition-colors">
-              Formula Simulator
-            </button>
-            <button onClick={() => handleScrollTo('studio')} className="hover:text-white transition-colors">
-              Proposal Studio
-            </button>
-            <button onClick={() => handleScrollTo('comparison')} className="hover:text-white transition-colors">
-              Comparison
-            </button>
-            <button onClick={() => handleScrollTo('roi')} className="hover:text-white transition-colors">
-              ROI
-            </button>
-            <button onClick={() => handleScrollTo('faq')} className="hover:text-white transition-colors">
-              FAQ
+            <button
+              onClick={() => handleScrollTo('pricing')}
+              className="hover:text-white transition-colors"
+            >
+              Pricing
             </button>
           </nav>
 
-          {/* Header Action Buttons */}
-          <div className="hidden sm:flex items-center gap-2.5">
+          {/* Desktop Header Actions */}
+          <div className="hidden sm:flex items-center gap-3">
+            <button
+              onClick={onLaunchApp}
+              className="text-xs font-medium text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg hover:bg-white/[0.04] transition-colors"
+            >
+              Log in
+            </button>
             <button
               onClick={onLoadDemoAndLaunch}
               disabled={isLoadingDemo}
-              className="text-xs font-semibold text-slate-300 hover:text-white px-3.5 py-1.5 rounded-full hover:bg-white/[0.06] transition-colors"
+              className="text-xs font-medium bg-white text-slate-950 hover:bg-slate-200 px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
             >
-              {isLoadingDemo ? 'Seeding Sandbox...' : '1-Click Demo'}
-            </button>
-            <button
-              onClick={onLaunchApp}
-              className="px-4 py-1.5 rounded-full bg-white text-slate-950 hover:bg-slate-100 font-semibold text-xs shadow-sm transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5"
-            >
-              <span>Launch Workspace</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              {isLoadingDemo ? (
+                <div className="w-3.5 h-3.5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <span>Get Started</span>
+                  <ArrowRight className="w-3 h-3 text-slate-950" />
+                </>
+              )}
             </button>
           </div>
 
-          {/* Mobile Hamburger Button */}
-          <div className="lg:hidden flex items-center gap-2">
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden items-center gap-2">
             <button
-              onClick={onLaunchApp}
-              className="px-3 py-1 rounded-full bg-white text-slate-950 text-xs font-semibold"
+              onClick={onLoadDemoAndLaunch}
+              className="text-xs font-medium bg-white text-slate-950 px-3 py-1.5 rounded-lg"
             >
-              Launch
+              Get Started
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-1.5 rounded-full bg-white/[0.06] border border-white/[0.08] text-slate-300 hover:text-white"
-              aria-label="Toggle Navigation"
+              className="p-1.5 text-slate-400 hover:text-white"
+              aria-label="Toggle navigation menu"
             >
-              {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* Mobile Dropdown */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-2 p-5 rounded-2xl bg-[#0b0f19] border border-white/[0.1] space-y-3 shadow-2xl backdrop-blur-xl">
-            <button onClick={() => handleScrollTo('features')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
+          <div className="md:hidden border-t border-white/[0.08] bg-[#0c0e14] px-5 py-4 space-y-3">
+            <button
+              onClick={() => handleScrollTo('product-overview')}
+              className="block w-full text-left py-2 text-sm text-slate-300"
+            >
+              Product
+            </button>
+            <button
+              onClick={() => handleScrollTo('how-it-works')}
+              className="block w-full text-left py-2 text-sm text-slate-300"
+            >
+              How It Works
+            </button>
+            <button
+              onClick={() => handleScrollTo('match-analysis')}
+              className="block w-full text-left py-2 text-sm text-slate-300"
+            >
+              Decision Engine
+            </button>
+            <button
+              onClick={() => handleScrollTo('features')}
+              className="block w-full text-left py-2 text-sm text-slate-300"
+            >
               Features
             </button>
-            <button onClick={() => handleScrollTo('cockpit')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              Opportunity Match
-            </button>
-            <button onClick={() => handleScrollTo('simulator')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              Formula Simulator
-            </button>
-            <button onClick={() => handleScrollTo('studio')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              Proposal Studio
-            </button>
-            <button onClick={() => handleScrollTo('comparison')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              Comparison
-            </button>
-            <button onClick={() => handleScrollTo('roi')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              ROI
-            </button>
-            <button onClick={() => handleScrollTo('faq')} className="block w-full text-left py-2 text-sm text-slate-300 hover:text-white">
-              FAQ
+            <button
+              onClick={() => handleScrollTo('pricing')}
+              className="block w-full text-left py-2 text-sm text-slate-300"
+            >
+              Pricing
             </button>
             <div className="pt-3 border-t border-white/[0.08] flex flex-col gap-2">
               <button
-                onClick={onLoadDemoAndLaunch}
-                className="w-full py-2.5 rounded-full bg-white/[0.06] border border-white/[0.1] text-xs font-semibold text-white text-center"
+                onClick={onLaunchApp}
+                className="w-full py-2 rounded-lg bg-white/[0.05] text-xs font-medium text-white"
               >
-                1-Click Demo Sandbox
+                Log in to Workspace
               </button>
               <button
-                onClick={onLaunchApp}
-                className="w-full py-2.5 rounded-full bg-white text-slate-950 text-xs font-semibold text-center"
+                onClick={onLoadDemoAndLaunch}
+                className="w-full py-2 rounded-lg bg-white text-slate-950 text-xs font-medium"
               >
-                Launch Workspace
+                Launch Sandbox Demo
               </button>
             </div>
           </div>
         )}
       </header>
 
-      {/* 1. HERO SECTION: Clean Visual Hierarchy, High Contrast, Spacious */}
-      <section className="relative z-10 flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-20 md:pt-28 pb-16 max-w-5xl mx-auto">
-        {/* Release Pill Badge & Atmosphere Theme Switcher */}
-        <div className="hero-animate mb-6 flex flex-wrap items-center justify-center gap-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold text-white">WorkMatch OS 2.0</span>
+      {/* ─────────────────────────────────────────────────────────────
+          2. HERO SECTION: Editorial, Product-First, High Craft
+      ────────────────────────────────────────────────────────────── */}
+      <section id="product-overview" className="relative pt-16 md:pt-24 pb-20 px-4 sm:px-6 max-w-6xl mx-auto">
+        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+          {/* Subtle Label */}
+          <div className="editorial-reveal inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono text-slate-300 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="tracking-wide">WORK DISCOVERY PLATFORM</span>
             <span className="text-white/20">•</span>
-            <span className="text-emerald-400 font-medium">Autonomous Freelance Operating System</span>
+            <span className="text-slate-400">DECISION INTELLIGENCE</span>
           </div>
 
-          <div className="inline-flex items-center bg-[#0d1322]/80 border border-white/[0.1] rounded-full p-1 backdrop-blur-md shadow-sm">
-            {(['cockpit', 'command', 'neural'] as const).map(mode => (
-              <button
-                key={mode}
-                onClick={() => setActiveBackdrop(mode)}
-                className={`px-3 py-1 rounded-full text-[11px] font-mono capitalize transition-all ${
-                  activeBackdrop === mode
-                    ? 'bg-white text-slate-950 font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                {mode === 'cockpit' ? 'Cockpit' : mode === 'command' ? 'Command Deck' : 'Neural Mesh'}
-              </button>
-            ))}
+          {/* Enormous Editorial Headline */}
+          <h1 className="editorial-reveal text-5xl sm:text-6xl md:text-7xl font-semibold tracking-[-0.035em] text-white leading-[1.06] mb-6">
+            Find work <br />
+            <span className="text-slate-200">that fits.</span>
+          </h1>
+
+          {/* Restrained, Confident Copy */}
+          <p className="editorial-reveal text-base sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl mx-auto mb-8">
+            WorkMatch helps freelancers discover opportunities that match their skills, experience, preferences, and availability. Less searching. Better opportunities. More focused applications.
+          </p>
+
+          {/* Hero CTAs */}
+          <div className="editorial-reveal flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              onClick={onLoadDemoAndLaunch}
+              disabled={isLoadingDemo}
+              className="w-full sm:w-auto px-6 py-3 rounded-lg bg-white hover:bg-slate-100 text-slate-950 text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm"
+            >
+              {isLoadingDemo ? (
+                <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <span>Find Your Matches</span>
+                  <ArrowRight className="w-4 h-4 text-slate-950" />
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={() => handleScrollTo('how-it-works')}
+              className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#0e111a] hover:bg-[#131724] text-slate-300 border border-white/[0.08] hover:border-white/[0.14] text-sm font-medium transition-all"
+            >
+              See How It Works
+            </button>
           </div>
-        </div>
 
-        {/* Hero Headline: Primary Visual Focal Point */}
-        <h1 className="hero-animate text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.08] max-w-4xl">
-          Stop Chasing Jobs. <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400">
-            Let AI Win Them.
-          </span>
-        </h1>
-
-        {/* Hero Subtitle */}
-        <p className="hero-animate text-base sm:text-lg md:text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed font-normal">
-          Universal marketplace discovery, multi-factor fit scoring, and deterministic, zero-hallucination proposal dispatch across Upwork, Fiverr, and global platforms.
-        </p>
-
-        {/* Primary CTA Buttons */}
-        <div className="hero-animate flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto">
-          <button
-            onClick={onLoadDemoAndLaunch}
-            disabled={isLoadingDemo}
-            className="w-full sm:w-auto bg-white text-slate-950 hover:bg-slate-100 text-sm md:text-base px-7 py-3 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.3),0_0_16px_rgba(255,255,255,0.12)] font-semibold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-          >
-            {isLoadingDemo ? (
-              <div className="w-4 h-4 rounded-full border-2 border-slate-950 border-t-transparent animate-spin" />
-            ) : (
-              <Zap className="w-4 h-4 fill-current text-slate-950" />
-            )}
-            <span>{isLoadingDemo ? 'Seeding Sandbox...' : '1-Click Demo Sandbox'}</span>
-            <ArrowRight className="w-4 h-4 ml-1" />
-          </button>
-
-          <button
-            onClick={() => handleScrollTo('simulator')}
-            className="w-full sm:w-auto bg-[#0b0f19] hover:bg-[#111726] text-slate-200 border border-white/[0.12] hover:border-white/[0.2] text-sm md:text-base px-6 py-3 rounded-full transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-sm"
-          >
-            <Sliders className="w-4 h-4 text-emerald-400" />
-            <span>Test Match Formula</span>
-          </button>
-        </div>
-
-        {/* Trust Badges */}
-        <div className="hero-animate mt-8 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs text-slate-400 font-mono">
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>100% Verified Profile Claims</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Mathematical Fit Scoring</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Safety Controls (Kill Switch Armed)</span>
+          {/* Understated Social Proof */}
+          <div className="editorial-reveal mt-10 pt-6 border-t border-white/[0.06] flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-400">
+            <div className="flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-emerald-400" />
+              <span>Designed for independent professionals</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-emerald-400" />
+              <span>Upwork, Fiverr & Direct Inbound</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-emerald-400" />
+              <span>100% verified profile claims</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* 2. LIVE OPPORTUNITY MATCH SECTION (AI Command Cockpit with Connected Workflow) */}
-      <section id="cockpit" className="relative z-10 py-12 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="relative rounded-3xl card-primary p-5 sm:p-7 shadow-[0_8px_32px_rgba(0,0,0,0.45)] border border-white/[0.08] overflow-hidden">
-          {/* Subtle architectural background texture */}
-          <div className="absolute inset-0 bg-[url('/images/tech-command-center.jpg')] bg-cover bg-center opacity-15 mix-blend-luminosity pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/70 to-transparent pointer-events-none" />
+        {/* ─────────────────────────────────────────────────────────────
+            3. PRODUCT HERO VISUAL (Real Interactive Interface)
+        ────────────────────────────────────────────────────────────── */}
+        <div className="editorial-reveal relative max-w-4xl mx-auto rounded-2xl bg-[#0c0e16] border border-white/[0.08] shadow-[0_16px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+          {/* Subtle real-world atmospheric layer (monochrome desaturated modern workspace) */}
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-[0.07] grayscale pointer-events-none"
+            style={{ backgroundImage: `url(${siteImages.hero})` }}
+          />
 
-          {/* Cockpit Header Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
+          {/* Interface Header Bar */}
+          <div className="relative px-5 py-3.5 border-b border-white/[0.08] bg-[#0e111c]/90 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.7)] animate-pulse" />
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">
-                    Live Opportunity Match
-                  </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    REAL-TIME RADAR
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-400 hidden md:inline">
-                    (Sample Listing #8942)
-                  </span>
-                </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
               </div>
-            </div>
-
-            {/* Operating Mode Selector */}
-            <div className="flex items-center bg-[#070a12] p-1 rounded-full border border-white/[0.08] text-xs self-start sm:self-auto">
-              {(['MANUAL', 'ASSISTED', 'AUTOMATIC'] as const).map(mode => (
-                <button
-                  key={mode}
-                  onClick={() => setCockpitMode(mode)}
-                  className={`px-3.5 py-1 rounded-full font-semibold transition-all ${
-                    cockpitMode === mode
-                      ? 'bg-white text-slate-950 shadow-sm'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {mode === 'MANUAL' ? 'Alert Only' : mode === 'ASSISTED' ? 'Co-Pilot' : 'Autonomous'}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Connected Visual Pipeline Indicator (Requirement 5) */}
-          <div className="py-3 border-b border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-slate-400 overflow-x-auto no-scrollbar gap-2">
-            <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-4 h-4 rounded-full bg-white/10 text-white flex items-center justify-center text-[9px] font-bold">1</span>
-              <span className="text-white font-medium">Job Intake</span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-            <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[9px] font-bold">2</span>
-              <span className="text-emerald-400 font-medium">Truth Check</span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-            <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-4 h-4 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-[9px] font-bold">3</span>
-              <span className="text-teal-400 font-medium">Match Factors</span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-            <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-4 h-4 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-[9px] font-bold">4</span>
-              <span className="text-white font-semibold">98% Fit Score</span>
-            </div>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-            <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-4 h-4 rounded-full bg-white/10 text-white flex items-center justify-center text-[9px] font-bold">5</span>
-              <span className="text-emerald-300 font-medium">Action & Dispatch</span>
-            </div>
-          </div>
-
-          {/* Opportunity Selector Tabs */}
-          <div className="mt-4 flex items-center justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mr-1">
-                <Activity className="w-3.5 h-3.5 text-emerald-400" />
-                Live Leads:
+              <span className="text-white/20 hidden sm:inline">|</span>
+              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                WorkMatch Recommendation Radar
               </span>
-              {sampleOpportunities.map((opp, idx) => (
-                <button
-                  key={opp.id}
-                  onClick={() => setSelectedOppIdx(idx)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
-                    selectedOppIdx === idx
-                      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/35 shadow-sm'
-                      : 'bg-white/[0.03] text-slate-400 hover:text-slate-200 border border-white/[0.06]'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${selectedOppIdx === idx ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} />
-                  <span>{opp.tabLabel}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white font-mono">{opp.matchScore}%</span>
-                </button>
-              ))}
-            </div>
-            <span className="text-[11px] font-mono text-slate-400 hidden md:inline-block">
-              Simulated WebSocket Intake
-            </span>
-          </div>
-
-          {/* Product Dashboard Visual Flow: JOB INTEL → MATCH FACTORS → AI ACTION */}
-          <div className="mt-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
-            {/* Column 1: Job Intake & Verification (lg:col-span-5) */}
-            <div className="lg:col-span-5 p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] space-y-4 flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase bg-white/10 text-white border border-white/15">
-                    {currentOpp.platform}
-                  </span>
-                  <span className="text-[11px] text-slate-400 font-mono">Posted {currentOpp.timeAgo}</span>
-                </div>
-
-                <h3 className="text-base font-bold text-white leading-snug">
-                  {currentOpp.title}
-                </h3>
-
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  {currentOpp.description}
-                </p>
-
-                {/* Key Metrics */}
-                <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
-                  <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-                    <span className="text-slate-400 block text-[10px] uppercase font-mono">Offered Rate</span>
-                    <span className="font-mono text-white font-bold">{currentOpp.budget}</span>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.06]">
-                    <span className="text-slate-400 block text-[10px] uppercase font-mono">Client Trust</span>
-                    <span className="font-mono text-emerald-400 font-bold">{currentOpp.clientRep}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Client & Job Verification Box (Requirement 3: Human-readable primary, technical secondary) */}
-              <div className="p-3.5 rounded-xl bg-emerald-500/[0.05] border border-emerald-500/20 space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-white flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                    Client &amp; Job Verification
-                  </span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-medium">
-                    TRUTH GUARD: STRICT
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-300 space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-emerald-400 font-mono">✓</span>
-                    <span>{currentOpp.verifiedSkills}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-emerald-400 font-mono">✓</span>
-                    <span>{currentOpp.riskAssessment}</span>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* Column 2: Match Factors & Star Match Score (lg:col-span-4) */}
-            <div className="lg:col-span-4 p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] flex flex-col justify-between space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-                    Match Analysis
-                  </span>
-                  <span className="text-[10px] font-mono text-emerald-400">9-Factor Formula</span>
-                </div>
-
-                {/* Star Match Score Display (Requirement 6) */}
-                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] text-center mb-4">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 block mb-0.5">
-                    MATCH SCORE
-                  </span>
-                  <div className="text-4xl font-extrabold font-mono text-emerald-400 tracking-tight">
-                    {currentOpp.matchScore}%
-                  </div>
-                  <span className="inline-block text-[10px] font-mono text-emerald-300 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full mt-1">
-                    Excellent Match • Top 1% Lead
-                  </span>
-                </div>
-
-                {/* Individual Scoring Bars */}
-                <div className="space-y-2.5 text-xs">
-                  <div>
-                    <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono text-[11px]">Skills Overlap</span>
-                      <span className="font-mono text-emerald-400 font-semibold">{currentOpp.factors.skills}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="h-full bg-emerald-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.skills}%` }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono text-[11px]">Rate Alignment</span>
-                      <span className="font-mono text-emerald-400 font-semibold">{currentOpp.factors.rate}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="h-full bg-emerald-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.rate}%` }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono text-[11px]">Client Trust Index</span>
-                      <span className="font-mono text-teal-400 font-semibold">{currentOpp.factors.reputation}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="h-full bg-teal-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.reputation}%` }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono text-[11px]">Scope Clarity</span>
-                      <span className="font-mono text-cyan-400 font-semibold">{currentOpp.factors.scope}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="h-full bg-cyan-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.scope}%` }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-slate-300 mb-1">
-                      <span className="font-mono text-[11px]">Turnaround Feasibility</span>
-                      <span className="font-mono text-emerald-400 font-semibold">{currentOpp.factors.timeline}%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="h-full bg-emerald-400 rounded-full transition-all duration-500" style={{ width: `${currentOpp.factors.timeline}%` }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-[10px] font-mono text-slate-500 text-center">
-                Empirical Multi-Factor Breakdown
-              </div>
-            </div>
-
-            {/* Column 3: AI Recommendation & Action (lg:col-span-3) */}
-            <div className="lg:col-span-3 p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] flex flex-col justify-between space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
-                    Action Workflow
-                  </span>
-                  <span className="text-[10px] font-mono text-emerald-400 font-semibold">
-                    CO-PILOT: APPROVED
-                  </span>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1.5">
-                  <div className="text-xs font-semibold text-white flex items-center gap-1.5">
-                    <Zap className="w-3.5 h-3.5 text-emerald-400 fill-current" />
-                    <span>AI Recommendation</span>
-                  </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">
-                    Opportunity exceeds the 85% match standard. Personalized proposal drafted with zero fabricated claims.
-                  </p>
-                </div>
-
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] space-y-1 text-xs">
-                  <div className="flex items-center justify-between text-[10px] font-mono text-slate-400">
-                    <span>SAFETY CONTROLS:</span>
-                    <span className="text-emerald-400 font-semibold">KILL SWITCH: ARMED</span>
-                  </div>
-                  <span className="text-white font-mono text-[11px] block">
-                    {cockpitMode === 'MANUAL'
-                      ? 'Manual Review Required'
-                      : cockpitMode === 'ASSISTED'
-                      ? '1-Click Review & Submit'
-                      : 'Auto-Submit within 12 Connects'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="space-y-2 pt-2 border-t border-white/[0.06]">
-                <button
-                  onClick={() => handleScrollTo('studio')}
-                  className="w-full py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-semibold shadow-sm transition-all hover:scale-102 flex items-center justify-center gap-1.5"
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>Review Proposal in Studio</span>
-                </button>
-                <button
-                  onClick={onLaunchApp}
-                  className="w-full py-2 px-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-medium transition"
-                >
-                  Open in Workspace →
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quantitative Proof Strip with Demo Data Transparency (Requirement 9 & 10) */}
-      <section className="relative z-10 border-y border-white/[0.06] bg-[#070a12]/60 py-7">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/[0.04] text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-            <span>Platform Capabilities</span>
-            <span className="text-emerald-400/80">SIMULATED BENCHMARK DATA</span>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">$4.2M+</div>
-              <div className="text-xs text-slate-400 mt-1">Opportunity Volume Evaluated</div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-400 tracking-tight">100%</div>
-              <div className="text-xs text-slate-400 mt-1">Verified Profile Alignment</div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-teal-400 tracking-tight">&lt; 15ms</div>
-              <div className="text-xs text-slate-400 mt-1">Multi-Factor Scoring Latency</div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold font-mono text-white tracking-tight">0</div>
-              <div className="text-xs text-slate-400 mt-1">Account Incidents or Bans</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. MINIATURE PRODUCT INTERFACES (Features with Human-Readable Terms & Demo Transparency) */}
-      <section id="features" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Core Capabilities
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-4">
-            Autonomous Precision. Zero Slop.
-          </h2>
-          <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-            Engineered for high-performing freelancers. Every subsystem eliminates connect waste, enforces truthful claims, and wins high-ticket contracts.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Universal Radar Scout */}
-          <div className="p-6 rounded-2xl card-primary flex flex-col justify-between border border-white/[0.08]">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
-                  <Radio className="w-5 h-5 animate-pulse" />
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  LIVE SCANNING
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-bold text-white">Universal Radar Scout</h3>
-                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-                  Aggregates Upwork, Fiverr, and direct leads with sub-second websocket synchronization and deduplication.
-                </p>
-              </div>
-
-              {/* Mini Radar Interface */}
-              <div className="p-3.5 rounded-xl card-terminal space-y-2 text-xs font-mono">
-                <div className="flex items-center justify-between pb-2 border-b border-white/[0.08] text-[11px]">
-                  <span className="text-slate-400 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    UNIVERSAL RADAR
-                  </span>
-                  <span className="text-emerald-400 font-semibold">24 new leads</span>
-                </div>
-
-                <div className="space-y-1.5 text-[11px]">
-                  <div className="flex justify-between text-slate-300">
-                    <span>Upwork Enterprise</span>
-                    <span className="text-white font-semibold">12</span>
-                  </div>
-                  <div className="flex justify-between text-slate-300">
-                    <span>Fiverr Pro</span>
-                    <span className="text-white font-semibold">7</span>
-                  </div>
-                  <div className="flex justify-between text-slate-300">
-                    <span>Direct Inbound</span>
-                    <span className="text-white font-semibold">5</span>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-white/[0.08] text-[10px] text-slate-400 flex items-center justify-between">
-                  <span>Last scan: 12 sec ago</span>
-                  <span className="text-emerald-400">Simulated Feed</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-3 border-t border-white/[0.06] text-xs font-mono text-slate-400 flex items-center justify-between">
-              <span>Intake Latency</span>
-              <span className="text-emerald-400 font-semibold">&lt; 15ms</span>
+            <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>EVALUATION ENGINE: ACTIVE</span>
             </div>
           </div>
 
-          {/* Card 2: Multi-Factor Fit Score */}
-          <div className="p-6 rounded-2xl card-primary flex flex-col justify-between border border-white/[0.08]">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/25 flex items-center justify-center text-teal-400">
-                  <Sliders className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-500/10 text-teal-400 border border-teal-500/20">
-                  9-FACTOR ALGO
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-bold text-white">Multi-Factor Fit Score</h3>
-                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-                  Evaluates skill overlap, client spend history, hourly yield, and turnaround before you spend a connect.
-                </p>
-              </div>
-
-              {/* Mini Fit Interface */}
-              <div className="p-3.5 rounded-xl card-terminal space-y-2 text-xs font-mono">
-                <div className="flex items-center justify-between pb-2 border-b border-white/[0.08] text-[11px]">
-                  <span className="text-slate-400">MATCH SCORE</span>
-                  <span className="text-emerald-400 font-bold text-sm">90%</span>
-                </div>
-
-                <div className="space-y-1.5 text-[10px]">
-                  <div>
-                    <div className="flex justify-between text-slate-400 mb-0.5">
-                      <span>Skills Match</span>
-                      <span className="text-emerald-400">87%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="w-[87%] h-full bg-emerald-400 rounded-full" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-slate-400 mb-0.5">
-                      <span>Experience</span>
-                      <span className="text-teal-400">94%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="w-[94%] h-full bg-teal-400 rounded-full" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-slate-400 mb-0.5">
-                      <span>Budget Yield</span>
-                      <span className="text-cyan-400">82%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="w-[82%] h-full bg-cyan-400 rounded-full" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between text-slate-400 mb-0.5">
-                      <span>Complexity</span>
-                      <span className="text-slate-300">76%</span>
-                    </div>
-                    <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
-                      <div className="w-[76%] h-full bg-slate-300 rounded-full" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+          {/* Interactive Parameters Bar (Subtle intelligence demonstration) */}
+          <div className="relative px-5 py-4 bg-[#090b12] border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+            <div className="text-slate-400 flex items-center gap-1.5">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="font-semibold text-slate-300">Test Your Criteria:</span>
             </div>
 
-            <div className="mt-6 pt-3 border-t border-white/[0.06] text-xs font-mono text-slate-400 flex items-center justify-between">
-              <span>Threshold Standard</span>
-              <span className="text-emerald-400 font-semibold">≥ 85% Auto</span>
-            </div>
-          </div>
-
-          {/* Card 3: Client & Job Verification (Requirement 3: Preferred human-readable naming) */}
-          <div className="p-6 rounded-2xl card-primary flex flex-col justify-between border border-white/[0.08]">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  TRUTH GUARD: STRICT
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-bold text-white">Client &amp; Job Verification</h3>
-                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-                  Strict profile constraints ensure AI never invents skills, preserving your account reputation.
-                </p>
-              </div>
-
-              {/* Mini Audit Interface */}
-              <div className="p-3.5 rounded-xl card-terminal space-y-2 text-xs font-mono">
-                <div className="flex items-center justify-between pb-2 border-b border-white/[0.08] text-[11px]">
-                  <span className="text-slate-400">VERIFICATION CHECKS</span>
-                  <span className="text-emerald-400 font-semibold">PASSED</span>
-                </div>
-
-                <div className="space-y-1.5 text-[11px]">
-                  <div className="flex items-center justify-between text-slate-300">
-                    <span>Profile Inventory</span>
-                    <span className="text-emerald-400">✓ PASS</span>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-300">
-                    <span>Zero Hallucination</span>
-                    <span className="text-emerald-400">✓ STRICT</span>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-300">
-                    <span>Rate Sanity Check</span>
-                    <span className="text-emerald-400">✓ PASS</span>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-300">
-                    <span>Client Payment Risk</span>
-                    <span className="text-teal-400">✓ LOW</span>
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-white/[0.08] text-[10px] text-slate-400 flex items-center justify-between">
-                  <span>Safety Controls</span>
-                  <span className="text-emerald-400 font-medium">Kill Switch: Armed</span>
+            <div className="flex flex-wrap items-center gap-4 text-slate-300">
+              {/* Budget Toggle */}
+              <div className="flex items-center gap-2">
+                <span className="text-slate-400">Target Rate:</span>
+                <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08]">
+                  {[35, 50, 75].map(b => (
+                    <button
+                      key={b}
+                      onClick={() => setHeroBudget(b)}
+                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
+                        heroBudget === b ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      ${b}/hr
+                    </button>
+                  ))}
                 </div>
               </div>
-            </div>
 
-            <div className="mt-6 pt-3 border-t border-white/[0.06] text-xs font-mono text-slate-400 flex items-center justify-between">
-              <span>Fabricated Claims</span>
-              <span className="text-emerald-400 font-semibold">0% Allowed</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. INTERACTIVE MATCH FORMULA SIMULATOR (Requirement 6: 90% Match Score is the Star) */}
-      <section id="simulator" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Formula Simulator
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-4">
-            Test the Opportunity Match Formula
-          </h2>
-          <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-            Adjust the sliders below to simulate how WorkMatch mathematically evaluates any freelance job listing.
-          </p>
-        </div>
-
-        <div className="p-6 sm:p-9 rounded-3xl card-primary max-w-4xl mx-auto border border-white/[0.08] shadow-2xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Sliders (7 cols) */}
-            <div className="lg:col-span-7 space-y-5">
-              {/* Skill Alignment */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs">
-                  <span className="font-medium text-slate-300">Skill Alignment with Profile:</span>
-                  <span className="font-mono text-emerald-400 font-semibold">{simSkillFit}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="40"
-                  max="100"
-                  value={simSkillFit}
-                  onChange={e => setSimSkillFit(Number(e.target.value))}
-                  className="w-full accent-emerald-400 cursor-pointer h-2 bg-white/10 rounded-lg"
-                  aria-label="Skill Alignment"
-                />
-              </div>
-
-              {/* Experience Depth */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs">
-                  <span className="font-medium text-slate-300">Verified Experience Depth:</span>
-                  <span className="font-mono text-teal-400 font-semibold">{simExperience}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="50"
-                  max="100"
-                  value={simExperience}
-                  onChange={e => setSimExperience(Number(e.target.value))}
-                  className="w-full accent-teal-400 cursor-pointer h-2 bg-white/10 rounded-lg"
-                  aria-label="Experience Depth"
-                />
-              </div>
-
-              {/* Offered Rate / Budget */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs">
-                  <span className="font-medium text-slate-300">Offered Hourly Rate / Budget:</span>
-                  <span className="font-mono text-white font-semibold">${simHourlyRate}/hr</span>
-                </div>
-                <input
-                  type="range"
-                  min="20"
-                  max="150"
-                  value={simHourlyRate}
-                  onChange={e => setSimHourlyRate(Number(e.target.value))}
-                  className="w-full accent-white cursor-pointer h-2 bg-white/10 rounded-lg"
-                  aria-label="Hourly Rate"
-                />
-              </div>
-
-              {/* Scope Complexity */}
-              <div className="space-y-1.5">
-                <span className="text-xs font-medium text-slate-300 block">Project Complexity:</span>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['Simple', 'Medium', 'Complex'] as const).map(c => (
+              {/* Complexity Toggle */}
+              <div className="flex items-center gap-2">
+                <span className="text-slate-400">Complexity:</span>
+                <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08]">
+                  {(['Low', 'Medium', 'High'] as const).map(c => (
                     <button
                       key={c}
-                      onClick={() => setSimComplexity(c)}
-                      className={`py-1.5 px-3 rounded-xl text-xs font-semibold border transition ${
-                        simComplexity === c
-                          ? 'bg-white text-slate-950 border-white shadow-sm'
-                          : 'bg-[#070a12] border-white/[0.08] text-slate-400 hover:text-white'
+                      onClick={() => setHeroComplexity(c)}
+                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
+                        heroComplexity === c ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
                       }`}
                     >
                       {c}
@@ -1156,494 +568,1088 @@ Let's align on your key business milestones and release schedule.`
                 </div>
               </div>
 
-              {/* Deadline Urgency */}
-              <div className="space-y-1.5">
-                <span className="text-xs font-medium text-slate-300 block">Turnaround Feasibility:</span>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['Flexible', 'Standard', 'Urgent'] as const).map(d => (
+              {/* Hours Toggle */}
+              <div className="flex items-center gap-2">
+                <span className="text-slate-400">Availability:</span>
+                <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08]">
+                  {[10, 20, 35].map(h => (
                     <button
-                      key={d}
-                      onClick={() => setSimDeadline(d)}
-                      className={`py-1.5 px-3 rounded-xl text-xs font-semibold border transition ${
-                        simDeadline === d
-                          ? 'bg-emerald-500 text-slate-950 border-emerald-500 shadow-sm'
-                          : 'bg-[#070a12] border-white/[0.08] text-slate-400 hover:text-white'
+                      key={h}
+                      onClick={() => setHeroAvailability(h)}
+                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
+                        heroAvailability === h ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
                       }`}
                     >
-                      {d}
+                      {h}h/wk
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Product UI Discovery Card */}
+          <div className="relative p-6 sm:p-8 space-y-6">
+            {/* Top row: Role, Platform, Rate, and Recommendation Metric */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b border-white/[0.08]">
+              <div>
+                <div className="flex items-center gap-2.5 mb-2">
+                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+                    Upwork Enterprise
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono">
+                    Remote · {heroAvailability} hrs/week
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-tight">
+                  Frontend Developer
+                </h3>
+                <p className="text-sm font-mono text-slate-400 mt-1">
+                  React / TypeScript Architect · $30–$50/hr
+                </p>
+              </div>
+
+              {/* Professional Recommendation Score */}
+              <div className="flex items-center sm:flex-col sm:items-end justify-between sm:justify-start gap-3 bg-[#111420] sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-0 border-white/[0.08]">
+                <div className="text-left sm:text-right">
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 block">
+                    Fit Recommendation
+                  </span>
+                  <div className="flex items-baseline gap-1.5 sm:justify-end">
+                    <span className="text-3xl sm:text-4xl font-bold font-mono text-emerald-400 tracking-tight">
+                      {heroLiveMatch}
+                    </span>
+                    <span className="text-xs font-mono text-slate-400">/ 100</span>
+                  </div>
+                </div>
+                <span className="text-[11px] font-mono text-emerald-400/90 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  {heroLiveMatch >= 90 ? 'Strong Fit' : 'Moderate Fit'}
+                </span>
+              </div>
+            </div>
+
+            {/* "Why this fits you" Evaluation Breakdown */}
+            <div className="space-y-3">
+              <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
+                Why this fits you
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-lg bg-[#0e111a] border border-white/[0.06] flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-200 block">Skills Overlap</span>
+                    <span className="text-slate-400">React · TypeScript · Tailwind (100% verified profile match)</span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-[#0e111a] border border-white/[0.06] flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-200 block">Experience Requirement</span>
+                    <span className="text-slate-400">4+ years background matches client seniority expectations</span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-[#0e111a] border border-white/[0.06] flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-200 block">Budget Target</span>
+                    <span className="text-slate-400">
+                      Within your ${heroBudget}/hr criteria (${heroBudget <= 50 ? 'Strong alignment' : 'Acceptable range'})
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-lg bg-[#0e111a] border border-white/[0.06] flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="font-semibold text-slate-200 block">Time & Availability</span>
+                    <span className="text-slate-400">
+                      Fits your {heroAvailability} hrs/week calendar without conflicting commitments
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Action Footer */}
+            <div className="pt-4 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-xs text-slate-400 font-mono">
+                Evaluated against 8 personal criteria · Instant client trust verification
+              </span>
+              <button
+                onClick={onLoadDemoAndLaunch}
+                className="w-full sm:w-auto px-5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+              >
+                <span>View Opportunity in Workspace</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          4. PROBLEM SECTION: Editorial Visual Story
+      ────────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+            The Traditional Search Friction
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+            Freelance search shouldn't feel like this.
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            Sorting through unfiltered job boards drains hours of creative energy before you even begin writing a proposal.
+          </p>
+        </div>
+
+        {/* Visual Progression: The Friction Pipeline */}
+        <div className="relative mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-2.5 text-center">
+            {[
+              { step: '100+ Listings', sub: 'Raw uncurated feeds' },
+              { step: 'Irrelevant Stacks', sub: 'Mismatched skills' },
+              { step: 'Random Budgets', sub: 'Below your rate' },
+              { step: 'Vague Deadlines', sub: 'Unstated expectations' },
+              { step: 'Hours of Comparison', sub: 'Endless open tabs' },
+              { step: '"Is this worth it?"', sub: 'Persistent fatigue', highlight: true }
+            ].map((node, i) => (
+              <div
+                key={i}
+                className={`p-3.5 rounded-xl border transition-colors ${
+                  node.highlight
+                    ? 'bg-rose-500/[0.08] border-rose-500/25 text-rose-300'
+                    : 'bg-[#0d1018] border-white/[0.06] text-slate-300'
+                }`}
+              >
+                <span className="text-xs font-semibold block mb-1">{node.step}</span>
+                <span className="text-[11px] font-mono text-slate-400">{node.sub}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Transition: Transformation into WorkMatch Clarity */}
+        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] p-6 sm:p-10 text-center">
+          <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 block mb-2">
+            The WorkMatch Difference
+          </span>
+          <h3 className="text-2xl sm:text-3xl font-semibold text-white mb-4">
+            WorkMatch makes the decision simpler.
+          </h3>
+          <p className="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed mb-8">
+            Instead of manually cross-referencing dozens of job descriptions, WorkMatch scores every listing against your verified stack, hourly rate, and capacity before you even open it.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+            <div className="p-4 rounded-xl bg-[#0e111a] border border-white/[0.06]">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block mb-1">01 · FILTERED INTAKE</span>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Connect your platforms once. Listings with low budgets or irrelevant skills are quietly discarded.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-[#0e111a] border border-white/[0.06]">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block mb-1">02 · OBJECTIVE SCORING</span>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                See a transparent 0–100 recommendation metric calculated from 5 mathematical dimensions.
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-[#0e111a] border border-white/[0.06]">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block mb-1">03 · TRUTHFUL PROPOSALS</span>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Draft compelling proposals constrained strictly by verified work history—never fabricating skills.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          5. HOW IT WORKS: Sophisticated 4-Step Sequence
+      ────────────────────────────────────────────────────────────── */}
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+            Workflow Architecture
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+            How WorkMatch Works
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            A quiet, deterministic workflow designed to keep independent craftspeople focused on high-fit contracts.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[
+            {
+              number: '01',
+              title: 'Set your preferences',
+              description:
+                'Declare your rate floor, verified technical stack, maximum weekly commitment, and preferred project complexity.'
+            },
+            {
+              number: '02',
+              title: 'Browse opportunities',
+              description:
+                'Unified intake continuously monitors Upwork, Fiverr, and direct leads, standardizing listings into a calm feed.'
+            },
+            {
+              number: '03',
+              title: 'See how well they fit',
+              description:
+                'Review multi-factor recommendation scores with transparent rationale for skills, budget, deadline, and scope.'
+            },
+            {
+              number: '04',
+              title: 'Apply with confidence',
+              description:
+                'Prepare tailored, truth-checked applications under complete human control. Nothing is ever sent automatically.'
+            }
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] hover:border-white/[0.16] transition-colors relative flex flex-col justify-between"
+            >
+              <div>
+                <span className="text-2xl font-mono font-semibold text-slate-500 mb-4 block">
+                  {item.number}
+                </span>
+                <h3 className="text-base font-semibold text-white mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          6. MATCH ANALYSIS: The Decision-Support Interface
+      ────────────────────────────────────────────────────────────── */}
+      <section id="match-analysis" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 block mb-3">
+            Objective Decision Support
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+            See why an opportunity fits.
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            No black-box mystery. Every recommendation is supported by mathematical factor weights and transparent verification.
+          </p>
+        </div>
+
+        {/* Opportunity Selector Tabs */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+          {sampleOpportunities.map(opp => (
+            <button
+              key={opp.id}
+              onClick={() => setSelectedOppId(opp.id)}
+              className={`px-4 py-2 rounded-lg text-xs font-mono transition-all ${
+                selectedOppId === opp.id
+                  ? 'bg-white text-slate-950 font-semibold shadow-sm'
+                  : 'bg-[#0e111a] text-slate-400 hover:text-white border border-white/[0.06]'
+              }`}
+            >
+              {opp.role} · {opp.matchScore} Fit
+            </button>
+          ))}
+        </div>
+
+        {/* Decision Analysis Card */}
+        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] p-6 sm:p-10 shadow-xl max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-white/[0.08]">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/[0.06] text-slate-300 border border-white/[0.08]">
+                  {currentAnalysisOpp.platform}
+                </span>
+                <span className="text-xs font-mono text-slate-400">
+                  {currentAnalysisOpp.timeEstimate}
+                </span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-semibold text-white">
+                {currentAnalysisOpp.title}
+              </h3>
+              <p className="text-sm font-mono text-slate-400 mt-1">
+                Budget: {currentAnalysisOpp.budget}
+              </p>
+            </div>
+
+            <div className="flex items-baseline gap-2 bg-[#0e111c] px-4 py-3 rounded-xl border border-white/[0.08]">
+              <div className="text-right">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
+                  Overall Score
+                </span>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-mono font-bold text-emerald-400">
+                    {currentAnalysisOpp.matchScore}
+                  </span>
+                  <span className="text-xs font-mono text-slate-400">/ 100</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Breakdown Factor Bars */}
+          <div className="py-6 border-b border-white/[0.08] space-y-4">
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
+              Multi-Factor Evaluation Breakdown
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+              <div>
+                <div className="flex justify-between text-slate-300 mb-1">
+                  <span>Skills Fit</span>
+                  <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.skills}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-400 rounded-full transition-all duration-500"
+                    style={{ width: `${currentAnalysisOpp.factors.skills}%` }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-slate-300 mb-1">
+                  <span>Budget Alignment</span>
+                  <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.budget}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-400 rounded-full transition-all duration-500"
+                    style={{ width: `${currentAnalysisOpp.factors.budget}%` }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-slate-300 mb-1">
+                  <span>Experience Seniority</span>
+                  <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.experience}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-400 rounded-full transition-all duration-500"
+                    style={{ width: `${currentAnalysisOpp.factors.experience}%` }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-slate-300 mb-1">
+                  <span>Time & Capacity Fit</span>
+                  <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.time}%</span>
+                </div>
+                <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-400 rounded-full transition-all duration-500"
+                    style={{ width: `${currentAnalysisOpp.factors.time}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Checklist: Why This Opportunity Fits */}
+          <div className="pt-6 space-y-3">
+            <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
+              Why this opportunity fits
+            </span>
+            <div className="space-y-2">
+              {currentAnalysisOpp.whyItFits.map((reason, idx) => (
+                <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-300">
+                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <span>{reason}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          7. MIDWAY EDITORIAL PHOTOGRAPHY SECTION: Atmospheric Calm
+      ────────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
+        <div className="relative rounded-3xl overflow-hidden min-h-[380px] sm:min-h-[440px] flex items-center justify-center p-8 sm:p-14 border border-white/[0.08] shadow-2xl">
+          {/* Authentic High-Quality Real Photography (Unsplash creative professional workspace) */}
+          <div
+            className="absolute inset-0 bg-cover bg-center grayscale opacity-25"
+            style={{ backgroundImage: `url(${siteImages.editorial})` }}
+          />
+
+          {/* Deep Dark Overlay for Pristine Readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#090b10] via-[#090b10]/80 to-[#090b10]/60 pointer-events-none" />
+
+          {/* Minimal Editorial Text */}
+          <div className="relative z-10 text-center max-w-2xl mx-auto space-y-5">
+            <span className="text-xs font-mono uppercase tracking-widest text-slate-400 block">
+              Craftsmanship & Focus
+            </span>
+            <blockquote className="text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white leading-tight">
+              Spend less time searching. <br />
+              <span className="text-slate-300">More time doing work that matters.</span>
+            </blockquote>
+            <p className="text-xs sm:text-sm text-slate-400 font-normal max-w-lg mx-auto leading-relaxed">
+              WorkMatch is built for independent professionals who treat their freelance practice with discipline, precision, and focus.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          8. BENTO FEATURES: Refined Layout with Real Product UI
+      ────────────────────────────────────────────────────────────── */}
+      <section id="features" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+            Platform Capabilities
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+            Designed for thoughtful decisions.
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            Every feature in WorkMatch exists to eliminate guesswork and protect your focus.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* 1. Better Matches */}
+          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+            <div className="space-y-3 mb-6">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block">01 · RELEVANCE</span>
+              <h3 className="text-lg font-semibold text-white">Better Matches</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                See opportunities that match your genuine skills, verified work history, and target rate.
+              </p>
+            </div>
+            {/* Real Mini Product UI */}
+            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-2">
+              <div className="flex justify-between items-center text-slate-400">
+                <span>TypeScript Architect</span>
+                <span className="text-emerald-400 font-bold">96 Match</span>
+              </div>
+              <div className="flex gap-1.5 flex-wrap">
+                <span className="px-1.5 py-0.5 rounded bg-white/[0.05] text-[10px] text-slate-300">React 18</span>
+                <span className="px-1.5 py-0.5 rounded bg-white/[0.05] text-[10px] text-slate-300">Vite</span>
+                <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-[10px] text-emerald-400 border border-emerald-500/20">Verified Fit</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 2. Clear Decisions */}
+          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+            <div className="space-y-3 mb-6">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block">02 · TRANSPARENCY</span>
+              <h3 className="text-lg font-semibold text-white">Clear Decisions</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Understand exactly why an opportunity fits before spending 30 minutes writing an application.
+              </p>
+            </div>
+            {/* Real Mini Product UI */}
+            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-1.5">
+              <div className="flex justify-between text-slate-400 text-[11px]">
+                <span>Rate Alignment</span>
+                <span className="text-slate-200">100% Fit</span>
+              </div>
+              <div className="flex justify-between text-slate-400 text-[11px]">
+                <span>Timeline Window</span>
+                <span className="text-slate-200">20h Open</span>
+              </div>
+              <div className="flex justify-between text-slate-400 text-[11px]">
+                <span>Client Reputation</span>
+                <span className="text-emerald-400 font-medium">★ 4.98 Verified</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Your Preferences */}
+          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+            <div className="space-y-3 mb-6">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block">03 · CONTROL</span>
+              <h3 className="text-lg font-semibold text-white">Your Preferences</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Control budget minimums, weekly capacity, complexity, and asynchronous communication requirements.
+              </p>
+            </div>
+            {/* Real Mini Product UI */}
+            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-2">
+              <div className="flex justify-between text-slate-400">
+                <span>Minimum Rate Floor:</span>
+                <span className="text-slate-200 font-semibold">$50/hr</span>
+              </div>
+              <div className="flex justify-between text-slate-400">
+                <span>Weekly Max:</span>
+                <span className="text-slate-200 font-semibold">25 hrs/wk</span>
+              </div>
+              <div className="flex justify-between text-slate-400">
+                <span>Async-First:</span>
+                <span className="text-emerald-400 font-semibold">Active</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Smart Alerts */}
+          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+            <div className="space-y-3 mb-6">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block">04 · NOTIFICATIONS</span>
+              <h3 className="text-lg font-semibold text-white">Smart Alerts</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Receive quiet notifications only when high-fit listings (≥90 match) appear in your connected marketplaces.
+              </p>
+            </div>
+            {/* Real Mini Product UI */}
+            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-1.5">
+              <div className="flex items-center gap-2 text-emerald-400 text-[11px]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>New 94-Score Listing Detected</span>
+              </div>
+              <p className="text-[11px] text-slate-400 truncate">
+                Upwork: Senior React Architect ($65/hr)
+              </p>
+            </div>
+          </div>
+
+          {/* 5. Proposal Assistance */}
+          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+            <div className="space-y-3 mb-6">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block">05 · TRUTHFULNESS</span>
+              <h3 className="text-lg font-semibold text-white">Proposal Assistance</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Generate proposal drafts strictly cross-referenced against your declared profile. Zero hallucinated claims.
+              </p>
+            </div>
+            {/* Real Mini Product UI */}
+            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-1.5">
+              <div className="flex items-center gap-1.5 text-emerald-400 text-[11px]">
+                <Check className="w-3.5 h-3.5" />
+                <span>100% Truthfulness Guarantee</span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Claims cross-checked against profile inventory
+              </p>
+            </div>
+          </div>
+
+          {/* 6. Application Tracking */}
+          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+            <div className="space-y-3 mb-6">
+              <span className="text-xs font-mono text-emerald-400 font-semibold block">06 · ORGANIZATION</span>
+              <h3 className="text-lg font-semibold text-white">Application Tracking</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Keep opportunities, outreach status, and active contracts unified in a single, distraction-free board.
+              </p>
+            </div>
+            {/* Real Mini Product UI */}
+            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono flex items-center justify-between">
+              <span className="px-2 py-0.5 rounded bg-white/[0.04] text-[10px] text-slate-400">Saved (4)</span>
+              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-[10px] text-emerald-400">Applied (3)</span>
+              <span className="px-2 py-0.5 rounded bg-white/[0.04] text-[10px] text-slate-400">Offer (1)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          9. PERSONALIZATION: Interactive Preferences Interface
+      ────────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+            Custom Fit Tuning
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+            Your preferences. Your opportunities.
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            Tune your discovery parameters in real time. WorkMatch evaluates every incoming contract against your exact boundaries.
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] p-6 sm:p-10 shadow-xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            {/* Left: Preferences Form */}
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between text-xs font-mono mb-2">
+                  <span className="text-slate-400">Hourly Rate Target</span>
+                  <span className="text-white font-semibold">${prefRateFloor} — ${prefRateFloor + 35}/hr</span>
+                </div>
+                <input
+                  type="range"
+                  min="25"
+                  max="120"
+                  step="5"
+                  value={prefRateFloor}
+                  onChange={e => setPrefRateFloor(Number(e.target.value))}
+                  className="w-full accent-emerald-400 bg-white/[0.06] rounded-lg h-1.5 cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <span className="text-xs font-mono text-slate-400 block mb-2">Experience Seniority</span>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['Mid', 'Senior', 'Lead'] as const).map(lvl => (
+                    <button
+                      key={lvl}
+                      onClick={() => setPrefExperience(lvl)}
+                      className={`py-2 rounded-lg text-xs font-mono transition-colors border ${
+                        prefExperience === lvl
+                          ? 'bg-white text-slate-950 font-semibold border-white'
+                          : 'bg-[#0e111a] text-slate-400 border-white/[0.06] hover:text-white'
+                      }`}
+                    >
+                      {lvl}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="flex justify-between text-xs font-mono mb-2">
+                  <span className="text-slate-400">Weekly Capacity</span>
+                  <span className="text-white font-semibold">{prefHours} hrs/week</span>
+                </div>
+                <input
+                  type="range"
+                  min="10"
+                  max="40"
+                  step="5"
+                  value={prefHours}
+                  onChange={e => setPrefHours(Number(e.target.value))}
+                  className="w-full accent-emerald-400 bg-white/[0.06] rounded-lg h-1.5 cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <span className="text-xs font-mono text-slate-400 block mb-2">Project Complexity</span>
+                <div className="grid grid-cols-3 gap-2">
+                  {(['Focused', 'Moderate', 'Architectural'] as const).map(c => (
+                    <button
+                      key={c}
+                      onClick={() => setPrefComplexity(c)}
+                      className={`py-2 rounded-lg text-xs font-mono transition-colors border ${
+                        prefComplexity === c
+                          ? 'bg-white text-slate-950 font-semibold border-white'
+                          : 'bg-[#0e111a] text-slate-400 border-white/[0.06] hover:text-white'
+                      }`}
+                    >
+                      {c}
                     </button>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Radial Result Card (5 cols) - Star of the Section (Requirement 6) */}
-            <div className="lg:col-span-5 p-6 rounded-2xl bg-[#070a12] border border-white/[0.08] text-center space-y-4">
-              {/* Radial Score Gauge Focal Point */}
-              <div className="flex flex-col items-center justify-center my-2">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-2 font-medium">
-                  MATCH SCORE
-                </span>
-
-                <div className="relative inline-flex items-center justify-center">
-                  <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 120 120">
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r={gaugeRadius}
-                      className="text-white/[0.06]"
-                      strokeWidth="7"
-                      stroke="currentColor"
-                      fill="transparent"
-                    />
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r={gaugeRadius}
-                      strokeWidth="7"
-                      strokeDasharray={gaugeCircumference}
-                      strokeDashoffset={gaugeStrokeDashoffset}
-                      strokeLinecap="round"
-                      stroke={computedScore >= 85 ? '#10b981' : computedScore >= 70 ? '#14b8a6' : '#f59e0b'}
-                      fill="transparent"
-                      className="transition-all duration-500 ease-out"
-                    />
-                  </svg>
-
-                  {/* Centered Score */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className={`text-5xl font-extrabold font-mono tracking-tight leading-none ${
-                      computedScore >= 85 ? 'text-emerald-400' : computedScore >= 70 ? 'text-teal-400' : 'text-amber-400'
-                    }`}>
-                      {computedScore}%
-                    </span>
-                    <span className="text-[9px] font-mono uppercase tracking-wider text-slate-400 mt-1">
-                      {computedScore >= 85 ? 'High Fit' : computedScore >= 70 ? 'Moderate' : 'Low Fit'}
-                    </span>
-                  </div>
+            {/* Right: Live Preference Preview & Confirmation */}
+            <div className="p-6 rounded-xl bg-[#090b12] border border-white/[0.06] flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between pb-4 border-b border-white/[0.08] mb-4">
+                  <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                    Profile Configuration
+                  </span>
+                  <span className="text-[11px] font-mono text-emerald-400 flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    LIVE SYNC
+                  </span>
                 </div>
 
-                {/* Rating Label directly below score */}
-                <div className="mt-3">
-                  {computedScore >= 85 ? (
-                    <span className="inline-block text-xs font-mono font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/25 px-3.5 py-1 rounded-full">
-                      Excellent Match • Auto-Approved
-                    </span>
-                  ) : computedScore >= 70 ? (
-                    <span className="inline-block text-xs font-mono font-semibold text-teal-300 bg-teal-500/10 border border-teal-500/25 px-3.5 py-1 rounded-full">
-                      Strong Match • Assisted Review
-                    </span>
-                  ) : (
-                    <span className="inline-block text-xs font-mono font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/25 px-3.5 py-1 rounded-full">
-                      Below Threshold • Auto-Filtered
-                    </span>
-                  )}
+                <div className="space-y-3 text-xs font-mono">
+                  <div className="flex justify-between py-1 border-b border-white/[0.04]">
+                    <span className="text-slate-400">Target Range:</span>
+                    <span className="text-slate-200">${prefRateFloor} — ${prefRateFloor + 35}/hr</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-white/[0.04]">
+                    <span className="text-slate-400">Seniority Bracket:</span>
+                    <span className="text-slate-200">{prefExperience} Practitioner</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-white/[0.04]">
+                    <span className="text-slate-400">Commitment Cap:</span>
+                    <span className="text-slate-200">{prefHours} hrs/week</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-white/[0.04]">
+                    <span className="text-slate-400">Complexity Filter:</span>
+                    <span className="text-slate-200">{prefComplexity}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-slate-400">Remote Verification:</span>
+                    <span className="text-emerald-400">Active</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Supporting Factor Bars */}
-              <div className="space-y-2 text-left text-xs font-mono pt-3 border-t border-white/[0.06]">
-                <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5">
-                    <span>Skills Fit</span>
-                    <span className="text-emerald-400 font-semibold">{simSkillFit}%</span>
-                  </div>
-                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-400 rounded-full transition-all duration-300" style={{ width: `${simSkillFit}%` }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5">
-                    <span>Experience</span>
-                    <span className="text-teal-400 font-semibold">{simExperience}%</span>
-                  </div>
-                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-teal-400 rounded-full transition-all duration-300" style={{ width: `${simExperience}%` }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5">
-                    <span>Budget Yield</span>
-                    <span className="text-white font-semibold">{budgetScore}%</span>
-                  </div>
-                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-white/90 rounded-full transition-all duration-300" style={{ width: `${budgetScore}%` }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5">
-                    <span>Complexity</span>
-                    <span className="text-slate-300 font-semibold">{complexityScore}%</span>
-                  </div>
-                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-400 rounded-full transition-all duration-300" style={{ width: `${complexityScore}%` }} />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-slate-400 mb-0.5">
-                    <span>Deadline</span>
-                    <span className="text-emerald-400 font-semibold">{deadlineScore}%</span>
-                  </div>
-                  <div className="w-full h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-400 rounded-full transition-all duration-300" style={{ width: `${deadlineScore}%` }} />
-                  </div>
-                </div>
+              <div className="mt-6 pt-4 border-t border-white/[0.08]">
+                <p className="text-xs font-mono text-emerald-400 mb-3">
+                  ✓ Your matches update automatically. 3 high-fit opportunities currently match your exact criteria.
+                </p>
+                <button
+                  onClick={onLoadDemoAndLaunch}
+                  className="w-full py-2.5 rounded-lg bg-white text-slate-950 text-xs font-semibold hover:bg-slate-200 transition-colors"
+                >
+                  Test Profile in Sandbox
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 5. AI PROPOSAL STUDIO: Professional Editor Layout (Requirement 8) */}
-      <section id="studio" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            Proposal Studio
+      {/* ─────────────────────────────────────────────────────────────
+          10. JOB DISCOVERY: Premium Professional Browser
+      ────────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+            Real-Time Radar
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-4">
-            Authentic Proposals That Win
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+            Curated opportunities, zero noise.
           </h2>
-          <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-            Notice the difference: zero boilerplate greetings, zero hallucinated claims, and immediate value tailored to the client&apos;s technical scope.
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            Every contract normalized into a clean, readable overview with verified client metrics and transparent match scores.
           </p>
         </div>
 
-        <div className="rounded-3xl card-primary max-w-4xl mx-auto border border-white/[0.08] overflow-hidden shadow-2xl">
-          {/* Breadcrumb Workflow Strip */}
-          <div className="px-6 py-3 bg-[#070a12] border-b border-white/[0.08] flex items-center justify-between text-xs font-mono text-slate-400 flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-300">1. Job Analyzed</span>
-              <span className="text-white/20">→</span>
-              <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" />
-                2. Truth Audit Passed
-              </span>
-              <span className="text-white/20">→</span>
-              <span className="text-white font-semibold">3. Proposal Synthesized</span>
-            </div>
+        {/* Category Filters */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+          {[
+            { id: 'all', label: 'All Opportunities' },
+            { id: 'frontend', label: 'Frontend & UI' },
+            { id: 'fullstack', label: 'Full Stack & APIs' },
+            { id: 'mobile', label: 'Mobile & Systems' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveCategory(tab.id as any)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-colors ${
+                activeCategory === tab.id
+                  ? 'bg-white text-slate-950 font-semibold'
+                  : 'bg-[#0c0e16] text-slate-400 hover:text-white border border-white/[0.06]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-            <span className="text-[11px] text-slate-400">
-              Target: Upwork #8942
-            </span>
-          </div>
+        {/* Opportunities List */}
+        <div className="space-y-4 max-w-4xl mx-auto">
+          {filteredOpportunities.map(opp => (
+            <div
+              key={opp.id}
+              className="p-5 sm:p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] hover:border-white/[0.14] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              <div className="space-y-2 max-w-xl">
+                <div className="flex items-center gap-2 text-xs font-mono">
+                  <span className="px-2 py-0.5 rounded bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+                    {opp.platform}
+                  </span>
+                  <span className="text-slate-400">{opp.timeEstimate}</span>
+                </div>
+                <h3 className="text-base sm:text-lg font-semibold text-white">
+                  {opp.title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                  {opp.summary}
+                </p>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {opp.skills.map((s, i) => (
+                    <span
+                      key={i}
+                      className="px-2 py-0.5 rounded bg-white/[0.04] text-[11px] font-mono text-slate-300"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
 
-          <div className="p-6 sm:p-8 space-y-6">
-            {/* Persona Tabs */}
-            <div className="flex items-center justify-center gap-2 flex-wrap pb-4 border-b border-white/[0.08]">
-              {[
-                { id: 'direct', label: 'Direct & Value-First', tag: 'Highest Conversion' },
-                { id: 'technical', label: 'Technical Specialist', tag: 'Architect Roles' },
-                { id: 'consultative', label: 'Consultative Partner', tag: 'Enterprise Strategy' }
-              ].map(tab => (
+              {/* Right: Rate, Match Metric & Action */}
+              <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/[0.06] flex-shrink-0">
+                <div className="text-left sm:text-right">
+                  <span className="text-sm font-mono font-semibold text-white block">
+                    {opp.budget}
+                  </span>
+                  <span className="text-xs font-mono text-emerald-400">
+                    {opp.matchScore} Fit Score
+                  </span>
+                </div>
                 <button
-                  key={tab.id}
-                  onClick={() => setActivePersona(tab.id as any)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-2 ${
-                    activePersona === tab.id
-                      ? 'bg-white text-slate-950 shadow-sm'
-                      : 'bg-white/[0.03] text-slate-400 hover:text-white border border-white/[0.08]'
+                  onClick={onLoadDemoAndLaunch}
+                  className="px-4 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white text-slate-200 hover:text-slate-950 font-semibold text-xs transition-colors border border-white/[0.1]"
+                >
+                  View in Workspace
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─────────────────────────────────────────────────────────────
+          11. PROPOSALS: Complete Human Control Workflow
+      ────────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+            Human-in-the-Loop Architecture
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+            You remain in complete control.
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            WorkMatch is not an autonomous bot that spams recruiters. It assists your proposal preparation using strictly verified profile facts.
+          </p>
+        </div>
+
+        {/* Workflow Diagram */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center mb-10 max-w-3xl mx-auto font-mono text-xs">
+          {[
+            { step: '01', title: 'Opportunity' },
+            { step: '02', title: 'Review Fit' },
+            { step: '03', title: 'Customize Draft' },
+            { step: '04', title: 'Submit' }
+          ].map((w, idx) => (
+            <div key={idx} className="p-3 rounded-xl bg-[#0c0e16] border border-white/[0.08]">
+              <span className="text-slate-500 font-bold block mb-1">{w.step}</span>
+              <span className="text-slate-200 font-semibold">{w.title}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Interactive Proposal Studio Preview */}
+        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] p-6 sm:p-8 max-w-3xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08] mb-4">
+            <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+              Proposal Assistant Preview
+            </span>
+            <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08] text-xs font-mono">
+              {(['direct', 'technical', 'consultative'] as const).map(angle => (
+                <button
+                  key={angle}
+                  onClick={() => setProposalAngle(angle)}
+                  className={`px-3 py-1 rounded capitalize transition-colors ${
+                    proposalAngle === angle ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
                   }`}
                 >
-                  <span>{tab.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
-                    activePersona === tab.id ? 'bg-slate-950/15 text-slate-950 font-bold' : 'bg-white/10 text-slate-400'
-                  }`}>
-                    {tab.tag}
-                  </span>
+                  {angle}
                 </button>
               ))}
             </div>
+          </div>
 
-            {/* Realistic Editor Chrome (Requirement 8) */}
-            <div className="rounded-2xl card-terminal overflow-hidden border border-white/[0.08]">
-              {/* Editor Header Bar with Match Status */}
-              <div className="px-5 py-3 bg-[#090d16] border-b border-white/[0.08] flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80" />
-                  </div>
-                  <span className="text-xs font-mono text-slate-300 font-medium">proposal-draft.md</span>
-                </div>
+          {/* Proposal Draft Body */}
+          <div className="p-5 rounded-xl bg-[#090b12] border border-white/[0.06] font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed mb-4">
+            {proposalDraft}
+          </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/25">
-                    Match: 98%
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-400 hidden sm:inline">
-                    Simulated Preview
-                  </span>
-                </div>
-              </div>
-
-              {/* Proposal Content Body */}
-              <div className="p-5 sm:p-7 text-xs sm:text-sm text-slate-200 leading-relaxed font-mono whitespace-pre-wrap select-text">
-                {proposalTexts[activePersona]}
-              </div>
-
-              {/* Metadata & Actions Footer Bar */}
-              <div className="px-5 py-3.5 bg-[#090d16] border-t border-white/[0.08] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
-                {/* Metadata Tags */}
-                <div className="flex items-center gap-4 text-slate-400 font-mono text-[11px] flex-wrap">
-                  <div className="flex items-center gap-1.5 text-emerald-300">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Skills: Verified</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500">Tone: </span>
-                    <span className="text-white capitalize">{activePersona}</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500">Length: </span>
-                    <span className="text-slate-300">128 words</span>
-                  </div>
-                </div>
-
-                {/* Copy Button */}
-                <button
-                  onClick={() => handleCopyProposal(proposalTexts[activePersona])}
-                  className={`flex items-center justify-center gap-1.5 px-5 py-2 rounded-xl text-xs font-mono font-semibold transition active:scale-95 border ${
-                    isCopied
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 shadow-sm'
-                      : 'bg-white text-slate-950 hover:bg-slate-100 border-transparent shadow-sm'
-                  }`}
-                >
-                  {isCopied ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Copied to Clipboard!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>Copy Proposal</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
+          <div className="flex items-center justify-between text-xs font-mono text-slate-400">
+            <span className="flex items-center gap-1.5 text-emerald-400">
+              <Check className="w-3.5 h-3.5" />
+              <span>100% verified profile skills used</span>
+            </span>
+            <button
+              onClick={handleCopyProposal}
+              className="px-3 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
+            >
+              <Copy className="w-3 h-3" />
+              <span>{isCopied ? 'Copied to Clipboard' : 'Copy Sample Proposal'}</span>
+            </button>
           </div>
         </div>
       </section>
 
-      {/* 6. COMPARISON MATRIX: ANTI-SLOP (Visual Hierarchy & Scannability) */}
-      <section id="comparison" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            The Anti-Slop Advantage
+      {/* ─────────────────────────────────────────────────────────────
+          12. PRICING SECTION: Clean, Transparent
+      ────────────────────────────────────────────────────────────── */}
+      <section id="pricing" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+            Transparent Pricing
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-4">
-            How WorkMatch Compares
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+            Simple, predictable plans.
           </h2>
-          <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-            See why serious freelancers choose deterministic truth over robotic spam scrapers and manual refreshing.
+          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+            No surprise add-ons. Full access to marketplace discovery, scoring, and proposal preparation.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Manual */}
-          <div className="p-6 sm:p-7 rounded-2xl card-primary space-y-4 border border-white/[0.08] flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
-                <span className="text-xs font-mono font-semibold uppercase text-slate-400">Old Way</span>
-                <span className="text-sm font-mono text-slate-500">MANUAL</span>
+          {/* Free Starter */}
+          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+            <div>
+              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-2">Sandbox</span>
+              <h3 className="text-xl font-semibold text-white mb-1">Free Explorer</h3>
+              <p className="text-xs text-slate-400 mb-6">Explore the recommendation engine with demo data.</p>
+              <div className="text-3xl font-mono font-bold text-white mb-6">$0</div>
+
+              <div className="space-y-2.5 text-xs text-slate-300">
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Full Mock Simulation Dataset</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>15 Opportunity Fit Audits</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Proposal Assistant Editor</span>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-slate-200">Manual Job Search</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Exhausting, slow, and reliant on intuition rather than empirical profitability data.
-              </p>
-              <ul className="space-y-2.5 text-xs text-slate-300 pt-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
-                  <span>Hours lost refreshing multiple browser tabs</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
-                  <span>Unscientific gut-feeling applications</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
-                  <span>Slow drafting misses early high-visibility bid window</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
-                  <span>Untracked connect capital waste</span>
-                </li>
-              </ul>
             </div>
+
+            <button
+              onClick={onLoadDemoAndLaunch}
+              className="mt-8 w-full py-2.5 rounded-lg bg-white/[0.06] hover:bg-white text-slate-200 hover:text-slate-950 font-semibold text-xs transition-colors border border-white/[0.1]"
+            >
+              Launch Free Sandbox
+            </button>
           </div>
 
-          {/* Card 2: Generic AI Bots */}
-          <div className="p-6 sm:p-7 rounded-2xl card-primary space-y-4 border border-rose-500/20 bg-[#0e090f] flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-rose-500/20">
-                <span className="text-xs font-mono font-semibold uppercase text-rose-400">High Risk</span>
-                <span className="text-sm font-mono text-rose-400">UNCONSTRAINED AI</span>
+          {/* Pro Freelancer (Featured) */}
+          <div className="p-6 rounded-2xl bg-[#101422] border border-emerald-500/30 flex flex-col justify-between relative shadow-xl">
+            <span className="absolute -top-3 right-6 px-2.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-mono font-bold tracking-wider uppercase">
+              Most Popular
+            </span>
+            <div>
+              <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider block mb-2">Independent</span>
+              <h3 className="text-xl font-semibold text-white mb-1">Pro Freelancer</h3>
+              <p className="text-xs text-slate-400 mb-6">For craftspeople actively acquiring contracts.</p>
+              <div className="text-3xl font-mono font-bold text-white mb-6">
+                $29 <span className="text-xs font-normal text-slate-400 font-sans">/ month</span>
               </div>
-              <h3 className="text-lg font-bold text-white">Generic AI Spam Bots</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Cheap scrapers that flood clients with generic template spam, ruining client trust.
-              </p>
-              <ul className="space-y-2.5 text-xs text-slate-300 pt-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
-                  <span>Canned templates flagged as spam by client filters</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
-                  <span>Hallucinates skills &amp; experience you don&apos;t possess</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
-                  <span>Severe risk of permanent Upwork account ban</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
-                  <span>Drains connects on low-paying or scam jobs</span>
-                </li>
-              </ul>
+
+              <div className="space-y-2.5 text-xs text-slate-300">
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Unlimited Marketplace Discovery</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Real-Time Fit Scoring & Alerts</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Truth-Checked Proposal Drafting</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Emergency Safety Kill Switch</span>
+                </div>
+              </div>
             </div>
+
+            <button
+              onClick={onLaunchApp}
+              className="mt-8 w-full py-2.5 rounded-lg bg-white hover:bg-slate-200 text-slate-950 font-semibold text-xs transition-colors shadow-sm"
+            >
+              Start Pro Access
+            </button>
           </div>
 
-          {/* Card 3: WorkMatch OS (The Standard) */}
-          <div className="p-6 sm:p-7 rounded-2xl card-primary space-y-4 border border-emerald-500/30 bg-[#091119] shadow-[0_0_20px_rgba(16,185,129,0.06)] flex flex-col justify-between relative">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-emerald-500/20">
-                <span className="text-xs font-mono font-bold uppercase text-emerald-400">The Pro Standard</span>
-                <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">WORKMATCH OS</span>
+          {/* Studio / Agency */}
+          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+            <div>
+              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-2">Team</span>
+              <h3 className="text-xl font-semibold text-white mb-1">Studio / Agency</h3>
+              <p className="text-xs text-slate-400 mb-6">For multi-person teams and talent networks.</p>
+              <div className="text-3xl font-mono font-bold text-white mb-6">
+                $79 <span className="text-xs font-normal text-slate-400 font-sans">/ month</span>
               </div>
-              <h3 className="text-lg font-bold text-white">WorkMatch Intelligence</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Deterministic truth enforcement, mathematically verified fit scores, and client-tailored proposals.
-              </p>
-              <ul className="space-y-2.5 text-xs text-slate-200 pt-2">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <span>24/7 Sub-second marketplace intake &amp; alerts</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <span>9-Factor multi-dimensional match formula (≥ 85%)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <span>100% Truthful audit bounded to verified skills</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <span>Safety Controls &amp; institutional audit ledger</span>
-                </li>
-              </ul>
+
+              <div className="space-y-2.5 text-xs text-slate-300">
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Multi-Profile Capability Management</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Team Workload & Capacity Balancing</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Priority Channel Webhooks</span>
+                </div>
+              </div>
             </div>
+
+            <button
+              onClick={onLaunchApp}
+              className="mt-8 w-full py-2.5 rounded-lg bg-white/[0.06] hover:bg-white text-slate-200 hover:text-slate-950 font-semibold text-xs transition-colors border border-white/[0.1]"
+            >
+              Open Studio Workspace
+            </button>
           </div>
         </div>
       </section>
 
-      {/* 7. ROI CALCULATOR */}
-      <section id="roi" className="relative z-10 py-24 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            ROI &amp; Connect Savings
+      {/* ─────────────────────────────────────────────────────────────
+          13. FAQ SECTION: Clear, Human Answers
+      ────────────────────────────────────────────────────────────── */}
+      <section id="faq" className="py-20 px-4 sm:px-6 max-w-4xl mx-auto border-t border-white/[0.08]">
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+            Common Questions
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-4">
-            Calculate Time &amp; Capital Reclaimed
-          </h2>
-          <p className="text-sm text-slate-400 mt-3 leading-relaxed">
-            See how much time and wasted connect capital WorkMatch recovers for you each month.
-          </p>
-        </div>
-
-        <div className="p-6 sm:p-9 rounded-3xl card-primary max-w-4xl mx-auto border border-white/[0.08] shadow-2xl">
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="font-medium text-slate-300">How many proposals do you send per month?</span>
-                <span className="font-mono text-emerald-400 font-bold text-sm">{monthlyProposals} proposals</span>
-              </div>
-              <input
-                type="range"
-                min="10"
-                max="100"
-                value={monthlyProposals}
-                onChange={e => setMonthlyProposals(Number(e.target.value))}
-                className="w-full accent-emerald-400 cursor-pointer h-2 bg-white/10 rounded-lg"
-                aria-label="Monthly proposals"
-              />
-            </div>
-
-            {/* ROI Metrics Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-white/[0.08] text-center">
-              <div className="p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] space-y-1">
-                <span className="text-[11px] text-slate-400 font-mono uppercase">Freelance Hours Saved</span>
-                <div className="text-3xl font-extrabold font-mono text-emerald-400">~{hoursSaved} hrs</div>
-                <span className="text-[10px] text-emerald-300">Every single month</span>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] space-y-1">
-                <span className="text-[11px] text-slate-400 font-mono uppercase">Connects Capital Rescued</span>
-                <div className="text-3xl font-extrabold font-mono text-teal-400">~{connectsSaved}</div>
-                <span className="text-[10px] text-teal-300">${estDollarConnects} USD saved</span>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#070a12] border border-white/[0.08] space-y-1">
-                <span className="text-[11px] text-slate-400 font-mono uppercase">Billable Value Unlocked</span>
-                <div className="text-3xl font-extrabold font-mono text-white">${estExtraEarnings}</div>
-                <span className="text-[10px] text-slate-400">At standard $50/hr billing</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. FAQ ACCORDION */}
-      <section id="faq" className="relative z-10 py-24 px-4 sm:px-6 max-w-4xl mx-auto border-t border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="px-3 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
             Frequently Asked Questions
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mt-4">
-            Clarity &amp; Security First
           </h2>
+          <p className="text-sm text-slate-400 leading-relaxed">
+            Everything you need to know about WorkMatch recommendation engine, safety, and privacy.
+          </p>
         </div>
 
         <div className="space-y-3">
           {[
             {
-              q: 'Will using WorkMatch get my Upwork or Fiverr account banned?',
-              a: 'No. WorkMatch uses standard official partner credentials, human-in-the-loop assisted approval by default, and strict anti-spam rate limiting. It never sends mass indiscriminate applications.'
+              q: 'Does WorkMatch apply to jobs automatically without my approval?',
+              a: 'No. WorkMatch is an intelligence and decision-support tool, not an autonomous spam bot. Every proposal draft must be reviewed, confirmed, and dispatched by you.'
             },
             {
-              q: 'Can I test WorkMatch without connecting my real platform accounts?',
+              q: 'How does the recommendation fit score work?',
+              a: 'WorkMatch evaluates every opportunity across 5 mathematical dimensions: skills overlap, budget floor, experience level, weekly capacity, and client payment reputation. The resulting 0–100 score gives you an instant measure of fit.'
+            },
+            {
+              q: 'Can I test WorkMatch without connecting live accounts?',
               a: 'Yes! WorkMatch includes full Mock Simulation Mode with a 1-click demo seed dataset that creates realistic marketplace jobs, verified client profiles, and test proposals instantly.'
             },
             {
-              q: 'How does the 100% Truthfulness Guarantee work?',
-              a: 'WorkMatch strictly cross-references every sentence generated against your declared skills inventory. If an opportunity mentions a technology you do not possess, it never fabricates experience—it focuses solely on your actual strengths or lowers the score.'
+              q: 'How does WorkMatch prevent hallucinated or exaggerated claims in proposals?',
+              a: 'The proposal assistant strictly checks every reference against your declared profile inventory. If a job mentions a technology you do not possess, WorkMatch will never fabricate experience.'
             },
             {
-              q: 'What are the Safety Controls & Kill Switch?',
-              a: 'A prominent safety control available on all views. Pressing it activates an immediate system-wide tripwire that disables all automated proposals in sub-5ms across every connected channel.'
+              q: 'What is the Safety Emergency Stop?',
+              a: 'A prominent safety control available on all views. Activating it engages an immediate system-wide tripwire that halts all proposal generation across all connected channels.'
             }
           ].map((item, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-2xl card-primary border border-white/[0.08] transition"
+              className="p-5 rounded-xl bg-[#0c0e16] border border-white/[0.08] transition-colors"
             >
               <button
                 onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                className="w-full text-left flex items-center justify-between gap-4 text-sm font-semibold text-white hover:text-emerald-300 transition"
+                className="w-full text-left flex items-center justify-between gap-4 text-sm font-semibold text-white hover:text-emerald-300 transition-colors"
                 aria-expanded={openFaq === idx}
               >
                 <span>{item.q}</span>
-                {openFaq === idx ? <ChevronUp className="w-4 h-4 text-white flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />}
+                {openFaq === idx ? (
+                  <ChevronUp className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                )}
               </button>
               {openFaq === idx && (
-                <div className="pt-3 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-white/[0.08] mt-3">
+                <div className="pt-3 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/[0.06] mt-3">
                   {item.a}
                 </div>
               )}
@@ -1652,45 +1658,47 @@ Let's align on your key business milestones and release schedule.`
         </div>
       </section>
 
-      {/* 9. FINAL HIGH-IMPACT CONVERSION CTA */}
-      <section className="relative z-10 py-24 px-4 sm:px-6 max-w-5xl mx-auto">
-        <div className="relative rounded-3xl p-8 sm:p-12 card-primary text-center overflow-hidden border border-white/[0.1] shadow-2xl">
-          {/* Cyber neural grid background layer */}
-          <div className="absolute inset-0 bg-[url('/images/neural-grid.jpg')] bg-cover bg-center opacity-15 mix-blend-screen pointer-events-none" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/80 to-transparent pointer-events-none" />
+      {/* ─────────────────────────────────────────────────────────────
+          14. FINAL CTA: Confident, Editorial, Clean
+      ────────────────────────────────────────────────────────────── */}
+      <section className="py-24 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
+        <div className="rounded-3xl bg-[#0c0e16] border border-white/[0.08] p-8 sm:p-14 text-center max-w-3xl mx-auto shadow-2xl relative overflow-hidden">
+          {/* Subtle real-world photography accent */}
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-[0.05] grayscale pointer-events-none"
+            style={{ backgroundImage: `url(${siteImages.workspace})` }}
+          />
 
-          {/* Subtle Ambient Radial */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 blur-[120px] pointer-events-none" />
-
-          <div className="relative space-y-6 max-w-2xl mx-auto">
-            <span className="px-3.5 py-1 rounded-full text-[11px] font-mono font-semibold tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
-              Production Access
+          <div className="relative space-y-5">
+            <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 block">
+              Begin Decision Discovery
             </span>
-            <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white">
-              Ready to win more contracts in 90% less time?
+            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+              Your next opportunity should fit.
             </h2>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Launch the live demo workspace right now. No credit card or API keys required to explore the full suite.
+            <p className="text-sm sm:text-base text-slate-400 max-w-lg mx-auto leading-relaxed">
+              Stop sorting through jobs that aren't right for you. Explore the live sandbox demo right now.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
               <button
                 onClick={onLoadDemoAndLaunch}
                 disabled={isLoadingDemo}
-                className="w-full sm:w-auto bg-white text-slate-950 hover:bg-slate-100 text-sm md:text-base px-8 py-3.5 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.3),0_0_16px_rgba(255,255,255,0.12)] font-semibold transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-7 py-3 rounded-lg bg-white hover:bg-slate-100 text-slate-950 font-semibold text-sm transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm"
               >
                 {isLoadingDemo ? (
-                  <div className="w-4 h-4 rounded-full border-2 border-slate-950 border-t-transparent animate-spin" />
+                  <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  <Zap className="w-4 h-4 fill-current text-slate-950" />
+                  <>
+                    <span>Find Your Matches</span>
+                    <ArrowRight className="w-4 h-4 text-slate-950" />
+                  </>
                 )}
-                <span>{isLoadingDemo ? 'Seeding Sandbox...' : 'Launch Live Demo Sandbox'}</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
               </button>
 
               <button
                 onClick={onLaunchApp}
-                className="w-full sm:w-auto bg-[#070a12] hover:bg-[#0c111d] text-slate-200 border border-white/[0.12] text-sm md:text-base px-7 py-3.5 rounded-full transition-all hover:scale-105 active:scale-95"
+                className="w-full sm:w-auto px-7 py-3 rounded-lg bg-[#0e111a] hover:bg-[#131724] text-slate-300 border border-white/[0.08] hover:border-white/[0.14] text-sm font-medium transition-all"
               >
                 Open Workspace Dashboard
               </button>
@@ -1699,19 +1707,30 @@ Let's align on your key business milestones and release schedule.`
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="relative z-10 border-t border-white/[0.08] mt-16 p-8 text-center text-slate-400 text-xs font-mono">
+      {/* ─────────────────────────────────────────────────────────────
+          15. FOOTER: Minimalist Editorial
+      ────────────────────────────────────────────────────────────── */}
+      <footer className="border-t border-white/[0.08] py-10 px-4 sm:px-6 text-xs font-mono text-slate-400">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-white tracking-tight">WorkMatch OS</span>
+            <span className="font-semibold text-white">WorkMatch</span>
             <span>•</span>
-            <span className="text-slate-400">Autonomous Freelance Operating System</span>
+            <span>Work discovery and decision intelligence for freelancers</span>
           </div>
 
-          <div className="flex items-center gap-6 text-slate-300">
-            <button onClick={onLaunchApp} className="hover:text-white transition">Workspace</button>
-            <button onClick={() => handleScrollTo('simulator')} className="hover:text-white transition">Simulator</button>
-            <button onClick={() => handleScrollTo('faq')} className="hover:text-white transition">FAQ</button>
+          <div className="flex items-center gap-6 text-slate-400">
+            <button onClick={() => handleScrollTo('product-overview')} className="hover:text-white transition-colors">
+              Product
+            </button>
+            <button onClick={() => handleScrollTo('how-it-works')} className="hover:text-white transition-colors">
+              How It Works
+            </button>
+            <button onClick={() => handleScrollTo('pricing')} className="hover:text-white transition-colors">
+              Pricing
+            </button>
+            <button onClick={() => handleScrollTo('faq')} className="hover:text-white transition-colors">
+              FAQ
+            </button>
           </div>
 
           <div>
