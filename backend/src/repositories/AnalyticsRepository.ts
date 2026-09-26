@@ -267,15 +267,12 @@ export class AnalyticsRepository {
       from_date: fromIso.slice(0, 10),
       to_date: toIso.slice(0, 10),
       metrics,
-      platform_breakdown: platformBreakdown.length > 0 ? platformBreakdown : [
-        { name: 'UPWORK', count: metrics.applications || 4 },
-        { name: 'FIVERR', count: 1 }
-      ],
+      platform_breakdown: platformBreakdown,
       spending_summary: {
-        total_connects: metrics.total_connects_spent || 18,
-        estimated_usd_cost: (metrics.total_connects_spent || 18) * 0.15
+        total_connects: metrics.total_connects_spent || 0,
+        estimated_usd_cost: (metrics.total_connects_spent || 0) * 0.15
       },
-      top_categories: topCategories.length > 0 ? topCategories : ['Data Entry', 'Web Research', 'Virtual Assistant'],
+      top_categories: topCategories,
       top_skills: topSkills,
       proposal_performance: proposalPerformance,
       chronological_events: eventRows

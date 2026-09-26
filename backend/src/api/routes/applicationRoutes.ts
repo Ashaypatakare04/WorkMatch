@@ -20,11 +20,18 @@ applicationsRouter.get('/', (req: AuthenticatedRequest, res: Response): void => 
 // Single application details
 applicationsRouter.get('/:id', (req: AuthenticatedRequest, res: Response): void => {
   try {
+    const userId = req.user?.userId;
     const app = ApplicationRepository.getById(req.params.id);
     if (!app) {
       res.status(404).json({ error: 'Application not found' });
       return;
     }
+
+    if (app.user_id !== userId && !req.user?.isAdmin) {
+      res.status(403).json({ error: 'Forbidden: You do not own this application' });
+      return;
+    }
+
     res.json({ success: true, application: app });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -73,6 +80,11 @@ applicationsRouter.post('/:id/status', (req: AuthenticatedRequest, res: Response
 
     if (!existing) {
       res.status(404).json({ error: 'Application not found' });
+      return;
+    }
+
+    if (existing.user_id !== userId && !req.user?.isAdmin) {
+      res.status(403).json({ error: 'Forbidden: You do not own this application' });
       return;
     }
 

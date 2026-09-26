@@ -56,10 +56,10 @@ export function generateJobHash(job: {
   description: string;
   client?: { name?: string };
 }): string {
-  const normalizedTitle = job.title.trim().toLowerCase().replace(/\s+/g, ' ');
-  const normalizedDesc = job.description.trim().toLowerCase().substring(0, 300).replace(/\s+/g, ' ');
-  const clientName = job.client?.name?.trim().toLowerCase() || '';
+  const normalizedTitle = (job.title || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const normalizedDesc = (job.description || '').trim().toLowerCase().substring(0, 300).replace(/\s+/g, ' ');
+  const clientName = (job.client?.name || '').trim().toLowerCase();
 
-  const raw = `${job.platform}:${job.platform_job_id}:${normalizedTitle}:${normalizedDesc}:${clientName}`;
+  const raw = `${job.platform || 'unknown'}:${job.platform_job_id || ''}:${normalizedTitle}:${normalizedDesc}:${clientName}`;
   return crypto.createHash('sha256').update(raw).digest('hex');
 }

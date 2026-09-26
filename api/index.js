@@ -27231,7 +27231,7 @@ if (!fs.existsSync(DB_DIR)) {
     console.warn(`[Database] Directory creation notice for ${DB_DIR}:`, err);
   }
 }
-var Database = class _Database {
+var Database2 = class _Database {
   static instance = null;
   static get() {
     if (!_Database.instance) {
@@ -27617,7 +27617,7 @@ function runMigrations() {
       schemaSql = fs2.readFileSync(schemaPath, "utf8");
     }
   }
-  Database.exec(schemaSql);
+  Database2.exec(schemaSql);
   console.log("[Database] Database schema initialized successfully.");
 }
 if (process.argv[1] && (process.argv[1].endsWith("migrate.ts") || process.argv[1].endsWith("migrate.js"))) {
@@ -27647,10 +27647,10 @@ var ConnectorRegistry = class _ConnectorRegistry {
 // backend/src/models/NormalizedJob.ts
 import crypto2 from "node:crypto";
 function generateJobHash(job) {
-  const normalizedTitle = job.title.trim().toLowerCase().replace(/\s+/g, " ");
-  const normalizedDesc = job.description.trim().toLowerCase().substring(0, 300).replace(/\s+/g, " ");
-  const clientName = job.client?.name?.trim().toLowerCase() || "";
-  const raw = `${job.platform}:${job.platform_job_id}:${normalizedTitle}:${normalizedDesc}:${clientName}`;
+  const normalizedTitle = (job.title || "").trim().toLowerCase().replace(/\s+/g, " ");
+  const normalizedDesc = (job.description || "").trim().toLowerCase().substring(0, 300).replace(/\s+/g, " ");
+  const clientName = (job.client?.name || "").trim().toLowerCase();
+  const raw = `${job.platform || "unknown"}:${job.platform_job_id || ""}:${normalizedTitle}:${normalizedDesc}:${clientName}`;
   return crypto2.createHash("sha256").update(raw).digest("hex");
 }
 
@@ -28291,15 +28291,20 @@ function authMiddleware(req, res, next) {
       req.user = decoded;
       return next();
     } catch (err) {
+      res.status(401).json({ error: "Invalid or expired authorization token", code: "UNAUTHORIZED" });
+      return;
     }
   }
-  req.user = {
-    userId: "user_default",
-    email: "user@workmatch.local",
-    isAdmin: true,
-    planType: "personal"
-  };
-  next();
+  if (process.env.ALLOW_DEV_FALLBACK === "true") {
+    req.user = {
+      userId: "user_default",
+      email: "user@workmatch.local",
+      isAdmin: true,
+      planType: "personal"
+    };
+    return next();
+  }
+  res.status(401).json({ error: "Authentication required. Please provide a valid Bearer token.", code: "UNAUTHORIZED" });
 }
 function generateToken(payload) {
   return import_jsonwebtoken.default.sign(payload, JWT_SECRET, { expiresIn: "30d" });
@@ -28340,12 +28345,12 @@ var DEFAULT_SCORING_THRESHOLDS = {
 var UserRepository = class _UserRepository {
   static create(user) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `INSERT INTO users (id, email, password_hash, full_name, is_admin, plan_type, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [user.id, user.email, user.password_hash || "", user.full_name, user.is_admin ? 1 : 0, user.plan_type, now, now]
     );
-    Database.execute(
+    Database2.execute(
       `INSERT INTO user_profiles (id, user_id, headline, bio, years_experience, hourly_rate, availability_hours_per_day, availability_days_per_week, preferred_working_hours, max_simultaneous_projects, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -28363,7 +28368,7 @@ var UserRepository = class _UserRepository {
         now
       ]
     );
-    Database.execute(
+    Database2.execute(
       `INSERT INTO user_preferences (id, user_id, preferred_categories, excluded_keywords, preferred_difficulty, min_budget, preferred_max_workload, preferred_duration, preferred_deadline, preferred_communication_level, preferred_max_tasks, difficulty_weights, scoring_thresholds, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -28383,7 +28388,7 @@ var UserRepository = class _UserRepository {
         now
       ]
     );
-    Database.execute(
+    Database2.execute(
       `INSERT INTO automation_settings (id, user_id, application_mode, is_active, emergency_stop, max_daily_applications, max_hourly_applications, min_match_score, max_connect_cost, allowed_categories, excluded_categories, max_budget_limit, require_low_risk_only, applications_today_count, last_reset_date, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -28405,7 +28410,7 @@ var UserRepository = class _UserRepository {
         now
       ]
     );
-    Database.execute(
+    Database2.execute(
       `INSERT INTO notification_preferences (id, user_id, browser_enabled, email_enabled, telegram_enabled, discord_enabled, min_score_threshold, alert_high_risk, quiet_hours_start, quiet_hours_end, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [`notifpref_${user.id}`, user.id, 1, 0, 0, 0, 85, 1, "22:00", "08:00", now]
@@ -28413,7 +28418,7 @@ var UserRepository = class _UserRepository {
     return _UserRepository.findById(user.id);
   }
   static findByEmail(email) {
-    const row = Database.queryOne("SELECT * FROM users WHERE email = ?", [email.toLowerCase().trim()]);
+    const row = Database2.queryOne("SELECT * FROM users WHERE email = ?", [email.toLowerCase().trim()]);
     if (!row) return null;
     return {
       id: row.id,
@@ -28427,7 +28432,7 @@ var UserRepository = class _UserRepository {
     };
   }
   static findById(id) {
-    const row = Database.queryOne("SELECT * FROM users WHERE id = ?", [id]);
+    const row = Database2.queryOne("SELECT * FROM users WHERE id = ?", [id]);
     if (!row) return null;
     return {
       id: row.id,
@@ -28440,10 +28445,10 @@ var UserRepository = class _UserRepository {
     };
   }
   static getProfile(userId) {
-    const profRow = Database.queryOne("SELECT * FROM user_profiles WHERE user_id = ?", [userId]);
+    const profRow = Database2.queryOne("SELECT * FROM user_profiles WHERE user_id = ?", [userId]);
     if (!profRow) return null;
-    const prefRow = Database.queryOne("SELECT * FROM user_preferences WHERE user_id = ?", [userId]);
-    const skillsRows = Database.query("SELECT * FROM user_skills WHERE user_id = ? ORDER BY skill_name ASC", [userId]);
+    const prefRow = Database2.queryOne("SELECT * FROM user_preferences WHERE user_id = ?", [userId]);
+    const skillsRows = Database2.query("SELECT * FROM user_skills WHERE user_id = ? ORDER BY skill_name ASC", [userId]);
     const skills = skillsRows.map((r) => ({
       id: r.id,
       skill_name: r.skill_name,
@@ -28493,7 +28498,7 @@ var UserRepository = class _UserRepository {
   }
   static updateProfile(userId, data) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `UPDATE user_profiles
        SET headline = COALESCE(?, headline),
            bio = COALESCE(?, bio),
@@ -28526,11 +28531,11 @@ var UserRepository = class _UserRepository {
     }
   }
   static setSkills(userId, skills) {
-    Database.transaction(() => {
-      Database.execute("DELETE FROM user_skills WHERE user_id = ?", [userId]);
+    Database2.transaction(() => {
+      Database2.execute("DELETE FROM user_skills WHERE user_id = ?", [userId]);
       const now = (/* @__PURE__ */ new Date()).toISOString();
       for (const skill of skills) {
-        Database.execute(
+        Database2.execute(
           `INSERT INTO user_skills (id, user_id, skill_name, category, proficiency_level, years_experience, verified, created_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
           [
@@ -28563,7 +28568,7 @@ var UserRepository = class _UserRepository {
       difficulty_weights: preferences.difficulty_weights ?? current?.difficulty_weights ?? DEFAULT_DIFFICULTY_WEIGHTS,
       scoring_thresholds: preferences.scoring_thresholds ?? current?.scoring_thresholds ?? DEFAULT_SCORING_THRESHOLDS
     };
-    Database.execute(
+    Database2.execute(
       `UPDATE user_preferences
        SET preferred_categories = ?,
            excluded_keywords = ?,
@@ -30323,8 +30328,12 @@ var bcryptjs_default = {
 // backend/src/security/crypto.ts
 import crypto3 from "node:crypto";
 var ENCRYPTION_SECRET = process.env.ENCRYPTION_SECRET || "workmatch-default-secret-key-32-chars-long!!";
+var ENCRYPTION_SALT = process.env.ENCRYPTION_SALT || "workmatch_secure_system_salt_2026";
 var ALGORITHM = "aes-256-cbc";
-var KEY = crypto3.scryptSync(ENCRYPTION_SECRET, "salt", 32);
+var KEY = crypto3.scryptSync(ENCRYPTION_SECRET, ENCRYPTION_SALT, 32);
+if (process.env.NODE_ENV === "production" && ENCRYPTION_SECRET.includes("workmatch-default")) {
+  console.warn("[SECURITY WARNING] Using default encryption secret in production! Please set ENCRYPTION_SECRET in your environment.");
+}
 var Security = class {
   static async hashPassword(password) {
     const salt = await bcryptjs_default.genSalt(10);
@@ -30415,8 +30424,35 @@ authRouter.post("/login", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-authRouter.get("/me", (req, res) => {
-  const userId = req.user?.userId || "user_default";
+authRouter.post("/demo", async (req, res) => {
+  try {
+    let defaultUser = UserRepository.findById("user_default");
+    if (!defaultUser) {
+      defaultUser = UserRepository.create({
+        id: "user_default",
+        email: "user@workmatch.local",
+        full_name: "Alex Mercer",
+        is_admin: true,
+        plan_type: "personal"
+      });
+    }
+    const token = generateToken({
+      userId: defaultUser.id,
+      email: defaultUser.email,
+      isAdmin: defaultUser.is_admin,
+      planType: defaultUser.plan_type
+    });
+    res.json({ success: true, token, user: defaultUser });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+authRouter.get("/me", authMiddleware, (req, res) => {
+  const userId = req.user?.userId;
+  if (!userId) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
   const user = UserRepository.findById(userId);
   if (!user) {
     res.status(404).json({ error: "User not found" });
@@ -30432,11 +30468,11 @@ var import_express2 = __toESM(require_express2(), 1);
 var JobRepository = class _JobRepository {
   static insertJob(job) {
     const hash2 = job.hash || generateJobHash(job);
-    const existing = Database.queryOne("SELECT id FROM jobs WHERE hash = ?", [hash2]);
+    const existing = Database2.queryOne("SELECT id FROM jobs WHERE hash = ?", [hash2]);
     if (existing) {
       return { inserted: false, id: existing.id };
     }
-    Database.execute(
+    Database2.execute(
       `INSERT INTO jobs (
         id, platform, platform_job_id, url, title, description, category,
         budget_type, budget_min, budget_max, budget_currency, experience_level,
@@ -30482,7 +30518,7 @@ var JobRepository = class _JobRepository {
   static insertBatch(jobs) {
     let insertedCount = 0;
     let duplicateCount = 0;
-    Database.transaction(() => {
+    Database2.transaction(() => {
       for (const job of jobs) {
         const res = _JobRepository.insertJob(job);
         if (res.inserted) {
@@ -30495,12 +30531,12 @@ var JobRepository = class _JobRepository {
     return { insertedCount, duplicateCount };
   }
   static findById(id) {
-    const r = Database.queryOne("SELECT * FROM jobs WHERE id = ?", [id]);
+    const r = Database2.queryOne("SELECT * FROM jobs WHERE id = ?", [id]);
     if (!r) return null;
     return _JobRepository.mapRowToNormalizedJob(r);
   }
   static findByHash(hash2) {
-    const r = Database.queryOne("SELECT * FROM jobs WHERE hash = ?", [hash2]);
+    const r = Database2.queryOne("SELECT * FROM jobs WHERE hash = ?", [hash2]);
     if (!r) return null;
     return _JobRepository.mapRowToNormalizedJob(r);
   }
@@ -30564,7 +30600,7 @@ var JobRepository = class _JobRepository {
       LEFT JOIN saved_jobs sj ON j.id = sj.job_id AND sj.user_id = ?
       WHERE ${whereSql}
     `;
-    const countRow = Database.queryOne(countSql, [userId, userId, ...params]);
+    const countRow = Database2.queryOne(countSql, [userId, userId, ...params]);
     const total = countRow ? countRow.cnt : 0;
     const limit = filter.limit || 50;
     const offset = filter.offset || 0;
@@ -30590,7 +30626,7 @@ var JobRepository = class _JobRepository {
       ORDER BY ${orderBy}
       LIMIT ? OFFSET ?
     `;
-    const rows = Database.query(dataSql, [userId, userId, ...params, limit, offset]);
+    const rows = Database2.query(dataSql, [userId, userId, ...params, limit, offset]);
     const jobs = rows.map((r) => {
       const job = _JobRepository.mapRowToNormalizedJob(r);
       const score = r.score_id ? {
@@ -30646,7 +30682,7 @@ var JobRepository = class _JobRepository {
   }
   static saveJobAnalysis(analysis) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `INSERT OR REPLACE INTO job_analyses (
         id, job_id, required_skills, optional_skills, experience_requirement,
         technical_complexity, estimated_hours, step_count, communication_level,
@@ -30670,7 +30706,7 @@ var JobRepository = class _JobRepository {
     );
   }
   static saveJobScore(score) {
-    Database.execute(
+    Database2.execute(
       `INSERT OR REPLACE INTO job_scores (
         id, job_id, user_id, overall_score, skill_score, experience_score,
         difficulty_score, budget_score, time_score, communication_score,
@@ -30698,7 +30734,7 @@ var JobRepository = class _JobRepository {
     );
   }
   static saveJobRisk(risk) {
-    Database.execute(
+    Database2.execute(
       `INSERT OR REPLACE INTO job_risks (
         id, job_id, risk_level, risk_score, warning_signals, explanation, analyzed_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -30715,19 +30751,19 @@ var JobRepository = class _JobRepository {
   }
   static setUserJobAction(userId, jobId, action, reason = "") {
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `INSERT OR REPLACE INTO saved_jobs (id, user_id, job_id, status, reason, created_at)
        VALUES (?, ?, ?, ?, ?, ?)`,
       [`action_${userId}_${jobId}`, userId, jobId, action, reason, now]
     );
-    Database.execute(
+    Database2.execute(
       `INSERT INTO user_feedback (id, user_id, job_id, action, reason, details, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [`fb_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`, userId, jobId, action, reason, JSON.stringify({}), now]
     );
   }
   static removeUserJobAction(userId, jobId) {
-    Database.execute("DELETE FROM saved_jobs WHERE user_id = ? AND job_id = ?", [userId, jobId]);
+    Database2.execute("DELETE FROM saved_jobs WHERE user_id = ? AND job_id = ?", [userId, jobId]);
   }
   static mapRowToNormalizedJob(r) {
     return {
@@ -30985,9 +31021,9 @@ var AIGateway = class _AIGateway {
       result = await provider.generateText(params.renderedPrompt, params.options);
     }
     try {
-      const userExists = params.userId ? Database.queryOne("SELECT id FROM users WHERE id = ?", [params.userId]) : null;
+      const userExists = params.userId ? Database2.queryOne("SELECT id FROM users WHERE id = ?", [params.userId]) : null;
       const validUserId = userExists ? params.userId : null;
-      Database.execute(
+      Database2.execute(
         `INSERT INTO ai_usage_logs (
           id, user_id, endpoint, provider, model, prompt_name, prompt_version,
           tokens_in, tokens_out, duration_ms, created_at
@@ -31117,7 +31153,7 @@ var ClaimVerifier = class {
     const verifiedSkillNames = profile.skills.map((s) => s.skill_name.toLowerCase());
     const unsupportedClaims = [];
     const detectedSkillsUsed = [];
-    const yearsMatches = proposalContent.match(/(\d+)\+?\s*years?\s*(?:of)?\s*(?:experience|working)/i);
+    const yearsMatches = proposalContent.match(/(\d+)\+?\s*years?(?:\s+(?:of|in))?(?:\s+\w+)?\s*(?:experience|working|field|industry)/i);
     if (yearsMatches && yearsMatches[1]) {
       const claimedYears = parseInt(yearsMatches[1], 10);
       if (claimedYears > Math.ceil(profile.years_experience)) {
@@ -31165,7 +31201,7 @@ var ClaimVerifier = class {
   static sanitize(proposalText, profile) {
     let cleaned = proposalText;
     cleaned = cleaned.replace(
-      /(\d+)\+?\s*years?\s*(?:of)?\s*(?:experience|working)/gi,
+      /(\d+)\+?\s*years?(?:\s+(?:of|in))?(?:\s+\w+)?\s*(?:experience|working|field|industry)/gi,
       `${Math.floor(profile.years_experience) || 1}+ years of experience`
     );
     return cleaned;
@@ -31249,14 +31285,14 @@ var ProposalGenerator = class {
 var ApplicationRepository = class _ApplicationRepository {
   static createOrUpdate(app2) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    const existing = Database.queryOne(
+    const existing = Database2.queryOne(
       "SELECT id, created_at, status FROM applications WHERE user_id = ? AND job_id = ?",
       [app2.user_id, app2.job_id]
     );
     const appId = existing ? existing.id : `app_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const createdAt = existing ? existing.created_at : now;
     const appliedAt = app2.status === "applied" ? now : null;
-    Database.execute(
+    Database2.execute(
       `INSERT OR REPLACE INTO applications (
         id, job_id, user_id, proposal_id, status, mode, connect_cost, applied_at, notes, outcome, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -31275,7 +31311,7 @@ var ApplicationRepository = class _ApplicationRepository {
         now
       ]
     );
-    Database.execute(
+    Database2.execute(
       `INSERT INTO application_events (id, application_id, event_type, payload, created_at)
        VALUES (?, ?, ?, ?, ?)`,
       [
@@ -31289,7 +31325,7 @@ var ApplicationRepository = class _ApplicationRepository {
     return _ApplicationRepository.getById(appId);
   }
   static getById(id) {
-    const r = Database.queryOne("SELECT * FROM applications WHERE id = ?", [id]);
+    const r = Database2.queryOne("SELECT * FROM applications WHERE id = ?", [id]);
     if (!r) return null;
     return {
       id: r.id,
@@ -31324,7 +31360,7 @@ var ApplicationRepository = class _ApplicationRepository {
       WHERE a.user_id = ?
       ORDER BY a.updated_at DESC
     `;
-    const rows = Database.query(sql, [userId]);
+    const rows = Database2.query(sql, [userId]);
     return rows.map((r) => ({
       id: r.id,
       job_id: r.job_id,
@@ -31350,7 +31386,7 @@ var ApplicationRepository = class _ApplicationRepository {
   static saveProposal(proposal) {
     const id = proposal.id || `prop_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `INSERT INTO proposals (
         id, job_id, user_id, version_number, style, title, content, word_count,
         claims_verification, addressed_requirements, why_written, created_at
@@ -31373,7 +31409,7 @@ var ApplicationRepository = class _ApplicationRepository {
     return { ...proposal, id, created_at: proposal.created_at || now };
   }
   static getProposalsForJob(userId, jobId) {
-    const rows = Database.query(
+    const rows = Database2.query(
       "SELECT * FROM proposals WHERE user_id = ? AND job_id = ? ORDER BY version_number ASC",
       [userId, jobId]
     );
@@ -31508,8 +31544,8 @@ var RiskScamSignalEngine = class {
   static async analyze(job, userId) {
     const warningSignals = [];
     let baseRiskScore = 10;
-    const lowerDesc = job.description.toLowerCase();
-    const lowerTitle = job.title.toLowerCase();
+    const lowerDesc = (job.description || "").toLowerCase();
+    const lowerTitle = (job.title || "").toLowerCase();
     if (lowerDesc.includes("telegram") || lowerDesc.includes("whatsapp") || lowerDesc.includes("skype id") || lowerDesc.includes("contact me on:")) {
       warningSignals.push("Explicit request to communicate outside the platform (Telegram/WhatsApp)");
       baseRiskScore += 45;
@@ -31526,7 +31562,7 @@ var RiskScamSignalEngine = class {
       warningSignals.push("Requests extensive unpaid test work or spec labor before contract award");
       baseRiskScore += 25;
     }
-    if (job.budget.type === "fixed" && job.budget.max && job.budget.max > 2e3 && (lowerTitle.includes("data entry") || lowerTitle.includes("copy paste"))) {
+    if (job.budget?.type === "fixed" && job.budget?.max && job.budget.max > 2e3 && (lowerTitle.includes("data entry") || lowerTitle.includes("copy paste"))) {
       warningSignals.push("Disproportionately high compensation for basic repetitive tasks");
       baseRiskScore += 30;
     }
@@ -31534,7 +31570,7 @@ var RiskScamSignalEngine = class {
       warningSignals.push("Contains obfuscated or suspicious external redirect links");
       baseRiskScore += 25;
     }
-    if (job.client.jobs_posted && job.client.jobs_posted > 15 && (job.client.hire_rate === 0 || job.client.rating && job.client.rating < 2.5)) {
+    if (job.client?.jobs_posted && job.client.jobs_posted > 15 && (job.client.hire_rate === 0 || job.client.rating && job.client.rating < 2.5)) {
       warningSignals.push("Client has posted numerous jobs with 0% hire rate or low client feedback rating");
       baseRiskScore += 20;
     }
@@ -31684,7 +31720,7 @@ var MatchingEngine = class {
     const skillRatio = analysis.required_skills.length > 0 ? matchedSkills.length / analysis.required_skills.length : 0.8;
     const skillScore = Math.round(skillRatio * 100);
     let experienceScore = 85;
-    const expReq = analysis.experience_requirement.toLowerCase();
+    const expReq = (analysis.experience_requirement || "").toLowerCase();
     if (expReq.includes("expert") && profile.years_experience < 4) {
       experienceScore = 60;
     } else if (expReq.includes("intermediate") && profile.years_experience < 1.5) {
@@ -31695,7 +31731,7 @@ var MatchingEngine = class {
     const difficultyAssessment = DifficultyCalculator.calculate(job, analysis, profile);
     const difficultyScore = difficultyAssessment.score;
     let budgetScore = 80;
-    const jobBudget = job.budget.max || job.budget.min || 0;
+    const jobBudget = job.budget?.max || job.budget?.min || 0;
     if (jobBudget >= profile.preferences.min_budget * 1.5) {
       budgetScore = 95;
     } else if (jobBudget >= profile.preferences.min_budget) {
@@ -31704,9 +31740,10 @@ var MatchingEngine = class {
       budgetScore = 55;
     }
     let timeScore = 85;
-    if (analysis.estimated_hours <= profile.availability_hours_per_day) {
+    const estHours = analysis.estimated_hours || 2;
+    if (estHours <= profile.availability_hours_per_day) {
       timeScore = 95;
-    } else if (analysis.estimated_hours <= profile.availability_hours_per_day * 2) {
+    } else if (estHours <= profile.availability_hours_per_day * 2) {
       timeScore = 80;
     } else {
       timeScore = 60;
@@ -31720,36 +31757,41 @@ var MatchingEngine = class {
       communicationScore = 90;
     }
     let preferenceScore = 90;
-    const lowerTitle = job.title.toLowerCase();
-    const lowerDesc = job.description.toLowerCase();
+    const lowerTitle = (job.title || "").toLowerCase();
+    const lowerDesc = (job.description || "").toLowerCase();
     const whyMatches = [];
     const whyNotMatches = [];
     const concerns = [];
-    for (const excl of profile.preferences.excluded_keywords) {
+    let hasExcludedKeyword = false;
+    for (const excl of profile.preferences.excluded_keywords || []) {
       const lowerExcl = excl.toLowerCase();
       if (lowerTitle.includes(lowerExcl) || lowerDesc.includes(lowerExcl)) {
-        preferenceScore -= 40;
+        hasExcludedKeyword = true;
+        preferenceScore -= 45;
         whyNotMatches.push(`Contains excluded term: "${excl}"`);
         concerns.push(`Matches explicit exclusion rule for "${excl}"`);
       }
     }
-    const catMatched = profile.preferences.preferred_categories.some(
-      (cat) => job.category.toLowerCase().includes(cat.toLowerCase()) || cat.toLowerCase().includes(job.category.toLowerCase())
+    const jobCategory = job.category || "";
+    const catMatched = (profile.preferences.preferred_categories || []).some(
+      (cat) => jobCategory.toLowerCase().includes(cat.toLowerCase()) || cat.toLowerCase().includes(jobCategory.toLowerCase())
     );
     if (catMatched) {
       preferenceScore = Math.min(100, preferenceScore + 10);
-      whyMatches.push(`Category "${job.category}" matches your preferred categories`);
-    } else if (profile.preferences.preferred_categories.length > 0) {
+      whyMatches.push(`Category "${jobCategory}" matches your preferred categories`);
+    } else if ((profile.preferences.preferred_categories || []).length > 0) {
       preferenceScore -= 15;
-      whyNotMatches.push(`Category "${job.category}" is outside your primary target categories`);
+      whyNotMatches.push(`Category "${jobCategory}" is outside your primary target categories`);
     }
     let clientQualityScore = 75;
-    if (job.client.rating && job.client.rating >= 4.8 && (job.client.reviews || 0) >= 5) {
+    const clientRating = job.client?.rating;
+    const clientReviews = job.client?.reviews || 0;
+    if (clientRating && clientRating >= 4.8 && clientReviews >= 5) {
       clientQualityScore = 95;
-      whyMatches.push(`Established client with strong ${job.client.rating}\u2605 rating and ${job.client.reviews} reviews`);
-    } else if (job.client.rating && job.client.rating < 4) {
+      whyMatches.push(`Established client with strong ${clientRating}\u2605 rating and ${clientReviews} reviews`);
+    } else if (clientRating && clientRating < 4) {
       clientQualityScore = 45;
-      concerns.push(`Client has below-average rating (${job.client.rating}\u2605)`);
+      concerns.push(`Client has below-average rating (${clientRating}\u2605)`);
     }
     if (matchedSkills.length > 0) {
       whyMatches.push(`Skills match your profile: ${matchedSkills.slice(0, 3).join(", ")}`);
@@ -31766,6 +31808,9 @@ var MatchingEngine = class {
     let overallScore = Math.round(
       skillScore * 0.3 + preferenceScore * 0.2 + difficultyScore * 0.2 + budgetScore * 0.15 + clientQualityScore * 0.15
     );
+    if (hasExcludedKeyword) {
+      overallScore = Math.min(overallScore, 40);
+    }
     if (risk.risk_level === "High") {
       overallScore = Math.min(overallScore, 45);
     } else if (risk.risk_level === "Medium") {
@@ -31776,8 +31821,8 @@ var MatchingEngine = class {
       why_matches: whyMatches,
       why_not_matches: whyNotMatches,
       concerns,
-      estimated_effort: `Estimated ~${analysis.estimated_hours} hours (${difficultyAssessment.label} difficulty)`,
-      potential_value: job.budget.max ? `$${job.budget.max} (${job.budget.type}) with ${job.client.country || "Global"} client` : `Competitive ${job.budget.type} rate`
+      estimated_effort: `Estimated ~${analysis.estimated_hours || 2} hours (${difficultyAssessment.label} difficulty)`,
+      potential_value: job.budget?.max ? `$${job.budget.max} (${job.budget?.type || "fixed"}) with ${job.client?.country || "Global"} client` : `Competitive ${job.budget?.type || "project"} rate`
     };
     return {
       job_id: job.id,
@@ -31816,7 +31861,7 @@ var NotificationRepository = class _NotificationRepository {
   static create(item) {
     const id = `notif_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `INSERT INTO notifications (id, user_id, job_id, channel, title, body, match_score, sent_at, read_at, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -31839,7 +31884,7 @@ var NotificationRepository = class _NotificationRepository {
     };
   }
   static listByUser(userId, limit = 30) {
-    const rows = Database.query(
+    const rows = Database2.query(
       "SELECT * FROM notifications WHERE user_id = ? ORDER BY sent_at DESC LIMIT ?",
       [userId, limit]
     );
@@ -31859,16 +31904,16 @@ var NotificationRepository = class _NotificationRepository {
   static markAsRead(userId, id) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
     if (id) {
-      Database.execute("UPDATE notifications SET read_at = ? WHERE id = ? AND user_id = ?", [now, id, userId]);
+      Database2.execute("UPDATE notifications SET read_at = ? WHERE id = ? AND user_id = ?", [now, id, userId]);
     } else {
-      Database.execute("UPDATE notifications SET read_at = ? WHERE user_id = ? AND read_at IS NULL", [now, userId]);
+      Database2.execute("UPDATE notifications SET read_at = ? WHERE user_id = ? AND read_at IS NULL", [now, userId]);
     }
   }
   static getPreferences(userId) {
-    const row = Database.queryOne("SELECT * FROM notification_preferences WHERE user_id = ?", [userId]);
+    const row = Database2.queryOne("SELECT * FROM notification_preferences WHERE user_id = ?", [userId]);
     if (!row) {
       const now = (/* @__PURE__ */ new Date()).toISOString();
-      Database.execute(
+      Database2.execute(
         `INSERT INTO notification_preferences (
           id, user_id, browser_enabled, email_enabled, telegram_enabled, discord_enabled,
           min_score_threshold, alert_high_risk, quiet_hours_start, quiet_hours_end, updated_at
@@ -31911,7 +31956,7 @@ var NotificationRepository = class _NotificationRepository {
   static updatePreferences(userId, prefs) {
     const current = _NotificationRepository.getPreferences(userId);
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `UPDATE notification_preferences
        SET browser_enabled = ?, email_enabled = ?, telegram_enabled = ?, discord_enabled = ?,
            min_score_threshold = ?, alert_high_risk = ?, quiet_hours_start = ?, quiet_hours_end = ?, updated_at = ?
@@ -32039,10 +32084,10 @@ var DEFAULT_AUTOMATION_SETTINGS = {
 var AutomationRepository = class _AutomationRepository {
   static getSettings(userId) {
     const today = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
-    let row = Database.queryOne("SELECT * FROM automation_settings WHERE user_id = ?", [userId]);
+    let row = Database2.queryOne("SELECT * FROM automation_settings WHERE user_id = ?", [userId]);
     if (!row) {
       const now = (/* @__PURE__ */ new Date()).toISOString();
-      Database.execute(
+      Database2.execute(
         `INSERT INTO automation_settings (
           id, user_id, application_mode, is_active, emergency_stop,
           max_daily_applications, max_hourly_applications, min_match_score,
@@ -32069,10 +32114,10 @@ var AutomationRepository = class _AutomationRepository {
           now
         ]
       );
-      row = Database.queryOne("SELECT * FROM automation_settings WHERE user_id = ?", [userId]);
+      row = Database2.queryOne("SELECT * FROM automation_settings WHERE user_id = ?", [userId]);
     }
     if (row.last_reset_date !== today) {
-      Database.execute(
+      Database2.execute(
         "UPDATE automation_settings SET applications_today_count = 0, last_reset_date = ? WHERE user_id = ?",
         [today, userId]
       );
@@ -32114,7 +32159,7 @@ var AutomationRepository = class _AutomationRepository {
       max_budget_limit: settings.max_budget_limit ?? current.max_budget_limit,
       require_low_risk_only: settings.require_low_risk_only !== void 0 ? settings.require_low_risk_only ? 1 : 0 : current.require_low_risk_only ? 1 : 0
     };
-    Database.execute(
+    Database2.execute(
       `UPDATE automation_settings
        SET application_mode = ?, is_active = ?, emergency_stop = ?,
            max_daily_applications = ?, max_hourly_applications = ?, min_match_score = ?,
@@ -32141,20 +32186,20 @@ var AutomationRepository = class _AutomationRepository {
   }
   static triggerEmergencyStop(userId) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `UPDATE automation_settings
        SET emergency_stop = 1, is_active = 0, application_mode = 'MANUAL', updated_at = ?
        WHERE user_id = ?`,
       [now, userId]
     );
-    Database.execute(
+    Database2.execute(
       `INSERT INTO audit_logs (id, user_id, action, details, created_at)
        VALUES (?, ?, ?, ?, ?)`,
       [`audit_${Date.now()}`, userId, "EMERGENCY_KILL_SWITCH_ACTIVATED", JSON.stringify({ reason: "User clicked emergency stop" }), now]
     );
   }
   static incrementDailyCount(userId) {
-    Database.execute(
+    Database2.execute(
       "UPDATE automation_settings SET applications_today_count = applications_today_count + 1 WHERE user_id = ?",
       [userId]
     );
@@ -32197,6 +32242,21 @@ var AutomationController = class {
         applied: false
       };
     }
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1e3).toISOString();
+    const hourlyRow = Database2.queryOne(
+      `SELECT COUNT(*) as count FROM applications
+       WHERE user_id = ? AND mode = 'automatic' AND applied_at >= ?`,
+      [params.userId, oneHourAgo]
+    );
+    const hourlyCount = Number(hourlyRow?.count || 0);
+    if (hourlyCount >= settings.max_hourly_applications) {
+      this.recordAudit(params.userId, params.job.id, "AUTOMATION_BLOCKED", `Hourly limit of ${settings.max_hourly_applications} reached (${hourlyCount} in last hour)`);
+      return {
+        allowed: false,
+        reason: `HOURLY_LIMIT_REACHED: Reached limit of ${settings.max_hourly_applications} applications per hour`,
+        applied: false
+      };
+    }
     if (params.score.overall_score < settings.min_match_score) {
       return {
         allowed: false,
@@ -32235,7 +32295,7 @@ var AutomationController = class {
         applied: false
       };
     }
-    const existing = Database.queryOne("SELECT id FROM applications WHERE user_id = ? AND job_id = ?", [params.userId, params.job.id]);
+    const existing = Database2.queryOne("SELECT id FROM applications WHERE user_id = ? AND job_id = ?", [params.userId, params.job.id]);
     if (existing) {
       return {
         allowed: false,
@@ -32292,7 +32352,7 @@ var AutomationController = class {
   static recordAudit(userId, jobId, action, message) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
     try {
-      Database.execute(
+      Database2.execute(
         `INSERT INTO audit_logs (id, user_id, action, details, created_at)
          VALUES (?, ?, ?, ?, ?)`,
         [`audit_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`, userId, action, JSON.stringify({ jobId, message }), now]
@@ -32306,7 +32366,7 @@ var AutomationController = class {
 // backend/src/repositories/PlatformRepository.ts
 var PlatformRepository = class {
   static getConnections(userId) {
-    const rows = Database.query("SELECT * FROM platform_connections WHERE user_id = ?", [userId]);
+    const rows = Database2.query("SELECT * FROM platform_connections WHERE user_id = ?", [userId]);
     const defaultPlatforms = [
       {
         platformId: "upwork",
@@ -32356,7 +32416,7 @@ var PlatformRepository = class {
   }
   static saveConnection(userId, data) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `INSERT INTO platform_connections (
         id, user_id, platform_id, status, mode, auth_data_encrypted, capabilities, last_sync_at, last_sync_status, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -32383,7 +32443,7 @@ var PlatformRepository = class {
   }
   static updateSyncStatus(userId, platformId, status) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `UPDATE platform_connections
        SET last_sync_at = ?, last_sync_status = ?, updated_at = ?
        WHERE user_id = ? AND platform_id = ?`,
@@ -32444,49 +32504,59 @@ var BackgroundWorker = class _BackgroundWorker {
           console.warn(`[BackgroundWorker] Failed to sync platform ${connector.platformId}:`, err);
         }
       }
-      const userId = targetUserId || "user_default";
-      const userProfile = UserRepository.getProfile(userId);
-      if (!userProfile) {
-        _BackgroundWorker.isRunning = false;
-        return { jobsCollected, newJobsInserted, analyzedCount, notificationsSent, automatedApplications };
+      let userIds = [];
+      if (targetUserId) {
+        userIds = [targetUserId];
+      } else {
+        try {
+          const users = Database.query("SELECT id FROM users");
+          userIds = users.map((u) => u.id);
+        } catch {
+          userIds = [];
+        }
+        if (userIds.length === 0) userIds.push("user_default");
       }
-      const { jobs } = JobRepository.listJobs(userId, { limit: 50 });
-      for (const job of jobs) {
-        let analysis = job.analysis;
-        if (!analysis) {
-          analysis = await JobAnalyzer.analyze(job, userId);
-          JobRepository.saveJobAnalysis(analysis);
-          analyzedCount++;
-        }
-        let risk = job.risk;
-        if (!risk) {
-          risk = await RiskScamSignalEngine.analyze(job, userId);
-          JobRepository.saveJobRisk(risk);
-        }
-        let score = job.score;
-        if (!score) {
-          score = MatchingEngine.match(job, analysis, risk, userProfile);
-          JobRepository.saveJobScore(score);
-          if (score.overall_score >= userProfile.preferences.scoring_thresholds.high_match) {
-            await NotificationService.dispatchJobAlert({
+      for (const userId of userIds) {
+        const userProfile = UserRepository.getProfile(userId);
+        if (!userProfile) continue;
+        const { jobs } = JobRepository.listJobs(userId, { limit: 50 });
+        for (const job of jobs) {
+          let analysis = job.analysis;
+          if (!analysis) {
+            analysis = await JobAnalyzer.analyze(job, userId);
+            JobRepository.saveJobAnalysis(analysis);
+            analyzedCount++;
+          }
+          let risk = job.risk;
+          if (!risk) {
+            risk = await RiskScamSignalEngine.analyze(job, userId);
+            JobRepository.saveJobRisk(risk);
+          }
+          let score = job.score;
+          if (!score) {
+            score = MatchingEngine.match(job, analysis, risk, userProfile);
+            JobRepository.saveJobScore(score);
+            if (score.overall_score >= userProfile.preferences.scoring_thresholds.high_match) {
+              await NotificationService.dispatchJobAlert({
+                userId,
+                job,
+                score,
+                risk
+              });
+              notificationsSent++;
+            }
+            const connector = ConnectorRegistry.get(job.platform) || ConnectorRegistry.get("mock");
+            const autoRes = await AutomationController.evaluateAndApply({
               userId,
               job,
               score,
-              risk
+              risk,
+              profile: userProfile,
+              connector
             });
-            notificationsSent++;
-          }
-          const connector = ConnectorRegistry.get(job.platform) || ConnectorRegistry.get("mock");
-          const autoRes = await AutomationController.evaluateAndApply({
-            userId,
-            job,
-            score,
-            risk,
-            profile: userProfile,
-            connector
-          });
-          if (autoRes.applied) {
-            automatedApplications++;
+            if (autoRes.applied) {
+              automatedApplications++;
+            }
           }
         }
       }
@@ -32639,9 +32709,14 @@ applicationsRouter.get("/", (req, res) => {
 });
 applicationsRouter.get("/:id", (req, res) => {
   try {
+    const userId = req.user?.userId;
     const app2 = ApplicationRepository.getById(req.params.id);
     if (!app2) {
       res.status(404).json({ error: "Application not found" });
+      return;
+    }
+    if (app2.user_id !== userId && !req.user?.isAdmin) {
+      res.status(403).json({ error: "Forbidden: You do not own this application" });
       return;
     }
     res.json({ success: true, application: app2 });
@@ -32683,6 +32758,10 @@ applicationsRouter.post("/:id/status", (req, res) => {
     const existing = ApplicationRepository.getById(req.params.id);
     if (!existing) {
       res.status(404).json({ error: "Application not found" });
+      return;
+    }
+    if (existing.user_id !== userId && !req.user?.isAdmin) {
+      res.status(403).json({ error: "Forbidden: You do not own this application" });
       return;
     }
     const updated = ApplicationRepository.createOrUpdate({
@@ -32767,7 +32846,7 @@ var import_express5 = __toESM(require_express2(), 1);
 // backend/src/ai/personalization/PersonalizationEngine.ts
 var PersonalizationEngine = class _PersonalizationEngine {
   static getLearnedInsights(userId) {
-    const row = Database.queryOne("SELECT * FROM learned_preferences WHERE user_id = ?", [userId]);
+    const row = Database2.queryOne("SELECT * FROM learned_preferences WHERE user_id = ?", [userId]);
     if (!row) {
       return _PersonalizationEngine.refreshInsights(userId);
     }
@@ -32781,14 +32860,14 @@ var PersonalizationEngine = class _PersonalizationEngine {
     };
   }
   static refreshInsights(userId) {
-    const positiveFeedback = Database.query(
+    const positiveFeedback = Database2.query(
       `SELECT j.category, j.budget_max, fb.action
        FROM user_feedback fb
        JOIN jobs j ON fb.job_id = j.id
        WHERE fb.user_id = ? AND fb.action IN ('save', 'apply', 'interview', 'hire')`,
       [userId]
     );
-    const negativeFeedback = Database.query(
+    const negativeFeedback = Database2.query(
       `SELECT j.category, fb.reason, fb.action
        FROM user_feedback fb
        JOIN jobs j ON fb.job_id = j.id
@@ -32810,7 +32889,7 @@ var PersonalizationEngine = class _PersonalizationEngine {
     }
     insights.push("You tend to prefer fixed-rate contracts between $30 and $150 with Low communication overhead.");
     const now = (/* @__PURE__ */ new Date()).toISOString();
-    Database.execute(
+    Database2.execute(
       `INSERT INTO learned_preferences (
         id, user_id, accepted_patterns, rejected_patterns, preferred_budget_range,
         preferred_difficulty, preferred_comm_level, insights, last_updated
@@ -32950,7 +33029,7 @@ automationRouter.post("/stop", (req, res) => {
 automationRouter.get("/audit", (req, res) => {
   try {
     const userId = req.user?.userId || "user_default";
-    const logs = Database.query(
+    const logs = Database2.query(
       "SELECT * FROM audit_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT 50",
       [userId]
     );
@@ -33013,24 +33092,24 @@ var import_express8 = __toESM(require_express2(), 1);
 // backend/src/repositories/AnalyticsRepository.ts
 var AnalyticsRepository = class _AnalyticsRepository {
   static getDashboardMetrics(userId) {
-    const jobsCountRow = Database.queryOne("SELECT COUNT(*) as cnt FROM jobs");
+    const jobsCountRow = Database2.queryOne("SELECT COUNT(*) as cnt FROM jobs");
     const jobsDiscovered = jobsCountRow ? jobsCountRow.cnt : 0;
-    const highMatchesRow = Database.queryOne(
+    const highMatchesRow = Database2.queryOne(
       "SELECT COUNT(*) as cnt FROM job_scores WHERE user_id = ? AND overall_score >= 85",
       [userId]
     );
     const highMatches = highMatchesRow ? highMatchesRow.cnt : 0;
-    const possibleMatchesRow = Database.queryOne(
+    const possibleMatchesRow = Database2.queryOne(
       "SELECT COUNT(*) as cnt FROM job_scores WHERE user_id = ? AND overall_score >= 70 AND overall_score < 85",
       [userId]
     );
     const possibleMatches = possibleMatchesRow ? possibleMatchesRow.cnt : 0;
-    const savedRow = Database.queryOne(
+    const savedRow = Database2.queryOne(
       "SELECT COUNT(*) as cnt FROM saved_jobs WHERE user_id = ? AND status = 'saved'",
       [userId]
     );
     const savedJobs = savedRow ? savedRow.cnt : 0;
-    const appStatsRow = Database.queryOne(
+    const appStatsRow = Database2.queryOne(
       `SELECT
         COUNT(*) as total_apps,
         SUM(CASE WHEN status = 'interview' THEN 1 ELSE 0 END) as interviews,
@@ -33041,7 +33120,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
        WHERE user_id = ?`,
       [userId]
     );
-    const avgScoreRow = Database.queryOne(
+    const avgScoreRow = Database2.queryOne(
       "SELECT AVG(overall_score) as avg_score FROM job_scores WHERE user_id = ?",
       [userId]
     );
@@ -33060,7 +33139,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
   }
   static getAnalyticsSummary(userId) {
     const metrics = _AnalyticsRepository.getDashboardMetrics(userId);
-    const platformRows = Database.query(
+    const platformRows = Database2.query(
       `SELECT j.platform, COUNT(*) as cnt
        FROM jobs j
        GROUP BY j.platform
@@ -33070,7 +33149,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
       name: r.platform.toUpperCase(),
       count: r.cnt
     }));
-    const categoryRows = Database.query(
+    const categoryRows = Database2.query(
       `SELECT j.category, COUNT(*) as cnt
        FROM jobs j
        GROUP BY j.category
@@ -33081,7 +33160,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
       name: r.category,
       count: r.cnt
     }));
-    const diffRows = Database.query(
+    const diffRows = Database2.query(
       `SELECT
          CASE
            WHEN js.difficulty_score >= 80 THEN 'Easy'
@@ -33098,7 +33177,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
       name: r.diff_label,
       count: r.cnt
     }));
-    const styleRows = Database.query(
+    const styleRows = Database2.query(
       `SELECT
          p.style,
          COUNT(a.id) as applications,
@@ -33116,7 +33195,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
       interviews: Number(r.interviews || 0),
       hires: Number(r.hires || 0)
     }));
-    const activityRows = Database.query(
+    const activityRows = Database2.query(
       `SELECT
          a.updated_at as date,
          a.status as action,
@@ -33161,7 +33240,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
     const fromIso = fromDate.toISOString();
     const toIso = now.toISOString();
     const metrics = _AnalyticsRepository.getDashboardMetrics(userId);
-    const platformAppRows = Database.query(
+    const platformAppRows = Database2.query(
       `SELECT j.platform, COUNT(a.id) as cnt
        FROM applications a
        JOIN jobs j ON a.job_id = j.id
@@ -33173,7 +33252,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
       name: r.platform.toUpperCase(),
       count: r.cnt
     }));
-    const topCatRows = Database.query(
+    const topCatRows = Database2.query(
       `SELECT j.category, COUNT(a.id) as cnt
        FROM applications a
        JOIN jobs j ON a.job_id = j.id
@@ -33185,7 +33264,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
     );
     const topCategories = topCatRows.map((r) => r.category);
     const topSkills = ["Data Entry", "Excel", "Web Research", "Fast Communication"];
-    const propRows = Database.query(
+    const propRows = Database2.query(
       `SELECT
          p.style,
          COUNT(a.id) as apps,
@@ -33215,7 +33294,7 @@ var AnalyticsRepository = class _AnalyticsRepository {
         });
       }
     }
-    const eventRows = Database.query(
+    const eventRows = Database2.query(
       `SELECT
          a.created_at as timestamp,
          j.platform,
@@ -33236,15 +33315,12 @@ var AnalyticsRepository = class _AnalyticsRepository {
       from_date: fromIso.slice(0, 10),
       to_date: toIso.slice(0, 10),
       metrics,
-      platform_breakdown: platformBreakdown.length > 0 ? platformBreakdown : [
-        { name: "UPWORK", count: metrics.applications || 4 },
-        { name: "FIVERR", count: 1 }
-      ],
+      platform_breakdown: platformBreakdown,
       spending_summary: {
-        total_connects: metrics.total_connects_spent || 18,
-        estimated_usd_cost: (metrics.total_connects_spent || 18) * 0.15
+        total_connects: metrics.total_connects_spent || 0,
+        estimated_usd_cost: (metrics.total_connects_spent || 0) * 0.15
       },
-      top_categories: topCategories.length > 0 ? topCategories : ["Data Entry", "Web Research", "Virtual Assistant"],
+      top_categories: topCategories,
       top_skills: topSkills,
       proposal_performance: proposalPerformance,
       chronological_events: eventRows
@@ -33475,7 +33551,9 @@ async function ensureInitialSeed() {
     console.warn("[WorkMatch AI] Automatic seed notice:", err);
   }
 }
-ensureInitialSeed().catch((err) => console.warn("[WorkMatch AI] Seed initialization warning:", err));
+if (process.env.NODE_ENV !== "test") {
+  ensureInitialSeed().catch((err) => console.warn("[WorkMatch AI] Seed initialization warning:", err));
+}
 if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {
   BackgroundWorker.start(6e5);
   app.listen(PORT, () => {

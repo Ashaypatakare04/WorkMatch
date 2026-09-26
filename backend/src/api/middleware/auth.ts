@@ -18,18 +18,23 @@ export function authMiddleware(req: AuthenticatedRequest, res: Response, next: N
       req.user = decoded;
       return next();
     } catch (err) {
-      // Invalid token, fall through to default demo user for personal/MVP mode
+      res.status(401).json({ error: 'Invalid or expired authorization token', code: 'UNAUTHORIZED' });
+      return;
     }
   }
 
-  // Fallback to default user for seamless local development and personal use
-  req.user = {
-    userId: 'user_default',
-    email: 'user@workmatch.local',
-    isAdmin: true,
-    planType: 'personal'
-  };
-  next();
+  // Allow fallback ONLY if explicitly enabled in local development environment
+  if (process.env.ALLOW_DEV_FALLBACK === 'true') {
+    req.user = {
+      userId: 'user_default',
+      email: 'user@workmatch.local',
+      isAdmin: true,
+      planType: 'personal'
+    };
+    return next();
+  }
+
+  res.status(401).json({ error: 'Authentication required. Please provide a valid Bearer token.', code: 'UNAUTHORIZED' });
 }
 
 export function generateToken(payload: UserSessionPayload): string {

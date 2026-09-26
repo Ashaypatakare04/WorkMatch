@@ -15,7 +15,9 @@ import {
   ShieldAlert,
   Radio,
   Sparkles,
-  Globe
+  Globe,
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { AutomationSettings } from '../../types/index.js';
 
@@ -29,6 +31,9 @@ interface MobileNavProps {
   onClose: () => void;
   automationSettings?: AutomationSettings;
   onEmergencyStop?: () => void;
+  currentUser?: { id: string; email: string; full_name?: string; is_admin?: boolean } | null;
+  onOpenAuth?: (mode?: 'login' | 'register') => void;
+  onLogout?: () => void;
 }
 
 export const MobileNav: React.FC<MobileNavProps> = ({
@@ -40,7 +45,10 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   onToggle,
   onClose,
   automationSettings,
-  onEmergencyStop
+  onEmergencyStop,
+  currentUser,
+  onOpenAuth,
+  onLogout
 }) => {
   const primaryTabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -175,6 +183,44 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                   <X className="w-4 h-4" />
                 </button>
               </div>
+
+              {/* User Account State */}
+              {currentUser ? (
+                <div className="p-3 rounded-2xl bg-surface-900 border border-white/[0.08] flex items-center justify-between">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 p-[1px] shrink-0">
+                      <div className="w-full h-full rounded-full bg-surface-950 flex items-center justify-center font-bold text-xs text-emerald-400 uppercase">
+                        {currentUser.full_name ? currentUser.full_name.charAt(0) : currentUser.email.charAt(0)}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-white truncate">{currentUser.full_name || 'WorkMatch User'}</p>
+                      <p className="text-[10px] text-slate-400 truncate font-mono">{currentUser.email}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onLogout?.();
+                    }}
+                    className="p-2 rounded-xl bg-surface-800 text-rose-400 hover:bg-rose-500/10 transition"
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    onClose();
+                    onOpenAuth?.('login');
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-surface-950 text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 active:scale-95"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span>Sign In / Register</span>
+                </button>
+              )}
 
               {/* Mode indicator */}
               <div className="p-3 rounded-2xl bg-surface-900/80 border border-white/[0.06] flex items-center justify-between text-xs">

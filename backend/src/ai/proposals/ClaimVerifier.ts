@@ -19,7 +19,7 @@ export class ClaimVerifier {
 
     // 1. Programmatic deterministic checks
     // Check if years claimed exceed profile years
-    const yearsMatches = proposalContent.match(/(\d+)\+?\s*years?\s*(?:of)?\s*(?:experience|working)/i);
+    const yearsMatches = proposalContent.match(/(\d+)\+?\s*years?(?:\s+(?:of|in))?(?:\s+\w+)?\s*(?:experience|working|field|industry)/i);
     if (yearsMatches && yearsMatches[1]) {
       const claimedYears = parseInt(yearsMatches[1], 10);
       if (claimedYears > Math.ceil(profile.years_experience)) {
@@ -82,7 +82,7 @@ export class ClaimVerifier {
 
     // Replace exaggerated years with verified years
     cleaned = cleaned.replace(
-      /(\d+)\+?\s*years?\s*(?:of)?\s*(?:experience|working)/gi,
+      /(\d+)\+?\s*years?(?:\s+(?:of|in))?(?:\s+\w+)?\s*(?:experience|working|field|industry)/gi,
       `${Math.floor(profile.years_experience) || 1}+ years of experience`
     );
 

@@ -67,6 +67,24 @@ export class AutomationController {
       };
     }
 
+    // 4b. Rate limits check (Hourly limit)
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const hourlyRow = Database.queryOne<{ count: number }>(
+      `SELECT COUNT(*) as count FROM applications
+       WHERE user_id = ? AND mode = 'automatic' AND applied_at >= ?`,
+      [params.userId, oneHourAgo]
+    );
+    const hourlyCount = Number(hourlyRow?.count || 0);
+
+    if (hourlyCount >= settings.max_hourly_applications) {
+      this.recordAudit(params.userId, params.job.id, 'AUTOMATION_BLOCKED', `Hourly limit of ${settings.max_hourly_applications} reached (${hourlyCount} in last hour)`);
+      return {
+        allowed: false,
+        reason: `HOURLY_LIMIT_REACHED: Reached limit of ${settings.max_hourly_applications} applications per hour`,
+        applied: false
+      };
+    }
+
     // 5. Minimum Score Threshold
     if (params.score.overall_score < settings.min_match_score) {
       return {

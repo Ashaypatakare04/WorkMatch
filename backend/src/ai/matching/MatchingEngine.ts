@@ -35,7 +35,7 @@ export class MatchingEngine {
 
     // 2. Experience Match
     let experienceScore = 85;
-    const expReq = analysis.experience_requirement.toLowerCase();
+    const expReq = (analysis.experience_requirement || '').toLowerCase();
     if (expReq.includes('expert') && profile.years_experience < 4) {
       experienceScore = 60;
     } else if (expReq.includes('intermediate') && profile.years_experience < 1.5) {
@@ -50,7 +50,7 @@ export class MatchingEngine {
 
     // 4. Budget Match
     let budgetScore = 80;
-    const jobBudget = job.budget.max || job.budget.min || 0;
+    const jobBudget = job.budget?.max || job.budget?.min || 0;
     if (jobBudget >= profile.preferences.min_budget * 1.5) {
       budgetScore = 95;
     } else if (jobBudget >= profile.preferences.min_budget) {
@@ -61,9 +61,10 @@ export class MatchingEngine {
 
     // 5. Time Match (hours per day/project limits)
     let timeScore = 85;
-    if (analysis.estimated_hours <= profile.availability_hours_per_day) {
+    const estHours = analysis.estimated_hours || 2;
+    if (estHours <= profile.availability_hours_per_day) {
       timeScore = 95;
-    } else if (analysis.estimated_hours <= profile.availability_hours_per_day * 2) {
+    } else if (estHours <= profile.availability_hours_per_day * 2) {
       timeScore = 80;
     } else {
       timeScore = 60;
@@ -81,42 +82,47 @@ export class MatchingEngine {
 
     // 7. Preference & Exclusion Match
     let preferenceScore = 90;
-    const lowerTitle = job.title.toLowerCase();
-    const lowerDesc = job.description.toLowerCase();
+    const lowerTitle = (job.title || '').toLowerCase();
+    const lowerDesc = (job.description || '').toLowerCase();
     const whyMatches: string[] = [];
     const whyNotMatches: string[] = [];
     const concerns: string[] = [];
+    let hasExcludedKeyword = false;
 
     // Check excluded keywords
-    for (const excl of profile.preferences.excluded_keywords) {
+    for (const excl of profile.preferences.excluded_keywords || []) {
       const lowerExcl = excl.toLowerCase();
       if (lowerTitle.includes(lowerExcl) || lowerDesc.includes(lowerExcl)) {
-        preferenceScore -= 40;
+        hasExcludedKeyword = true;
+        preferenceScore -= 45;
         whyNotMatches.push(`Contains excluded term: "${excl}"`);
         concerns.push(`Matches explicit exclusion rule for "${excl}"`);
       }
     }
 
     // Check category preference
-    const catMatched = profile.preferences.preferred_categories.some(cat =>
-      job.category.toLowerCase().includes(cat.toLowerCase()) || cat.toLowerCase().includes(job.category.toLowerCase())
+    const jobCategory = job.category || '';
+    const catMatched = (profile.preferences.preferred_categories || []).some(cat =>
+      jobCategory.toLowerCase().includes(cat.toLowerCase()) || cat.toLowerCase().includes(jobCategory.toLowerCase())
     );
     if (catMatched) {
       preferenceScore = Math.min(100, preferenceScore + 10);
-      whyMatches.push(`Category "${job.category}" matches your preferred categories`);
-    } else if (profile.preferences.preferred_categories.length > 0) {
+      whyMatches.push(`Category "${jobCategory}" matches your preferred categories`);
+    } else if ((profile.preferences.preferred_categories || []).length > 0) {
       preferenceScore -= 15;
-      whyNotMatches.push(`Category "${job.category}" is outside your primary target categories`);
+      whyNotMatches.push(`Category "${jobCategory}" is outside your primary target categories`);
     }
 
     // 8. Client Quality
     let clientQualityScore = 75;
-    if (job.client.rating && job.client.rating >= 4.8 && (job.client.reviews || 0) >= 5) {
+    const clientRating = job.client?.rating;
+    const clientReviews = job.client?.reviews || 0;
+    if (clientRating && clientRating >= 4.8 && clientReviews >= 5) {
       clientQualityScore = 95;
-      whyMatches.push(`Established client with strong ${job.client.rating}★ rating and ${job.client.reviews} reviews`);
-    } else if (job.client.rating && job.client.rating < 4.0) {
+      whyMatches.push(`Established client with strong ${clientRating}★ rating and ${clientReviews} reviews`);
+    } else if (clientRating && clientRating < 4.0) {
       clientQualityScore = 45;
-      concerns.push(`Client has below-average rating (${job.client.rating}★)`);
+      concerns.push(`Client has below-average rating (${clientRating}★)`);
     }
 
     // Highlight matched skills
@@ -145,6 +151,11 @@ export class MatchingEngine {
       (clientQualityScore * 0.15)
     );
 
+    // Apply exclusion keyword cap
+    if (hasExcludedKeyword) {
+      overallScore = Math.min(overallScore, 40);
+    }
+
     // Apply risk penalty
     if (risk.risk_level === 'High') {
       overallScore = Math.min(overallScore, 45);
@@ -158,10 +169,10 @@ export class MatchingEngine {
       why_matches: whyMatches,
       why_not_matches: whyNotMatches,
       concerns,
-      estimated_effort: `Estimated ~${analysis.estimated_hours} hours (${difficultyAssessment.label} difficulty)`,
-      potential_value: job.budget.max
-        ? `$${job.budget.max} (${job.budget.type}) with ${job.client.country || 'Global'} client`
-        : `Competitive ${job.budget.type} rate`
+      estimated_effort: `Estimated ~${analysis.estimated_hours || 2} hours (${difficultyAssessment.label} difficulty)`,
+      potential_value: job.budget?.max
+        ? `$${job.budget.max} (${job.budget?.type || 'fixed'}) with ${job.client?.country || 'Global'} client`
+        : `Competitive ${job.budget?.type || 'project'} rate`
     };
 
     return {

@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { UserRepository } from '../../repositories/UserRepository.js';
 import { Security } from '../../security/crypto.js';
-import { AuthenticatedRequest, generateToken } from '../middleware/auth.js';
+import { AuthenticatedRequest, generateToken, authMiddleware } from '../middleware/auth.js';
 
 export const authRouter = Router();
 
@@ -76,8 +76,38 @@ authRouter.post('/login', async (req: AuthenticatedRequest, res: Response): Prom
   }
 });
 
-authRouter.get('/me', (req: AuthenticatedRequest, res: Response): void => {
-  const userId = req.user?.userId || 'user_default';
+authRouter.post('/demo', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    let defaultUser = UserRepository.findById('user_default');
+    if (!defaultUser) {
+      defaultUser = UserRepository.create({
+        id: 'user_default',
+        email: 'user@workmatch.local',
+        full_name: 'Alex Mercer',
+        is_admin: true,
+        plan_type: 'personal'
+      });
+    }
+
+    const token = generateToken({
+      userId: defaultUser.id,
+      email: defaultUser.email,
+      isAdmin: defaultUser.is_admin,
+      planType: defaultUser.plan_type
+    });
+
+    res.json({ success: true, token, user: defaultUser });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+authRouter.get('/me', authMiddleware, (req: AuthenticatedRequest, res: Response): void => {
+  const userId = req.user?.userId;
+  if (!userId) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
   const user = UserRepository.findById(userId);
   if (!user) {
     res.status(404).json({ error: 'User not found' });

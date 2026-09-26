@@ -12,12 +12,35 @@ import {
 } from '../types/index.js';
 
 const BASE_URL = '/api';
+const TOKEN_KEY = 'workmatch_jwt_token';
+
+export function getAuthToken(): string | null {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(TOKEN_KEY);
+  }
+  return null;
+}
+
+export function setAuthToken(token: string | null): void {
+  if (typeof window !== 'undefined') {
+    if (token) {
+      localStorage.setItem(TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+    }
+  }
+}
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const headers = {
+  const token = getAuthToken();
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...(options.headers || {})
+    ...(options.headers as Record<string, string> || {})
   };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
@@ -26,6 +49,9 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
   const data = await response.json();
   if (!response.ok || data.success === false) {
+    if (response.status === 401 && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('workmatch:unauthorized'));
+    }
     throw new Error(data.error || `HTTP error ${response.status}`);
   }
   return data;
@@ -201,5 +227,45 @@ export const api = {
   // 1-Click Demo
   async triggerDemoSeed() {
     return request<{ message: string; syncSummary: any }>('/demo/seed', { method: 'POST' });
+  },
+
+  // Authentication
+  async login(email: string, password: string) {
+    const res = await request<{ success: boolean; token: string; user: any }>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+    if (res.token) setAuthToken(res.token);
+    return res;
+  },
+
+  async register(email: string, password: string, fullName: string) {
+    const res = await request<{ success: boolean; token: string; user: any }>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, full_name: fullName })
+    });
+    if (res.token) setAuthToken(res.token);
+    return res;
+  },
+
+  async demoLogin() {
+    const res = await request<{ success: boolean; token: string; user: any }>('/auth/demo', {
+      method: 'POST'
+    });
+    if (res.token) setAuthToken(res.token);
+    return res;
+  },
+
+  async getMe() {
+    const res = await request<{ success: boolean; user: any }>('/auth/me');
+    return res.user;
+  },
+
+  logout() {
+    setAuthToken(null);
+  },
+
+  isAuthenticated(): boolean {
+    return Boolean(getAuthToken());
   }
 };

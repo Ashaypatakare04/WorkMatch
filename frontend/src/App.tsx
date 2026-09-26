@@ -13,6 +13,8 @@ import { AutomationView } from './components/automation/AutomationView.js';
 import { SettingsView } from './components/settings/SettingsView.js';
 import { JobDetailsModal } from './components/jobs/JobDetailsModal.js';
 import { LandingPage } from './components/landing/LandingPage.js';
+import { AuthModal } from './components/auth/AuthModal.js';
+import { ErrorBoundary } from './components/common/ErrorBoundary.js';
 
 import {
   NormalizedJob,
@@ -46,6 +48,11 @@ export function App() {
   const [learnedInsights, setLearnedInsights] = useState<any>(null);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
+  // Authentication & session state
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
+
   // Selected job for modal inspection
   const [selectedJob, setSelectedJob] = useState<NormalizedJob | null>(null);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
@@ -55,6 +62,16 @@ export function App() {
   // Initial Data Fetch
   const loadInitialData = async () => {
     try {
+      if (api.isAuthenticated()) {
+        try {
+          const user = await api.getMe();
+          setCurrentUser(user);
+        } catch (err) {
+          console.warn('Failed to resolve authenticated session:', err);
+          setCurrentUser(null);
+        }
+      }
+
       const [jobsRes, platformsRes, appsRes, autoRes, analyticsRes, profRes, learnedRes, notifsRes] =
         await Promise.all([
           api.getJobs({ limit: 50 }),
@@ -82,6 +99,13 @@ export function App() {
 
   useEffect(() => {
     loadInitialData();
+
+    const handleUnauthorized = () => {
+      setCurrentUser(null);
+      setIsAuthModalOpen(true);
+    };
+    window.addEventListener('workmatch:unauthorized', handleUnauthorized);
+
     const onHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       if (hash && ['landing', 'dashboard', 'jobs', 'saved', 'applications', 'analytics', 'reports', 'platforms', 'profile', 'automation', 'settings'].includes(hash)) {
@@ -89,8 +113,28 @@ export function App() {
       }
     };
     window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+
+    return () => {
+      window.removeEventListener('workmatch:unauthorized', handleUnauthorized);
+      window.removeEventListener('hashchange', onHashChange);
+    };
   }, []);
+
+  const handleOpenAuth = (mode: 'login' | 'register' = 'login') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const handleAuthSuccess = (user: any) => {
+    setCurrentUser(user);
+    loadInitialData();
+  };
+
+  const handleLogout = () => {
+    api.logout();
+    setCurrentUser(null);
+    loadInitialData();
+  };
 
   const handleNavigateTab = (tab: string) => {
     setCurrentTab(tab);
@@ -109,6 +153,14 @@ export function App() {
   const handleLoadDemo = async () => {
     setIsLoadingDemo(true);
     try {
+      if (!api.isAuthenticated()) {
+        try {
+          const demoAuth = await api.demoLogin();
+          setCurrentUser(demoAuth.user);
+        } catch (err) {
+          console.warn('Demo fast login bypass:', err);
+        }
+      }
       await api.triggerDemoSeed();
       await loadInitialData();
     } catch (err) {
@@ -224,174 +276,198 @@ export function App() {
 
   if (currentTab === 'landing') {
     return (
-      <LandingPage
-        onLaunchApp={() => handleNavigateTab('dashboard')}
-        onLoadDemoAndLaunch={handleLoadDemoAndLaunch}
-        isLoadingDemo={isLoadingDemo}
-      />
+      <ErrorBoundary>
+        <LandingPage
+          onLaunchApp={() => handleNavigateTab('dashboard')}
+          onLoadDemoAndLaunch={handleLoadDemoAndLaunch}
+          isLoadingDemo={isLoadingDemo}
+        />
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          initialMode={authModalMode}
+          onSuccess={handleAuthSuccess}
+        />
+      </ErrorBoundary>
     );
   }
 
   return (
-    <div className="min-h-screen bg-transparent text-slate-100 flex flex-col font-sans">
-      {/* Top Navigation */}
-      <Navbar
-        automationSettings={automationSettings}
-        notifications={notifications}
-        onEmergencyStop={handleEmergencyStop}
-        onSync={handleSync}
-        isSyncing={isSyncing}
-        onNavigate={handleNavigateTab}
-        onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-      />
+    <ErrorBoundary>
+      <div className="min-h-screen bg-transparent text-slate-100 flex flex-col font-sans">
+        {/* Top Navigation */}
+        <Navbar
+          automationSettings={automationSettings}
+          notifications={notifications}
+          currentUser={currentUser}
+          onEmergencyStop={handleEmergencyStop}
+          onSync={handleSync}
+          isSyncing={isSyncing}
+          onNavigate={handleNavigateTab}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onOpenAuth={handleOpenAuth}
+          onLogout={handleLogout}
+        />
 
-      {/* Main Container */}
-      <div className="flex flex-1">
-        {/* Left Sidebar */}
-        <Sidebar
+        {/* Main Container */}
+        <div className="flex flex-1">
+          {/* Left Sidebar */}
+          <Sidebar
+            currentTab={currentTab}
+            onTabChange={handleNavigateTab}
+            highMatchCount={highMatchCount}
+            possibleMatchCount={possibleMatchCount}
+            activeAppCount={activeAppCount}
+          />
+
+          {/* Content View Area */}
+          <main className="flex-1 p-3.5 sm:p-6 md:p-8 pb-28 md:pb-8 max-w-7xl mx-auto w-full overflow-x-hidden">
+            {currentTab === 'dashboard' && (
+              <DashboardView
+                jobs={jobs}
+                platforms={platforms}
+                automationSettings={automationSettings}
+                analytics={analytics}
+                onViewJob={setSelectedJob}
+                onNavigate={handleNavigateTab}
+                onLoadDemo={handleLoadDemo}
+                onUpdateMode={handleUpdateMode}
+                isLoadingDemo={isLoadingDemo}
+              />
+            )}
+
+            {currentTab === 'jobs' && (
+              <JobsView
+                jobs={jobs}
+                onViewJob={setSelectedJob}
+                onSaveJob={handleSaveJob}
+                onIgnoreJob={handleIgnoreJob}
+                onRemoveAction={handleRemoveAction}
+                filterStatus="active"
+              />
+            )}
+
+            {currentTab === 'saved' && (
+              <JobsView
+                jobs={jobs}
+                onViewJob={setSelectedJob}
+                onSaveJob={handleSaveJob}
+                onIgnoreJob={handleIgnoreJob}
+                onRemoveAction={handleRemoveAction}
+                filterStatus="saved"
+              />
+            )}
+
+            {currentTab === 'applications' && (
+              <ApplicationsView
+                applications={applications}
+                onUpdateStatus={handleUpdateAppStatus}
+              />
+            )}
+
+            {currentTab === 'analytics' && (
+              <AnalyticsView
+                analytics={analytics}
+                onNavigateToReports={() => handleNavigateTab('reports')}
+              />
+            )}
+
+            {currentTab === 'reports' && (
+              <ReportsView />
+            )}
+
+            {currentTab === 'platforms' && (
+              <PlatformsView
+                platforms={platforms}
+                onConnect={async (platformId, creds) => {
+                  await api.connectPlatform(platformId, creds);
+                  const p = await api.getPlatforms();
+                  setPlatforms(p);
+                }}
+                onDisconnect={async platformId => {
+                  await api.disconnectPlatform(platformId);
+                  const p = await api.getPlatforms();
+                  setPlatforms(p);
+                }}
+              />
+            )}
+
+            {currentTab === 'profile' && profile && (
+              <ProfileView
+                profile={profile}
+                learnedInsights={learnedInsights}
+                onUpdateProfile={async updated => {
+                  const res = await api.updateProfile(updated);
+                  setProfile(res);
+                }}
+                onUpdateSkills={async skills => {
+                  const res = await api.updateSkills(skills);
+                  setProfile(prev => (prev ? { ...prev, skills: res } : null));
+                }}
+                onUpdatePreferences={async prefs => {
+                  const res = await api.updatePreferences(prefs);
+                  setProfile(prev => (prev ? { ...prev, preferences: res } : null));
+                }}
+                onRefreshLearned={async () => {
+                  const res = await api.refreshLearnedInsights();
+                  setLearnedInsights(res);
+                }}
+              />
+            )}
+
+            {currentTab === 'automation' && automationSettings && (
+              <AutomationView
+                settings={automationSettings}
+                onUpdateSettings={async updated => {
+                  const res = await api.updateAutomationSettings(updated);
+                  setAutomationSettings(res);
+                }}
+                onEmergencyStop={handleEmergencyStop}
+              />
+            )}
+
+            {currentTab === 'settings' && (
+              <SettingsView />
+            )}
+          </main>
+        </div>
+
+        {/* Global Job Details Modal */}
+        {selectedJob && (
+          <JobDetailsModal
+            job={selectedJob}
+            onClose={() => setSelectedJob(null)}
+            onSaveJob={handleSaveJob}
+            onApply={handleApply}
+            applicationMode={automationSettings?.application_mode}
+          />
+        )}
+
+        {/* Mobile Navigation Bar & Slide-out Drawer */}
+        <MobileNav
           currentTab={currentTab}
           onTabChange={handleNavigateTab}
           highMatchCount={highMatchCount}
-          possibleMatchCount={possibleMatchCount}
           activeAppCount={activeAppCount}
+          isOpen={isMobileMenuOpen}
+          onToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onClose={() => setIsMobileMenuOpen(false)}
+          automationSettings={automationSettings}
+          onEmergencyStop={handleEmergencyStop}
+          currentUser={currentUser}
+          onOpenAuth={handleOpenAuth}
+          onLogout={handleLogout}
         />
 
-        {/* Content View Area */}
-        <main className="flex-1 p-3.5 sm:p-6 md:p-8 pb-28 md:pb-8 max-w-7xl mx-auto w-full overflow-x-hidden">
-          {currentTab === 'dashboard' && (
-            <DashboardView
-              jobs={jobs}
-              platforms={platforms}
-              automationSettings={automationSettings}
-              analytics={analytics}
-              onViewJob={setSelectedJob}
-              onNavigate={handleNavigateTab}
-              onLoadDemo={handleLoadDemo}
-              onUpdateMode={handleUpdateMode}
-              isLoadingDemo={isLoadingDemo}
-            />
-          )}
-
-          {currentTab === 'jobs' && (
-            <JobsView
-              jobs={jobs}
-              onViewJob={setSelectedJob}
-              onSaveJob={handleSaveJob}
-              onIgnoreJob={handleIgnoreJob}
-              onRemoveAction={handleRemoveAction}
-              filterStatus="active"
-            />
-          )}
-
-          {currentTab === 'saved' && (
-            <JobsView
-              jobs={jobs}
-              onViewJob={setSelectedJob}
-              onSaveJob={handleSaveJob}
-              onIgnoreJob={handleIgnoreJob}
-              onRemoveAction={handleRemoveAction}
-              filterStatus="saved"
-            />
-          )}
-
-          {currentTab === 'applications' && (
-            <ApplicationsView
-              applications={applications}
-              onUpdateStatus={handleUpdateAppStatus}
-            />
-          )}
-
-          {currentTab === 'analytics' && (
-            <AnalyticsView
-              analytics={analytics}
-              onNavigateToReports={() => handleNavigateTab('reports')}
-            />
-          )}
-
-          {currentTab === 'reports' && (
-            <ReportsView />
-          )}
-
-          {currentTab === 'platforms' && (
-            <PlatformsView
-              platforms={platforms}
-              onConnect={async (platformId, creds) => {
-                await api.connectPlatform(platformId, creds);
-                const p = await api.getPlatforms();
-                setPlatforms(p);
-              }}
-              onDisconnect={async platformId => {
-                await api.disconnectPlatform(platformId);
-                const p = await api.getPlatforms();
-                setPlatforms(p);
-              }}
-            />
-          )}
-
-          {currentTab === 'profile' && profile && (
-            <ProfileView
-              profile={profile}
-              learnedInsights={learnedInsights}
-              onUpdateProfile={async updated => {
-                const res = await api.updateProfile(updated);
-                setProfile(res);
-              }}
-              onUpdateSkills={async skills => {
-                const res = await api.updateSkills(skills);
-                setProfile(prev => (prev ? { ...prev, skills: res } : null));
-              }}
-              onUpdatePreferences={async prefs => {
-                const res = await api.updatePreferences(prefs);
-                setProfile(prev => (prev ? { ...prev, preferences: res } : null));
-              }}
-              onRefreshLearned={async () => {
-                const res = await api.refreshLearnedInsights();
-                setLearnedInsights(res);
-              }}
-            />
-          )}
-
-          {currentTab === 'automation' && automationSettings && (
-            <AutomationView
-              settings={automationSettings}
-              onUpdateSettings={async updated => {
-                const res = await api.updateAutomationSettings(updated);
-                setAutomationSettings(res);
-              }}
-              onEmergencyStop={handleEmergencyStop}
-            />
-          )}
-
-          {currentTab === 'settings' && (
-            <SettingsView />
-          )}
-        </main>
+        {/* Authentication Modal */}
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          initialMode={authModalMode}
+          onSuccess={handleAuthSuccess}
+        />
       </div>
-
-      {/* Global Job Details Modal */}
-      {selectedJob && (
-        <JobDetailsModal
-          job={selectedJob}
-          onClose={() => setSelectedJob(null)}
-          onSaveJob={handleSaveJob}
-          onApply={handleApply}
-          applicationMode={automationSettings?.application_mode}
-        />
-      )}
-
-      {/* Mobile Navigation Bar & Slide-out Drawer */}
-      <MobileNav
-        currentTab={currentTab}
-        onTabChange={handleNavigateTab}
-        highMatchCount={highMatchCount}
-        activeAppCount={activeAppCount}
-        isOpen={isMobileMenuOpen}
-        onToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        onClose={() => setIsMobileMenuOpen(false)}
-        automationSettings={automationSettings}
-        onEmergencyStop={handleEmergencyStop}
-      />
-    </div>
+    </ErrorBoundary>
   );
 }
 

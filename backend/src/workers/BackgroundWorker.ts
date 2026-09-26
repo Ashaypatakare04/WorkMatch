@@ -74,62 +74,73 @@ export class BackgroundWorker {
         }
       }
 
-      // 2. Determine target user (or default user)
-      const userId = targetUserId || 'user_default';
-      const userProfile = UserRepository.getProfile(userId);
-      if (!userProfile) {
-        BackgroundWorker.isRunning = false;
-        return { jobsCollected, newJobsInserted, analyzedCount, notificationsSent, automatedApplications };
+      // 2. Determine target user list
+      let userIds: string[] = [];
+      if (targetUserId) {
+        userIds = [targetUserId];
+      } else {
+        try {
+          const users = Database.query<{ id: string }>('SELECT id FROM users');
+          userIds = users.map(u => u.id);
+        } catch {
+          userIds = [];
+        }
+        if (userIds.length === 0) userIds.push('user_default');
       }
 
-      // 3. Process jobs that need analysis & scoring
-      const { jobs } = JobRepository.listJobs(userId, { limit: 50 });
-      for (const job of jobs) {
-        // A. Analyze if not already analyzed
-        let analysis = job.analysis;
-        if (!analysis) {
-          analysis = await JobAnalyzer.analyze(job, userId);
-          JobRepository.saveJobAnalysis(analysis);
-          analyzedCount++;
-        }
+      // 3. Process jobs that need analysis & scoring for each user
+      for (const userId of userIds) {
+        const userProfile = UserRepository.getProfile(userId);
+        if (!userProfile) continue;
 
-        // B. Risk check if not already performed
-        let risk = job.risk;
-        if (!risk) {
-          risk = await RiskScamSignalEngine.analyze(job, userId);
-          JobRepository.saveJobRisk(risk);
-        }
+        const { jobs } = JobRepository.listJobs(userId, { limit: 50 });
+        for (const job of jobs) {
+          // A. Analyze if not already analyzed
+          let analysis = job.analysis;
+          if (!analysis) {
+            analysis = await JobAnalyzer.analyze(job, userId);
+            JobRepository.saveJobAnalysis(analysis);
+            analyzedCount++;
+          }
 
-        // C. Score job if not already scored
-        let score = job.score;
-        if (!score) {
-          score = MatchingEngine.match(job, analysis, risk, userProfile);
-          JobRepository.saveJobScore(score);
+          // B. Risk check if not already performed
+          let risk = job.risk;
+          if (!risk) {
+            risk = await RiskScamSignalEngine.analyze(job, userId);
+            JobRepository.saveJobRisk(risk);
+          }
 
-          // D. Dispatch notification if threshold met
-          if (score.overall_score >= userProfile.preferences.scoring_thresholds.high_match) {
-            await NotificationService.dispatchJobAlert({
+          // C. Score job if not already scored
+          let score = job.score;
+          if (!score) {
+            score = MatchingEngine.match(job, analysis, risk, userProfile);
+            JobRepository.saveJobScore(score);
+
+            // D. Dispatch notification if threshold met
+            if (score.overall_score >= userProfile.preferences.scoring_thresholds.high_match) {
+              await NotificationService.dispatchJobAlert({
+                userId,
+                job,
+                score,
+                risk
+              });
+              notificationsSent++;
+            }
+
+            // E. Check for automated application
+            const connector = ConnectorRegistry.get(job.platform) || ConnectorRegistry.get('mock')!;
+            const autoRes = await AutomationController.evaluateAndApply({
               userId,
               job,
               score,
-              risk
+              risk,
+              profile: userProfile,
+              connector
             });
-            notificationsSent++;
-          }
 
-          // E. Check for automated application
-          const connector = ConnectorRegistry.get(job.platform) || ConnectorRegistry.get('mock')!;
-          const autoRes = await AutomationController.evaluateAndApply({
-            userId,
-            job,
-            score,
-            risk,
-            profile: userProfile,
-            connector
-          });
-
-          if (autoRes.applied) {
-            automatedApplications++;
+            if (autoRes.applied) {
+              automatedApplications++;
+            }
           }
         }
       }

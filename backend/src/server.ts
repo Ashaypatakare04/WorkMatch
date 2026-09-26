@@ -160,7 +160,9 @@ export async function ensureInitialSeed(): Promise<void> {
 }
 
 // Trigger initial check
-ensureInitialSeed().catch(err => console.warn('[WorkMatch AI] Seed initialization warning:', err));
+if (process.env.NODE_ENV !== 'test') {
+  ensureInitialSeed().catch(err => console.warn('[WorkMatch AI] Seed initialization warning:', err));
+}
 
 // Only start background interval worker and listen on port when not running as a Vercel serverless function
 if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {

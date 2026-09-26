@@ -8,8 +8,8 @@ export class RiskScamSignalEngine {
     const warningSignals: string[] = [];
     let baseRiskScore = 10;
 
-    const lowerDesc = job.description.toLowerCase();
-    const lowerTitle = job.title.toLowerCase();
+    const lowerDesc = (job.description || '').toLowerCase();
+    const lowerTitle = (job.title || '').toLowerCase();
 
     // 1. Off-platform contact indicators
     if (lowerDesc.includes('telegram') || lowerDesc.includes('whatsapp') || lowerDesc.includes('skype id') || lowerDesc.includes('contact me on:')) {
@@ -36,7 +36,7 @@ export class RiskScamSignalEngine {
     }
 
     // 5. Unrealistic compensation flags
-    if (job.budget.type === 'fixed' && job.budget.max && job.budget.max > 2000 && (lowerTitle.includes('data entry') || lowerTitle.includes('copy paste'))) {
+    if (job.budget?.type === 'fixed' && job.budget?.max && job.budget.max > 2000 && (lowerTitle.includes('data entry') || lowerTitle.includes('copy paste'))) {
       warningSignals.push('Disproportionately high compensation for basic repetitive tasks');
       baseRiskScore += 30;
     }
@@ -48,7 +48,7 @@ export class RiskScamSignalEngine {
     }
 
     // 7. Client history signals
-    if (job.client.jobs_posted && job.client.jobs_posted > 15 && (job.client.hire_rate === 0 || (job.client.rating && job.client.rating < 2.5))) {
+    if (job.client?.jobs_posted && job.client.jobs_posted > 15 && (job.client.hire_rate === 0 || (job.client.rating && job.client.rating < 2.5))) {
       warningSignals.push('Client has posted numerous jobs with 0% hire rate or low client feedback rating');
       baseRiskScore += 20;
     }
