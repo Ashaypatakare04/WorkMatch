@@ -17379,8 +17379,8 @@ var require_escape_html = __commonJS({
   "backend/node_modules/escape-html/index.js"(exports, module) {
     "use strict";
     var matchHtmlRegExp = /["'&<>]/;
-    module.exports = escapeHtml;
-    function escapeHtml(string) {
+    module.exports = escapeHtml2;
+    function escapeHtml2(string) {
       var str = "" + string;
       var match = matchHtmlRegExp.exec(str);
       if (!match) {
@@ -17511,7 +17511,7 @@ var require_finalhandler = __commonJS({
     "use strict";
     var debug = require_src()("finalhandler");
     var encodeUrl = require_encodeurl();
-    var escapeHtml = require_escape_html();
+    var escapeHtml2 = require_escape_html();
     var onFinished = require_on_finished();
     var parseUrl = require_parseurl();
     var statuses = require_statuses();
@@ -17523,7 +17523,7 @@ var require_finalhandler = __commonJS({
     };
     var isFinished = onFinished.isFinished;
     function createHtmlDocument(message) {
-      var body = escapeHtml(message).replace(NEWLINE_REGEXP, "<br>").replace(DOUBLE_SPACE_REGEXP, " &nbsp;");
+      var body = escapeHtml2(message).replace(NEWLINE_REGEXP, "<br>").replace(DOUBLE_SPACE_REGEXP, " &nbsp;");
       return '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<title>Error</title>\n</head>\n<body>\n<pre>' + body + "</pre>\n</body>\n</html>\n";
     }
     module.exports = finalhandler;
@@ -19179,7 +19179,7 @@ var require_send = __commonJS({
     var deprecate = require_depd()("send");
     var destroy = require_destroy();
     var encodeUrl = require_encodeurl();
-    var escapeHtml = require_escape_html();
+    var escapeHtml2 = require_escape_html();
     var etag = require_etag();
     var fresh = require_fresh();
     var fs3 = __require("fs");
@@ -19279,7 +19279,7 @@ var require_send = __commonJS({
       }
       var res = this.res;
       var msg = statuses.message[status] || String(status);
-      var doc = createHtmlDocument("Error", escapeHtml(msg));
+      var doc = createHtmlDocument("Error", escapeHtml2(msg));
       clearHeaders(res);
       if (err && err.headers) {
         setHeaders(res, err.headers);
@@ -19379,7 +19379,7 @@ var require_send = __commonJS({
         return;
       }
       var loc = encodeUrl(collapseLeadingSlashes(this.path + "/"));
-      var doc = createHtmlDocument("Redirecting", "Redirecting to " + escapeHtml(loc));
+      var doc = createHtmlDocument("Redirecting", "Redirecting to " + escapeHtml2(loc));
       res.statusCode = 301;
       res.setHeader("Content-Type", "text/html; charset=UTF-8");
       res.setHeader("Content-Length", Buffer.byteLength(doc));
@@ -21984,7 +21984,7 @@ var require_response = __commonJS({
     var createError = require_http_errors();
     var deprecate = require_depd()("express");
     var encodeUrl = require_encodeurl();
-    var escapeHtml = require_escape_html();
+    var escapeHtml2 = require_escape_html();
     var http = __require("http");
     var isAbsolute = require_utils2().isAbsolute;
     var onFinished = require_on_finished();
@@ -22390,7 +22390,7 @@ var require_response = __commonJS({
           body = statuses.message[status] + ". Redirecting to " + address;
         },
         html: function() {
-          var u = escapeHtml(address);
+          var u = escapeHtml2(address);
           body = "<p>" + statuses.message[status] + ". Redirecting to " + u + "</p>";
         },
         default: function() {
@@ -22522,7 +22522,7 @@ var require_serve_static = __commonJS({
   "backend/node_modules/serve-static/index.js"(exports, module) {
     "use strict";
     var encodeUrl = require_encodeurl();
-    var escapeHtml = require_escape_html();
+    var escapeHtml2 = require_escape_html();
     var parseUrl = require_parseurl();
     var resolve = __require("path").resolve;
     var send = require_send();
@@ -22609,7 +22609,7 @@ var require_serve_static = __commonJS({
         originalUrl.path = null;
         originalUrl.pathname = collapseLeadingSlashes(originalUrl.pathname + "/");
         var loc = encodeUrl(url.format(originalUrl));
-        var doc = createHtmlDocument("Redirecting", "Redirecting to " + escapeHtml(loc));
+        var doc = createHtmlDocument("Redirecting", "Redirecting to " + escapeHtml2(loc));
         res.statusCode = 301;
         res.setHeader("Content-Type", "text/html; charset=UTF-8");
         res.setHeader("Content-Length", Buffer.byteLength(doc));
@@ -30996,29 +30996,306 @@ Thanks!`,
   }
 };
 
+// backend/src/ai/providers/GeminiProvider.ts
+var GeminiProvider = class {
+  name = "GeminiProvider";
+  apiKey;
+  model;
+  baseUrl;
+  constructor(apiKey, model) {
+    const rawKey = apiKey !== void 0 ? apiKey : process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
+    this.apiKey = (rawKey || "").trim();
+    this.model = model || process.env.GEMINI_MODEL || "gemini-1.5-flash";
+    this.baseUrl = process.env.GEMINI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta";
+  }
+  async generateText(prompt, options) {
+    const startTime = Date.now();
+    if (!this.apiKey) {
+      throw new Error("[GeminiProvider] Missing GEMINI_API_KEY or GOOGLE_API_KEY in environment");
+    }
+    const url = `${this.baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`;
+    const payload = {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }]
+        }
+      ],
+      generationConfig: {
+        temperature: options?.temperature ?? 0.7,
+        maxOutputTokens: options?.maxTokens ?? 2048,
+        stopSequences: options?.stopSequences
+      }
+    };
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`[GeminiProvider] API Error (${response.status}): ${errText}`);
+    }
+    const json = await response.json();
+    const rawText = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const tokensIn = json?.usageMetadata?.promptTokenCount || Math.round(prompt.length / 4);
+    const tokensOut = json?.usageMetadata?.candidatesTokenCount || Math.round(rawText.length / 4);
+    return {
+      data: rawText,
+      rawText,
+      tokensIn,
+      tokensOut,
+      durationMs: Date.now() - startTime,
+      provider: "google-gemini",
+      model: this.model
+    };
+  }
+  async generateStructured(prompt, schemaDescription, options) {
+    const startTime = Date.now();
+    if (!this.apiKey) {
+      throw new Error("[GeminiProvider] Missing GEMINI_API_KEY or GOOGLE_API_KEY in environment");
+    }
+    const enhancedPrompt = `${prompt}
+
+Strict Output Requirements:
+You must respond with valid JSON ONLY conforming to: ${schemaDescription}.
+Do NOT output markdown backticks, explanations, or text outside the JSON object.`;
+    const url = `${this.baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`;
+    const payload = {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: enhancedPrompt }]
+        }
+      ],
+      generationConfig: {
+        temperature: options?.temperature ?? 0.2,
+        maxOutputTokens: options?.maxTokens ?? 2048,
+        responseMimeType: "application/json"
+      }
+    };
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`[GeminiProvider] API Error (${response.status}): ${errText}`);
+    }
+    const json = await response.json();
+    let rawText = json?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+    rawText = rawText.trim();
+    if (rawText.startsWith("```json")) {
+      rawText = rawText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+    } else if (rawText.startsWith("```")) {
+      rawText = rawText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+    }
+    let parsedData;
+    try {
+      parsedData = JSON.parse(rawText);
+    } catch (err) {
+      throw new Error(`[GeminiProvider] Failed to parse model output as JSON: ${err.message}. Raw text: ${rawText}`);
+    }
+    const tokensIn = json?.usageMetadata?.promptTokenCount || Math.round(enhancedPrompt.length / 4);
+    const tokensOut = json?.usageMetadata?.candidatesTokenCount || Math.round(rawText.length / 4);
+    return {
+      data: parsedData,
+      rawText,
+      tokensIn,
+      tokensOut,
+      durationMs: Date.now() - startTime,
+      provider: "google-gemini",
+      model: this.model
+    };
+  }
+};
+
+// backend/src/ai/providers/OpenAIProvider.ts
+var OpenAIProvider = class {
+  name = "OpenAIProvider";
+  apiKey;
+  model;
+  baseUrl;
+  constructor(apiKey, model, baseUrl) {
+    const rawKey = apiKey !== void 0 ? apiKey : process.env.OPENAI_API_KEY || "";
+    this.apiKey = (rawKey || "").trim();
+    this.model = model || process.env.OPENAI_MODEL || "gpt-4o-mini";
+    this.baseUrl = baseUrl || process.env.OPENAI_BASE_URL || "https://api.openai.com/v1";
+  }
+  async generateText(prompt, options) {
+    const startTime = Date.now();
+    if (!this.apiKey) {
+      throw new Error("[OpenAIProvider] Missing OPENAI_API_KEY in environment");
+    }
+    const url = `${this.baseUrl}/chat/completions`;
+    const payload = {
+      model: this.model,
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: options?.temperature ?? 0.7,
+      max_tokens: options?.maxTokens ?? 2048,
+      stop: options?.stopSequences
+    };
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`[OpenAIProvider] API Error (${response.status}): ${errText}`);
+    }
+    const json = await response.json();
+    const rawText = json?.choices?.[0]?.message?.content || "";
+    const tokensIn = json?.usage?.prompt_tokens || Math.round(prompt.length / 4);
+    const tokensOut = json?.usage?.completion_tokens || Math.round(rawText.length / 4);
+    return {
+      data: rawText,
+      rawText,
+      tokensIn,
+      tokensOut,
+      durationMs: Date.now() - startTime,
+      provider: "openai",
+      model: this.model
+    };
+  }
+  async generateStructured(prompt, schemaDescription, options) {
+    const startTime = Date.now();
+    if (!this.apiKey) {
+      throw new Error("[OpenAIProvider] Missing OPENAI_API_KEY in environment");
+    }
+    const systemPrompt = `You are a structured data processing agent. Output valid JSON ONLY matching schema: ${schemaDescription}.`;
+    const url = `${this.baseUrl}/chat/completions`;
+    const payload = {
+      model: this.model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: prompt }
+      ],
+      temperature: options?.temperature ?? 0.2,
+      max_tokens: options?.maxTokens ?? 2048,
+      response_format: { type: "json_object" }
+    };
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey}`
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`[OpenAIProvider] API Error (${response.status}): ${errText}`);
+    }
+    const json = await response.json();
+    let rawText = json?.choices?.[0]?.message?.content || "{}";
+    rawText = rawText.trim();
+    if (rawText.startsWith("```json")) {
+      rawText = rawText.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+    } else if (rawText.startsWith("```")) {
+      rawText = rawText.replace(/^```\s*/, "").replace(/\s*```$/, "");
+    }
+    let parsedData;
+    try {
+      parsedData = JSON.parse(rawText);
+    } catch (err) {
+      throw new Error(`[OpenAIProvider] Failed to parse model output as JSON: ${err.message}. Raw text: ${rawText}`);
+    }
+    const tokensIn = json?.usage?.prompt_tokens || Math.round(prompt.length / 4);
+    const tokensOut = json?.usage?.completion_tokens || Math.round(rawText.length / 4);
+    return {
+      data: parsedData,
+      rawText,
+      tokensIn,
+      tokensOut,
+      durationMs: Date.now() - startTime,
+      provider: "openai",
+      model: this.model
+    };
+  }
+};
+
 // backend/src/ai/gateway/AIGateway.ts
 var AIGateway = class _AIGateway {
   static providerInstance = null;
+  static fallbackProvider = new MockAIProvider();
   static getProvider() {
     if (!_AIGateway.providerInstance) {
-      _AIGateway.providerInstance = new MockAIProvider();
+      const explicitProvider = (process.env.AI_PROVIDER || "").toLowerCase();
+      if (explicitProvider === "gemini" || !explicitProvider && (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY)) {
+        try {
+          _AIGateway.providerInstance = new GeminiProvider();
+          console.log("[AIGateway] Initialized GeminiProvider as primary AI engine");
+        } catch (err) {
+          console.warn("[AIGateway] Failed to initialize GeminiProvider, falling back to mock:", err);
+          _AIGateway.providerInstance = new MockAIProvider();
+        }
+      } else if (explicitProvider === "openai" || !explicitProvider && process.env.OPENAI_API_KEY) {
+        try {
+          _AIGateway.providerInstance = new OpenAIProvider();
+          console.log("[AIGateway] Initialized OpenAIProvider as primary AI engine");
+        } catch (err) {
+          console.warn("[AIGateway] Failed to initialize OpenAIProvider, falling back to mock:", err);
+          _AIGateway.providerInstance = new MockAIProvider();
+        }
+      } else {
+        _AIGateway.providerInstance = new MockAIProvider();
+      }
     }
     return _AIGateway.providerInstance;
   }
   static setProvider(provider) {
     _AIGateway.providerInstance = provider;
   }
-  static async executePrompt(params) {
+  static getActiveProviderInfo() {
     const provider = _AIGateway.getProvider();
+    const isLive = provider.name === "GeminiProvider" || provider.name === "OpenAIProvider";
+    return {
+      name: provider.name,
+      isLive
+    };
+  }
+  static async executePrompt(params) {
+    let provider = _AIGateway.getProvider();
     let result;
-    if (params.isStructured) {
-      result = await provider.generateStructured(
-        params.renderedPrompt,
-        params.schemaDescription || "",
-        params.options
-      );
-    } else {
-      result = await provider.generateText(params.renderedPrompt, params.options);
+    try {
+      if (params.isStructured) {
+        result = await provider.generateStructured(
+          params.renderedPrompt,
+          params.schemaDescription || "",
+          params.options
+        );
+      } else {
+        result = await provider.generateText(params.renderedPrompt, params.options);
+      }
+    } catch (primaryErr) {
+      if (provider.name !== "MockAIProvider") {
+        console.warn(`[AIGateway] Primary provider ${provider.name} failed (${primaryErr.message}). Engaging resilient MockAIProvider fallback.`);
+        if (params.isStructured) {
+          result = await _AIGateway.fallbackProvider.generateStructured(
+            params.renderedPrompt,
+            params.schemaDescription || "",
+            params.options
+          );
+        } else {
+          result = await _AIGateway.fallbackProvider.generateText(params.renderedPrompt, params.options);
+        }
+      } else {
+        throw primaryErr;
+      }
     }
     try {
       const userExists = params.userId ? Database2.queryOne("SELECT id FROM users WHERE id = ?", [params.userId]) : null;
@@ -31861,13 +32138,15 @@ var NotificationRepository = class _NotificationRepository {
   static create(item) {
     const id = `notif_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const now = (/* @__PURE__ */ new Date()).toISOString();
+    const jobExists = item.job_id ? Database2.queryOne("SELECT id FROM jobs WHERE id = ?", [item.job_id]) : null;
+    const validJobId = jobExists ? item.job_id : null;
     Database2.execute(
       `INSERT INTO notifications (id, user_id, job_id, channel, title, body, match_score, sent_at, read_at, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         item.user_id,
-        item.job_id || null,
+        validJobId,
         item.channel,
         item.title,
         item.body,
@@ -31988,24 +32267,170 @@ var BrowserNotifier = class {
 var EmailNotifier = class {
   channel = "email";
   async send(notification) {
-    console.log(`[EmailNotifier] Sending email to user for alert: ${notification.title}`);
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const emailWebhookUrl = process.env.EMAIL_WEBHOOK_URL;
+    const fromAddress = process.env.EMAIL_FROM || "WorkMatch AI <alerts@workmatch.local>";
+    const user = UserRepository.findById(notification.user_id);
+    const recipientEmail = process.env.EMAIL_TO || user?.email || "user@workmatch.local";
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #090b10; color: #f1f5f9; padding: 24px; margin: 0; }
+    .card { background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; max-width: 580px; margin: 0 auto; padding: 28px; }
+    .badge { display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: bold; }
+    .title { font-size: 18px; font-weight: bold; color: #ffffff; margin-top: 14px; margin-bottom: 8px; line-height: 1.3; }
+    .body { font-size: 13px; color: #94a3b8; line-height: 1.6; white-space: pre-line; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 16px; margin: 16px 0; }
+    .footer { font-size: 11px; color: #64748b; text-align: center; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="badge">MATCH ALERT ${notification.match_score ? `\u2022 ${notification.match_score}%` : ""}</span>
+    <div class="title">${escapeHtml(notification.title)}</div>
+    <div class="body">${escapeHtml(notification.body)}</div>
+    <div class="footer">Dispatched by WorkMatch AI Opportunity Intelligence Pipeline</div>
+  </div>
+</body>
+</html>
+    `;
+    if (resendApiKey) {
+      try {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${resendApiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            from: fromAddress,
+            to: [recipientEmail],
+            subject: notification.title,
+            html: htmlContent
+          })
+        });
+        if (!res.ok) {
+          const errText = await res.text();
+          console.warn(`[EmailNotifier] Resend API error (${res.status}): ${errText}`);
+          return { delivered: false, error: errText };
+        }
+        console.log(`[EmailNotifier] Alert successfully delivered via Resend to ${recipientEmail}`);
+        return { delivered: true };
+      } catch (err) {
+        console.warn("[EmailNotifier] Network failure delivering via Resend:", err.message);
+        return { delivered: false, error: err.message };
+      }
+    }
+    if (emailWebhookUrl) {
+      try {
+        const res = await fetch(emailWebhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: recipientEmail,
+            subject: notification.title,
+            body: notification.body,
+            html: htmlContent,
+            match_score: notification.match_score,
+            sent_at: notification.sent_at
+          })
+        });
+        return { delivered: res.ok };
+      } catch (err) {
+        return { delivered: false, error: err.message };
+      }
+    }
+    console.log(`[EmailNotifier] [SIMULATION] Delivered email to ${recipientEmail}: ${notification.title}`);
     return { delivered: true };
   }
 };
 var TelegramNotifier = class {
   channel = "telegram";
   async send(notification) {
-    console.log(`[TelegramNotifier] Sending Telegram message: ${notification.title}`);
+    const botToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    if (botToken && chatId) {
+      try {
+        const text = `<b>${escapeHtml(notification.title)}</b>
+
+${escapeHtml(notification.body)}
+
+<i>Dispatched via WorkMatch AI</i>`;
+        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text,
+            parse_mode: "HTML",
+            disable_web_page_preview: true
+          })
+        });
+        if (!res.ok) {
+          const errText = await res.text();
+          console.warn(`[TelegramNotifier] Telegram Bot API error (${res.status}): ${errText}`);
+          return { delivered: false, error: errText };
+        }
+        console.log(`[TelegramNotifier] Alert delivered to Telegram chat ${chatId}`);
+        return { delivered: true };
+      } catch (err) {
+        console.warn("[TelegramNotifier] Network failure connecting to Telegram:", err.message);
+        return { delivered: false, error: err.message };
+      }
+    }
+    console.log(`[TelegramNotifier] [SIMULATION] Delivered Telegram message: ${notification.title}`);
     return { delivered: true };
   }
 };
 var DiscordNotifier = class {
   channel = "discord";
   async send(notification) {
-    console.log(`[DiscordNotifier] Sending Discord webhook: ${notification.title}`);
+    const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+    if (webhookUrl) {
+      try {
+        const isHighMatch = (notification.match_score || 0) >= 85;
+        const color = isHighMatch ? 1096065 : 440020;
+        const payload = {
+          username: "WorkMatch AI",
+          avatar_url: "https://raw.githubusercontent.com/Ashaypatakare04/WorkMatch/main/frontend/public/favicon.svg",
+          embeds: [
+            {
+              title: notification.title,
+              description: notification.body,
+              color,
+              timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+              footer: {
+                text: "WorkMatch AI \u2022 Opportunity Alert"
+              }
+            }
+          ]
+        };
+        const res = await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const errText = await res.text();
+          console.warn(`[DiscordNotifier] Discord webhook error (${res.status}): ${errText}`);
+          return { delivered: false, error: errText };
+        }
+        console.log("[DiscordNotifier] Alert delivered via Discord webhook");
+        return { delivered: true };
+      } catch (err) {
+        console.warn("[DiscordNotifier] Network failure connecting to Discord webhook:", err.message);
+        return { delivered: false, error: err.message };
+      }
+    }
+    console.log(`[DiscordNotifier] [SIMULATION] Delivered Discord webhook: ${notification.title}`);
     return { delivered: true };
   }
 };
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
 
 // backend/src/notifications/NotificationService.ts
 var NotificationService = class _NotificationService {
@@ -32015,6 +32440,20 @@ var NotificationService = class _NotificationService {
     ["telegram", new TelegramNotifier()],
     ["discord", new DiscordNotifier()]
   ]);
+  static isWithinQuietHours(start, end, now = /* @__PURE__ */ new Date()) {
+    if (!start || !end) return false;
+    const [startH, startM] = start.split(":").map(Number);
+    const [endH, endM] = end.split(":").map(Number);
+    if (isNaN(startH) || isNaN(endH)) return false;
+    const currentTotal = now.getHours() * 60 + now.getMinutes();
+    const startTotal = startH * 60 + (startM || 0);
+    const endTotal = endH * 60 + (endM || 0);
+    if (startTotal <= endTotal) {
+      return currentTotal >= startTotal && currentTotal < endTotal;
+    } else {
+      return currentTotal >= startTotal || currentTotal < endTotal;
+    }
+  }
   static async dispatchJobAlert(params) {
     const prefs = NotificationRepository.getPreferences(params.userId);
     if (params.score.overall_score < prefs.min_score_threshold && !prefs.alert_high_risk) {
@@ -32030,17 +32469,20 @@ var NotificationService = class _NotificationService {
     const riskWarning = params.risk.risk_level === "High" ? `\u26A0\uFE0F High Risk: ${params.risk.warning_signals.join(", ")}
 ` : "";
     const body = `Platform: ${params.job.platform.toUpperCase()}
-Budget: ${params.job.budget.type === "fixed" ? `$${params.job.budget.max || params.job.budget.min} Fixed` : `$${params.job.budget.min}-$${params.job.budget.max}/hr`}
+Budget: ${params.job.budget?.type === "fixed" ? `$${params.job.budget.max || params.job.budget.min} Fixed` : `$${params.job.budget?.min || 0}-$${params.job.budget?.max || 0}/hr`}
 Skill Match: ${params.score.skill_score}% | Difficulty: ${params.score.difficulty_score >= 80 ? "Easy" : "Moderate"} | Risk: ${params.risk.risk_level}
 
 Why:
 ${whySnippet || "\u2713 Matches your profile attributes"}
 ${riskWarning}`;
+    const inQuietHours = _NotificationService.isWithinQuietHours(prefs.quiet_hours_start, prefs.quiet_hours_end);
     const enabledChannels = [];
     if (prefs.browser_enabled) enabledChannels.push("browser");
-    if (prefs.email_enabled) enabledChannels.push("email");
-    if (prefs.telegram_enabled) enabledChannels.push("telegram");
-    if (prefs.discord_enabled) enabledChannels.push("discord");
+    if (!inQuietHours) {
+      if (prefs.email_enabled) enabledChannels.push("email");
+      if (prefs.telegram_enabled) enabledChannels.push("telegram");
+      if (prefs.discord_enabled) enabledChannels.push("discord");
+    }
     for (const channel of enabledChannels) {
       const notifItem = NotificationRepository.create({
         user_id: params.userId,
@@ -32054,12 +32496,30 @@ ${riskWarning}`;
       const adapter = _NotificationService.adapters.get(channel);
       if (adapter) {
         try {
-          await adapter.send(notifItem);
+          const res = await adapter.send(notifItem);
+          if (!res.delivered && res.error) {
+            console.warn(`[NotificationService] Delivery notice for ${channel}:`, res.error);
+          }
         } catch (e) {
           console.warn(`[NotificationService] Failed to send via ${channel}:`, e);
         }
       }
     }
+  }
+  static async sendTestAlert(userId, channel) {
+    const adapter = _NotificationService.adapters.get(channel);
+    if (!adapter) {
+      return { delivered: false, error: `Channel adapter ${channel} not found` };
+    }
+    const testItem = NotificationRepository.create({
+      user_id: userId,
+      channel,
+      title: `\u26A1 WorkMatch AI Test Alert (${channel.toUpperCase()})`,
+      body: `This is a test notification confirming your ${channel.toUpperCase()} integration is connected and functioning properly.`,
+      match_score: 95,
+      status: "sent"
+    });
+    return adapter.send(testItem);
   }
 };
 
@@ -33081,6 +33541,52 @@ notificationRouter.put("/preferences", (req, res) => {
     const userId = req.user?.userId || "user_default";
     const updated = NotificationRepository.updatePreferences(userId, req.body);
     res.json({ success: true, preferences: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+notificationRouter.post("/test", async (req, res) => {
+  try {
+    const userId = req.user?.userId || "user_default";
+    const { channel } = req.body;
+    if (!channel || !["browser", "email", "telegram", "discord"].includes(channel)) {
+      res.status(400).json({ error: "Valid channel required (browser, email, telegram, discord)" });
+      return;
+    }
+    const result = await NotificationService.sendTestAlert(userId, channel);
+    res.json({
+      success: true,
+      channel,
+      delivered: result.delivered,
+      error: result.error
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+notificationRouter.get("/channels", (req, res) => {
+  try {
+    res.json({
+      success: true,
+      channels: {
+        browser: {
+          available: true,
+          configured: true
+        },
+        email: {
+          available: true,
+          configured: Boolean(process.env.RESEND_API_KEY || process.env.EMAIL_WEBHOOK_URL)
+        },
+        telegram: {
+          available: true,
+          configured: Boolean(process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID)
+        },
+        discord: {
+          available: true,
+          configured: Boolean(process.env.DISCORD_WEBHOOK_URL)
+        }
+      }
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

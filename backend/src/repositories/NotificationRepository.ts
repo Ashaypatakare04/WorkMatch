@@ -6,13 +6,16 @@ export class NotificationRepository {
     const id = `notif_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
     const now = new Date().toISOString();
 
+    const jobExists = item.job_id ? Database.queryOne('SELECT id FROM jobs WHERE id = ?', [item.job_id]) : null;
+    const validJobId = jobExists ? item.job_id : null;
+
     Database.execute(
       `INSERT INTO notifications (id, user_id, job_id, channel, title, body, match_score, sent_at, read_at, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         item.user_id,
-        item.job_id || null,
+        validJobId,
         item.channel,
         item.title,
         item.body,
