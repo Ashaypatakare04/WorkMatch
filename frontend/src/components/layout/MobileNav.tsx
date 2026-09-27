@@ -20,6 +20,8 @@ import {
   LogOut
 } from 'lucide-react';
 import { AutomationSettings } from '../../types/index.js';
+import { LogoIcon } from '../common/Logo.js';
+import { ThemeToggle } from '../common/ThemeToggle.js';
 
 interface MobileNavProps {
   currentTab: string;
@@ -75,14 +77,14 @@ export const MobileNav: React.FC<MobileNavProps> = ({
       label: 'Opportunity Catalog',
       icon: Briefcase,
       badge: highMatchCount > 0 ? `${highMatchCount} new` : undefined,
-      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+      badgeColor: 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border-emerald-500/30'
     },
     {
       id: 'applications',
       label: 'Applications Kanban',
       icon: Layers,
       badge: activeAppCount > 0 ? `${activeAppCount} active` : undefined,
-      badgeColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30'
+      badgeColor: 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border-cyan-500/30'
     },
     { id: 'saved', label: 'Saved Opportunities', icon: Bookmark },
     { id: 'analytics', label: 'Performance Analytics', icon: BarChart3 },
@@ -102,7 +104,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   return (
     <>
       {/* Bottom Fixed Navigation Bar for Mobile */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface-950/95 backdrop-blur-2xl border-t border-white/[0.08] px-2 py-1.5 shadow-2xl safe-area-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-surface-950/95 backdrop-blur-2xl border-t border-slate-200 dark:border-white/[0.08] px-2 py-1.5 shadow-2xl safe-area-bottom transition-colors duration-200">
         <div className="flex items-center justify-around">
           {primaryTabs.map(tab => {
             const Icon = tab.icon;
@@ -121,14 +123,14 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                 }}
                 className={`relative flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all duration-200 select-none min-w-[54px] active:scale-95 ${
                   isActive || isMenuOpen
-                    ? 'text-emerald-400 font-semibold'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'text-emerald-600 dark:text-emerald-400 font-semibold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                 }`}
               >
                 <div className="relative">
                   <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110' : ''}`} />
                   {tab.badge && (
-                    <span className="absolute -top-1.5 -right-2 px-1.5 py-0.2 rounded-full font-mono text-[9px] font-bold bg-emerald-500 text-surface-950 shadow-glow-emerald">
+                    <span className="absolute -top-1.5 -right-2 px-1.5 py-0.2 rounded-full font-mono text-[9px] font-bold bg-emerald-500 text-white dark:text-surface-950 shadow-glow-emerald">
                       {tab.badge}
                     </span>
                   )}
@@ -137,7 +139,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                   {tab.label}
                 </span>
                 {isActive && (
-                  <span className="absolute bottom-0 w-4 h-0.5 rounded-full bg-emerald-400 shadow-glow-emerald" />
+                  <span className="absolute bottom-0 w-4 h-0.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-glow-emerald" />
                 )}
               </button>
             );
@@ -150,26 +152,22 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         <div className="md:hidden fixed inset-0 z-50 animate-fadeIn">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
+            className="absolute inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm transition-opacity"
             onClick={onClose}
           />
 
           {/* Drawer Sheet */}
-          <div className="absolute right-0 top-0 bottom-0 w-5/6 max-w-sm bg-surface-950 border-l border-white/10 p-5 flex flex-col justify-between overflow-y-auto shadow-2xl animate-slideLeft">
-            <div className="space-y-5">
+          <div className="absolute right-0 top-0 bottom-0 w-5/6 max-w-sm bg-white dark:bg-surface-950 border-l border-slate-200 dark:border-white/10 p-5 flex flex-col justify-between overflow-y-auto shadow-2xl animate-slideLeft">
+            <div className="space-y-4">
               {/* Drawer Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
+              <div className="flex items-center justify-between pb-3.5 border-b border-slate-200 dark:border-white/[0.08]">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 p-[1px] shadow-glow-emerald">
-                    <div className="w-full h-full bg-surface-950 rounded-[11px] flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 text-emerald-400" />
-                    </div>
-                  </div>
+                  <LogoIcon className="w-8 h-8" />
                   <div>
-                    <span className="font-display font-bold text-white text-sm block leading-tight">
+                    <span className="font-display font-bold text-slate-900 dark:text-white text-sm block leading-tight">
                       Navigation Hub
                     </span>
-                    <span className="text-[10px] text-slate-400 font-mono">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                       All Intelligence Modules
                     </span>
                   </div>
@@ -177,25 +175,31 @@ export const MobileNav: React.FC<MobileNavProps> = ({
 
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-xl bg-surface-900 text-slate-400 hover:text-white border border-white/[0.08] transition active:scale-95"
+                  className="p-2 rounded-xl bg-slate-100 dark:bg-surface-900 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/[0.08] transition active:scale-95"
                   aria-label="Close drawer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
+              {/* Theme Toggle Pill in Drawer */}
+              <div className="flex items-center justify-between p-2.5 rounded-2xl bg-slate-50 dark:bg-surface-900/80 border border-slate-200 dark:border-white/[0.06]">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Theme</span>
+                <ThemeToggle variant="pill" />
+              </div>
+
               {/* User Account State */}
               {currentUser ? (
-                <div className="p-3 rounded-2xl bg-surface-900 border border-white/[0.08] flex items-center justify-between">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-surface-900 border border-slate-200 dark:border-white/[0.08] flex items-center justify-between">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 p-[1px] shrink-0">
-                      <div className="w-full h-full rounded-full bg-surface-950 flex items-center justify-center font-bold text-xs text-emerald-400 uppercase">
+                      <div className="w-full h-full rounded-full bg-white dark:bg-surface-950 flex items-center justify-center font-bold text-xs text-emerald-600 dark:text-emerald-400 uppercase">
                         {currentUser.full_name ? currentUser.full_name.charAt(0) : currentUser.email.charAt(0)}
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-semibold text-white truncate">{currentUser.full_name || 'WorkMatch User'}</p>
-                      <p className="text-[10px] text-slate-400 truncate font-mono">{currentUser.email}</p>
+                      <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">{currentUser.full_name || 'WorkMatch User'}</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate font-mono">{currentUser.email}</p>
                     </div>
                   </div>
                   <button
@@ -203,7 +207,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                       onClose();
                       onLogout?.();
                     }}
-                    className="p-2 rounded-xl bg-surface-800 text-rose-400 hover:bg-rose-500/10 transition"
+                    className="p-2 rounded-xl bg-slate-200 dark:bg-surface-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"
                     title="Sign Out"
                   >
                     <LogOut className="w-4 h-4" />
@@ -215,7 +219,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                     onClose();
                     onOpenAuth?.('login');
                   }}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-surface-950 text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 active:scale-95"
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-white dark:text-surface-950 text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 active:scale-95"
                 >
                   <LogIn className="w-4 h-4" />
                   <span>Sign In / Register</span>
@@ -223,9 +227,9 @@ export const MobileNav: React.FC<MobileNavProps> = ({
               )}
 
               {/* Mode indicator */}
-              <div className="p-3 rounded-2xl bg-surface-900/80 border border-white/[0.06] flex items-center justify-between text-xs">
-                <span className="text-slate-400 font-medium">Operating Mode</span>
-                <span className="px-2.5 py-0.5 rounded-full font-mono font-bold text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 uppercase">
+              <div className="p-2.5 rounded-2xl bg-slate-50 dark:bg-surface-900/80 border border-slate-200 dark:border-white/[0.06] flex items-center justify-between text-xs">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">Operating Mode</span>
+                <span className="px-2.5 py-0.5 rounded-full font-mono font-bold text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 uppercase">
                   {automationSettings?.application_mode || 'MANUAL'}
                 </span>
               </div>
@@ -241,16 +245,16 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                       onClick={() => handleSelectTab(item.id)}
                       className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition active:scale-98 ${
                         isActive
-                          ? 'bg-gradient-to-r from-emerald-500/15 to-cyan-500/10 text-white font-semibold border border-emerald-500/30'
-                          : 'text-slate-300 hover:bg-surface-900 hover:text-white'
+                          ? 'bg-emerald-50 dark:bg-gradient-to-r dark:from-emerald-500/15 dark:to-cyan-500/10 text-emerald-700 dark:text-white font-semibold border border-emerald-500/30'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-surface-900 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-400'}`} />
+                        <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`} />
                         <span>{item.label}</span>
                       </div>
                       {item.badge && (
-                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${item.badgeColor || 'bg-white/[0.05] text-slate-400'}`}>
+                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${item.badgeColor || 'bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400'}`}>
                           {item.badge}
                         </span>
                       )}
@@ -261,26 +265,26 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             </div>
 
             {/* Bottom: Emergency Kill Switch & Engine Status */}
-            <div className="pt-5 border-t border-white/[0.08] space-y-3">
+            <div className="pt-4 border-t border-slate-200 dark:border-white/[0.08] space-y-3">
               {onEmergencyStop && (
                 <button
                   onClick={() => {
                     onEmergencyStop();
                     onClose();
                   }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-600/90 hover:bg-red-600 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-red-950/50 transition active:scale-95 border border-red-500/30"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-red-950/40 transition active:scale-95 border border-red-500/30"
                 >
                   <ShieldAlert className="w-4 h-4" />
                   <span>Stop Automation (Kill Switch)</span>
                 </button>
               )}
 
-              <div className="p-3 rounded-xl bg-surface-900/60 border border-white/[0.05] flex items-center justify-between text-[11px] text-slate-400">
+              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-surface-900/60 border border-slate-200 dark:border-white/[0.05] flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
                   Opportunity Engine
                 </span>
-                <span className="font-mono text-emerald-400 font-bold text-[10px]">LIVE</span>
+                <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold text-[10px]">LIVE</span>
               </div>
             </div>
           </div>
@@ -289,3 +293,4 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     </>
   );
 };
+

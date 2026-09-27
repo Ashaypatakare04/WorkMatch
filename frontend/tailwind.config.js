@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -13,12 +14,19 @@ export default {
       },
       colors: {
         surface: {
-          950: '#07090e',
-          900: '#0d1117',
-          850: '#111722',
-          800: '#161f2e',
-          750: '#1d283c',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
           700: '#25344d',
+          750: '#1d283c',
+          800: '#161f2e',
+          850: '#111722',
+          900: '#0d1117',
+          950: '#07090e',
         },
         brand: {
           50: '#f0fdf4',
@@ -34,6 +42,7 @@ export default {
         'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.25)',
         'glow-amber': '0 0 25px -5px rgba(245, 158, 11, 0.25)',
         'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+        'glass-light': '0 8px 30px 0 rgba(0, 0, 0, 0.06)',
       }
     },
   },

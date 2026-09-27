@@ -31,6 +31,8 @@ import {
   Sparkles,
   RefreshCw
 } from 'lucide-react';
+import { Logo, LogoIcon } from '../common/Logo.js';
+import { ThemeToggle } from '../common/ThemeToggle.js';
 
 interface LandingPageProps {
   onLaunchApp: () => void;
@@ -329,77 +331,62 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-[#090b10] text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-200 overflow-x-hidden font-sans"
+      className="min-h-screen bg-slate-50 dark:bg-[#090b10] text-slate-900 dark:text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-800 dark:selection:text-emerald-200 overflow-x-hidden font-sans transition-colors duration-200"
     >
       {/* ─────────────────────────────────────────────────────────────
           1. NAVIGATION: Clean, Compact, Editorial
       ────────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-[#090b10]/90 backdrop-blur-md border-b border-white/[0.08]">
+      <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#090b10]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/[0.08] transition-colors">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Brand Logo */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-3 cursor-pointer select-none group"
+            className="cursor-pointer select-none group"
           >
-            <div className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/[0.12] flex items-center justify-center text-emerald-400 group-hover:border-emerald-500/40 transition-colors">
-              <div className="w-3.5 h-3.5 grid grid-cols-2 gap-0.5">
-                <span className="w-1.5 h-1.5 rounded-[1px] bg-emerald-400" />
-                <span className="w-1.5 h-1.5 rounded-[1px] bg-slate-400" />
-                <span className="w-1.5 h-1.5 rounded-[1px] bg-slate-500" />
-                <span className="w-1.5 h-1.5 rounded-[1px] bg-emerald-400" />
-              </div>
-            </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-semibold tracking-tight text-white group-hover:text-emerald-300 transition-colors">
-                WorkMatch
-              </span>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400">
-                Studio
-              </span>
-            </div>
+            <Logo size="md" badgeText="STUDIO" />
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-medium text-slate-300">
+          <nav className="hidden lg:flex items-center gap-7 text-xs font-medium text-slate-600 dark:text-slate-300">
             <button
               onClick={() => handleScrollTo('product-overview')}
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               Product
             </button>
             <button
               onClick={() => handleScrollTo('how-it-works')}
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               Workflow
             </button>
             <button
               onClick={() => handleScrollTo('cockpit')}
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               Decision Cockpit
             </button>
             <button
               onClick={() => handleScrollTo('simulator')}
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               Formula Simulator
             </button>
             <button
               onClick={() => handleScrollTo('studio')}
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               Proposal Studio
             </button>
             <button
               onClick={() => handleScrollTo('comparison')}
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               Comparison
             </button>
             <button
               onClick={() => handleScrollTo('pricing')}
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               Pricing
             </button>
@@ -407,23 +394,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Desktop Header Actions */}
           <div className="hidden sm:flex items-center gap-3">
+            <ThemeToggle variant="icon" />
             <button
               onClick={onLaunchApp}
-              className="text-xs font-medium text-slate-300 hover:text-white px-3.5 py-1.5 rounded-lg hover:bg-white/[0.04] transition-colors"
+              className="text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors"
             >
               Log in
             </button>
             <button
               onClick={onLoadDemoAndLaunch}
               disabled={isLoadingDemo}
-              className="text-xs font-medium bg-white text-slate-950 hover:bg-slate-200 px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
+              className="text-xs font-medium bg-slate-900 text-white dark:bg-white dark:text-slate-950 hover:bg-slate-800 dark:hover:bg-slate-200 px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
             >
               {isLoadingDemo ? (
-                <div className="w-3.5 h-3.5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 border-2 border-white dark:border-slate-900 border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
                   <span>Find Your Matches</span>
-                  <ArrowRight className="w-3 h-3 text-slate-950" />
+                  <ArrowRight className="w-3 h-3 text-white dark:text-slate-950" />
                 </>
               )}
             </button>
@@ -431,15 +419,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Mobile Menu Button */}
           <div className="flex lg:hidden items-center gap-2">
+            <ThemeToggle variant="icon" />
             <button
               onClick={onLoadDemoAndLaunch}
-              className="text-xs font-medium bg-white text-slate-950 px-3 py-1.5 rounded-lg"
+              className="text-xs font-medium bg-slate-900 text-white dark:bg-white dark:text-slate-950 px-3 py-1.5 rounded-lg"
             >
               Get Started
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-1.5 text-slate-400 hover:text-white"
+              className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               aria-label="Toggle navigation menu"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -449,59 +438,59 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         {/* Mobile Dropdown */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-white/[0.08] bg-[#0c0e14] px-5 py-4 space-y-3">
+          <div className="lg:hidden border-t border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0c0e14] px-5 py-4 space-y-3">
             <button
               onClick={() => handleScrollTo('product-overview')}
-              className="block w-full text-left py-2 text-sm text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
             >
               Product
             </button>
             <button
               onClick={() => handleScrollTo('how-it-works')}
-              className="block w-full text-left py-2 text-sm text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
             >
               Workflow
             </button>
             <button
               onClick={() => handleScrollTo('cockpit')}
-              className="block w-full text-left py-2 text-sm text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
             >
               Decision Cockpit
             </button>
             <button
               onClick={() => handleScrollTo('simulator')}
-              className="block w-full text-left py-2 text-sm text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
             >
               Formula Simulator
             </button>
             <button
               onClick={() => handleScrollTo('studio')}
-              className="block w-full text-left py-2 text-sm text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
             >
               Proposal Studio
             </button>
             <button
               onClick={() => handleScrollTo('comparison')}
-              className="block w-full text-left py-2 text-sm text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
             >
               Comparison
             </button>
             <button
               onClick={() => handleScrollTo('pricing')}
-              className="block w-full text-left py-2 text-sm text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
             >
               Pricing
             </button>
-            <div className="pt-3 border-t border-white/[0.08] flex flex-col gap-2">
+            <div className="pt-3 border-t border-slate-200 dark:border-white/[0.08] flex flex-col gap-2">
               <button
                 onClick={onLaunchApp}
-                className="w-full py-2 rounded-lg bg-white/[0.05] text-xs font-medium text-white"
+                className="w-full py-2 rounded-lg bg-slate-100 dark:bg-white/[0.05] text-xs font-medium text-slate-800 dark:text-white"
               >
                 Log in to Workspace
               </button>
               <button
                 onClick={onLoadDemoAndLaunch}
-                className="w-full py-2 rounded-lg bg-white text-slate-950 text-xs font-medium"
+                className="w-full py-2 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-950 text-xs font-medium"
               >
                 Launch Sandbox Demo
               </button>
@@ -2154,31 +2143,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           17. FOOTER: Minimalist Editorial
       ────────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/[0.08] py-10 px-4 sm:px-6 text-xs font-mono text-slate-400">
+      <footer className="border-t border-slate-200 dark:border-white/[0.08] py-10 px-4 sm:px-6 text-xs font-mono text-slate-500 dark:text-slate-400">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-white">WorkMatch</span>
-            <span>•</span>
+          <div className="flex items-center gap-3">
+            <Logo size="sm" />
+            <span className="text-slate-300 dark:text-slate-600">•</span>
             <span>Work discovery and decision intelligence for freelancers</span>
           </div>
 
-          <div className="flex items-center gap-6 text-slate-400">
-            <button onClick={() => handleScrollTo('product-overview')} className="hover:text-white transition-colors">
+          <div className="flex items-center gap-6 text-slate-600 dark:text-slate-400">
+            <button onClick={() => handleScrollTo('product-overview')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               Product
             </button>
-            <button onClick={() => handleScrollTo('how-it-works')} className="hover:text-white transition-colors">
+            <button onClick={() => handleScrollTo('how-it-works')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               Workflow
             </button>
-            <button onClick={() => handleScrollTo('cockpit')} className="hover:text-white transition-colors">
+            <button onClick={() => handleScrollTo('cockpit')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               Cockpit
             </button>
-            <button onClick={() => handleScrollTo('simulator')} className="hover:text-white transition-colors">
+            <button onClick={() => handleScrollTo('simulator')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               Simulator
             </button>
-            <button onClick={() => handleScrollTo('pricing')} className="hover:text-white transition-colors">
+            <button onClick={() => handleScrollTo('pricing')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               Pricing
             </button>
-            <button onClick={() => handleScrollTo('faq')} className="hover:text-white transition-colors">
+            <button onClick={() => handleScrollTo('faq')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
               FAQ
             </button>
           </div>

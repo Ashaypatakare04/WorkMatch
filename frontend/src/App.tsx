@@ -294,7 +294,7 @@ export function App() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-transparent text-slate-100 flex flex-col font-sans">
+      <div className="min-h-screen bg-slate-50 dark:bg-transparent text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
         {/* Top Navigation */}
         <Navbar
           automationSettings={automationSettings}
