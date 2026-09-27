@@ -19,6 +19,7 @@ import { automationRouter } from './api/routes/automationRoutes.js';
 import { notificationRouter } from './api/routes/notificationRoutes.js';
 import { analyticsRouter } from './api/routes/analyticsRoutes.js';
 import { demoRouter } from './api/routes/demoRoutes.js';
+import { backupRouter } from './api/routes/backupRoutes.js';
 import { BackgroundWorker } from './workers/BackgroundWorker.js';
 
 import { UserRepository } from './repositories/UserRepository.js';
@@ -64,6 +65,7 @@ apiRouter.use('/notifications', authMiddleware, notificationRouter);
 apiRouter.use('/analytics', authMiddleware, analyticsRouter);
 apiRouter.use('/reports', authMiddleware, analyticsRouter);
 apiRouter.use('/demo', authMiddleware, demoRouter);
+apiRouter.use('/backup', authMiddleware, backupRouter);
 
 // Health check endpoint
 apiRouter.get('/health', (req, res) => {
