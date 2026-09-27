@@ -86,11 +86,11 @@
   transform: translateY(-1px);
 }
 
-/* Upwork/Fiverr style badge glow */
+/* Upwork/Fiverr/Freelancer style badges */
 .badge-upwork {
-  background: rgba(16, 185, 129, 0.1);
-  color: #047857;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.12);
+  color: #065f46;
+  border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
 .dark .badge-upwork {
@@ -100,15 +100,27 @@
 }
 
 .badge-fiverr {
-  background: rgba(6, 182, 212, 0.1);
+  background: rgba(6, 182, 212, 0.12);
   color: #0e7490;
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  border: 1px solid rgba(6, 182, 212, 0.35);
 }
 
 .dark .badge-fiverr {
   background: rgba(6, 182, 212, 0.1);
   color: #22d3ee;
   border: 1px solid rgba(6, 182, 212, 0.22);
+}
+
+.badge-indigo {
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.dark .badge-indigo {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.25);
 }
 
 /* Hierarchy-driven modern surfaces */
@@ -378,6 +390,12 @@
 .bg-grid-pattern {
   background-size: 32px 32px;
   background-image: 
+    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+}
+
+.dark .bg-grid-pattern {
+  background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
@@ -388,12 +406,24 @@
 }
 
 .gradient-text {
+  background: linear-gradient(135deg, #0f172a 0%, #334155 45%, #64748b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .gradient-text {
   background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 40%, #94a3b8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-text-emerald {
+  background: linear-gradient(135deg, #047857 0%, #0891b2 50%, #0284c7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .gradient-text-emerald {
   background: linear-gradient(135deg, #34d399 0%, #06b6d4 50%, #38bdf8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

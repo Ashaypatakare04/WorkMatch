@@ -47,26 +47,26 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-[#07090e] text-slate-100 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-slate-50 dark:bg-[#07090e] text-slate-900 dark:text-slate-100 flex items-center justify-center p-4">
           <div className="glass-card border border-rose-500/30 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden text-center">
             <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/30 mx-auto mb-4 flex items-center justify-center">
-              <AlertOctagon className="w-7 h-7 text-rose-400" />
+              <AlertOctagon className="w-7 h-7 text-rose-500 dark:text-rose-400" />
             </div>
 
-            <h1 className="text-xl sm:text-2xl font-bold font-display text-white mb-2">
+            <h1 className="text-xl sm:text-2xl font-bold font-display text-slate-900 dark:text-white mb-2">
               Something went wrong
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mb-6 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
               WorkMatch AI encountered an unexpected rendering error. Your data and settings are preserved in the system.
             </p>
 
             {this.state.error && (
-              <div className="bg-surface-950 border border-white/[0.08] rounded-xl p-3 text-left mb-6 overflow-hidden">
-                <p className="text-[11px] font-mono text-rose-300 break-words font-semibold">
+              <div className="bg-slate-100 dark:bg-surface-950 border border-slate-200 dark:border-white/[0.08] rounded-xl p-3 text-left mb-6 overflow-hidden">
+                <p className="text-[11px] font-mono text-rose-700 dark:text-rose-300 break-words font-semibold">
                   {this.state.error.name}: {this.state.error.message}
                 </p>
                 {this.state.errorInfo?.componentStack && (
-                  <pre className="text-[10px] font-mono text-slate-500 mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap">
+                  <pre className="text-[10px] font-mono text-slate-600 dark:text-slate-500 mt-2 max-h-32 overflow-y-auto whitespace-pre-wrap">
                     {this.state.errorInfo.componentStack}
                   </pre>
                 )}

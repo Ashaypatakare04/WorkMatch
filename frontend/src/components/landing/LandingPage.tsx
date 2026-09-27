@@ -505,21 +505,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       <section id="product-overview" className="relative pt-16 md:pt-24 pb-20 px-4 sm:px-6 max-w-6xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
           {/* Subtle Label */}
-          <div className="editorial-reveal inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] font-mono text-slate-300 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <div className="editorial-reveal inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] text-[11px] font-mono text-slate-700 dark:text-slate-300 mb-6">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
             <span className="tracking-wide">WORK DISCOVERY PLATFORM</span>
-            <span className="text-white/20">•</span>
-            <span className="text-slate-400">DECISION INTELLIGENCE</span>
+            <span className="text-slate-300 dark:text-white/20">•</span>
+            <span className="text-slate-600 dark:text-slate-400">DECISION INTELLIGENCE</span>
           </div>
 
           {/* Enormous Editorial Headline */}
-          <h1 className="editorial-reveal text-5xl sm:text-6xl md:text-7xl font-semibold tracking-[-0.035em] text-white leading-[1.06] mb-6">
+          <h1 className="editorial-reveal text-5xl sm:text-6xl md:text-7xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-white leading-[1.06] mb-6">
             Find work <br />
-            <span className="text-slate-200">that fits.</span>
+            <span className="text-slate-500 dark:text-slate-200">that fits.</span>
           </h1>
 
           {/* Restrained, Confident Copy */}
-          <p className="editorial-reveal text-base sm:text-lg text-slate-300 leading-relaxed font-normal max-w-2xl mx-auto mb-8">
+          <p className="editorial-reveal text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-normal max-w-2xl mx-auto mb-8">
             WorkMatch helps freelancers discover opportunities that match their skills, experience, preferences, and availability. Less searching. Better opportunities. More focused applications.
           </p>
 
@@ -528,38 +528,38 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <button
               onClick={onLoadDemoAndLaunch}
               disabled={isLoadingDemo}
-              className="w-full sm:w-auto px-6 py-3 rounded-lg bg-white hover:bg-slate-100 text-slate-950 text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm"
+              className="w-full sm:w-auto px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm"
             >
               {isLoadingDemo ? (
-                <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white dark:border-slate-900 border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
                   <span>Find Your Matches</span>
-                  <ArrowRight className="w-4 h-4 text-slate-950" />
+                  <ArrowRight className="w-4 h-4 text-white dark:text-slate-950" />
                 </>
               )}
             </button>
 
             <button
               onClick={() => handleScrollTo('how-it-works')}
-              className="w-full sm:w-auto px-6 py-3 rounded-lg bg-[#0e111a] hover:bg-[#131724] text-slate-300 border border-white/[0.08] hover:border-white/[0.14] text-sm font-medium transition-all"
+              className="w-full sm:w-auto px-6 py-3 rounded-lg bg-white hover:bg-slate-50 text-slate-800 dark:bg-[#0e111a] dark:hover:bg-[#131724] dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.14] text-sm font-medium transition-all shadow-sm"
             >
               See How It Works
             </button>
           </div>
 
           {/* Understated Social Proof */}
-          <div className="editorial-reveal mt-10 pt-6 border-t border-white/[0.06] flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-400">
+          <div className="editorial-reveal mt-10 pt-6 border-t border-slate-200 dark:border-white/[0.06] flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-emerald-400" />
+              <span className="w-1 h-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
               <span>Designed for independent professionals</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-emerald-400" />
+              <span className="w-1 h-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
               <span>Upwork, Fiverr & Direct Inbound</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-emerald-400" />
+              <span className="w-1 h-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
               <span>100% verified profile claims</span>
             </div>
           </div>
@@ -568,51 +568,51 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         {/* ─────────────────────────────────────────────────────────────
             3. PRODUCT HERO VISUAL (Enhanced with Radial Gauge & Parameter Tuning)
         ────────────────────────────────────────────────────────────── */}
-        <div className="editorial-reveal relative max-w-4xl mx-auto rounded-2xl bg-[#0c0e16] border border-white/[0.08] shadow-[0_16px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+        <div className="editorial-reveal relative max-w-4xl mx-auto rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-xl dark:shadow-[0_16px_50px_rgba(0,0,0,0.5)] overflow-hidden">
           {/* Subtle real-world atmospheric layer (monochrome desaturated modern workspace) */}
           <div
-            className="absolute inset-0 bg-cover bg-center opacity-[0.06] grayscale pointer-events-none"
+            className="absolute inset-0 bg-cover bg-center opacity-[0.04] dark:opacity-[0.06] grayscale pointer-events-none"
             style={{ backgroundImage: `url(${siteImages.hero})` }}
           />
 
           {/* Interface Header Bar */}
-          <div className="relative px-5 py-3.5 border-b border-white/[0.08] bg-[#0e111c]/90 flex flex-wrap items-center justify-between gap-3">
+          <div className="relative px-5 py-3.5 border-b border-slate-200 dark:border-white/[0.08] bg-slate-50/90 dark:bg-[#0e111c]/90 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-white/[0.12]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
               </div>
-              <span className="text-white/20 hidden sm:inline">|</span>
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+              <span className="text-slate-300 dark:text-white/20 hidden sm:inline">|</span>
+              <span className="text-xs font-mono text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                 Live Opportunity Recommendation
               </span>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="flex items-center gap-2 text-xs font-mono text-slate-600 dark:text-slate-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
               <span>MATCHING ENGINE: ACTIVE</span>
             </div>
           </div>
 
           {/* Interactive Parameters Bar (Subtle intelligence demonstration) */}
-          <div className="relative px-5 py-4 bg-[#090b12] border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
-            <div className="text-slate-400 flex items-center gap-1.5">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="font-semibold text-slate-300">Test Your Criteria:</span>
+          <div className="relative px-5 py-4 bg-slate-50 dark:bg-[#090b12] border-b border-slate-200 dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+            <div className="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span className="font-semibold text-slate-800 dark:text-slate-300">Test Your Criteria:</span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4 text-slate-300">
+            <div className="flex flex-wrap items-center gap-4 text-slate-700 dark:text-slate-300">
               {/* Budget Toggle */}
               <div className="flex items-center gap-2">
-                <span className="text-slate-400">Target Rate:</span>
-                <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08]">
+                <span className="text-slate-500 dark:text-slate-400">Target Rate:</span>
+                <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
                   {[35, 50, 75].map(b => (
                     <button
                       key={b}
                       onClick={() => setHeroBudget(b)}
                       className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
-                        heroBudget === b ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                        heroBudget === b ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                       }`}
                     >
                       ${b}/hr
@@ -623,14 +623,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
               {/* Complexity Toggle */}
               <div className="flex items-center gap-2">
-                <span className="text-slate-400">Complexity:</span>
-                <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08]">
+                <span className="text-slate-500 dark:text-slate-400">Complexity:</span>
+                <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
                   {(['Focused', 'Moderate', 'Architectural'] as const).map(c => (
                     <button
                       key={c}
                       onClick={() => setHeroComplexity(c)}
                       className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
-                        heroComplexity === c ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                        heroComplexity === c ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                       }`}
                     >
                       {c}
@@ -641,14 +641,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
               {/* Hours Toggle */}
               <div className="flex items-center gap-2">
-                <span className="text-slate-400">Availability:</span>
-                <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08]">
+                <span className="text-slate-500 dark:text-slate-400">Availability:</span>
+                <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
                   {[10, 20, 35].map(h => (
                     <button
                       key={h}
                       onClick={() => setHeroAvailability(h)}
                       className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
-                        heroAvailability === h ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                        heroAvailability === h ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                       }`}
                     >
                       {h}h/wk
@@ -661,23 +661,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Product UI Discovery Card */}
           <div className="relative p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-white/[0.08]">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-slate-200 dark:border-white/[0.08]">
               <div className="space-y-2">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 font-medium">
                     Upwork Enterprise
                   </span>
-                  <span className="text-xs text-slate-400 font-mono">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                     Remote · {heroAvailability} hrs/week
                   </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-white tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">
                   Frontend Developer
                 </h3>
-                <p className="text-sm font-mono text-slate-400">
+                <p className="text-sm font-mono text-slate-600 dark:text-slate-400">
                   React / TypeScript Architect · $45–$65/hr
                 </p>
-                <div className="flex items-center gap-2 text-xs font-mono text-slate-400 pt-1">
+                <div className="flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-slate-400 pt-1">
                   <span>★ 4.98 Client ($120k+ spent)</span>
                   <span>•</span>
                   <span>Low Risk Verified</span>
@@ -685,14 +685,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
 
               {/* SVG Radial Score Gauge (Integrated from GitHub version) */}
-              <div className="flex items-center gap-4 bg-[#111420] sm:bg-[#090b12] p-4 rounded-xl border border-white/[0.08] flex-shrink-0">
+              <div className="flex items-center gap-4 bg-slate-50 sm:bg-slate-100 dark:bg-[#111420] sm:dark:bg-[#090b12] p-4 rounded-xl border border-slate-200 dark:border-white/[0.08] flex-shrink-0">
                 <div className="relative w-20 h-20 flex items-center justify-center">
                   <svg className="w-20 h-20 -rotate-90" viewBox="0 0 100 100">
                     <circle
                       cx="50"
                       cy="50"
                       r="40"
-                      className="stroke-white/[0.08]"
+                      className="stroke-slate-200 dark:stroke-white/[0.08]"
                       strokeWidth="7"
                       fill="transparent"
                     />
@@ -700,7 +700,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       cx="50"
                       cy="50"
                       r="40"
-                      className="stroke-emerald-400 transition-all duration-700 ease-out"
+                      className="stroke-emerald-600 dark:stroke-emerald-400 transition-all duration-700 ease-out"
                       strokeWidth="7"
                       strokeDasharray={2 * Math.PI * 40}
                       strokeDashoffset={2 * Math.PI * 40 - (heroLiveMatch / 100) * (2 * Math.PI * 40)}
@@ -709,21 +709,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-xl font-bold font-mono text-emerald-400 leading-none">
+                    <span className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 leading-none">
                       {heroLiveMatch}
                     </span>
-                    <span className="text-[9px] font-mono text-slate-400">SCORE</span>
+                    <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400">SCORE</span>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                     Fit Recommendation
                   </span>
-                  <span className="text-xs font-mono font-semibold text-emerald-300 block">
+                  <span className="text-xs font-mono font-semibold text-emerald-700 dark:text-emerald-300 block">
                     {heroLiveMatch >= 90 ? 'High Fit Recommendation' : 'Moderate Match'}
                   </span>
-                  <span className="text-[11px] text-slate-400 block">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
                     Top 5% of candidate pool
                   </span>
                 </div>
@@ -732,41 +732,41 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
             {/* "Why this fits you" Evaluation Breakdown */}
             <div className="space-y-3">
-              <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
+              <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                 Why this fits you
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-[#0e111a] border border-white/[0.06] flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06] flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                   <div>
-                    <span className="font-semibold text-slate-200 block">Skills Overlap</span>
-                    <span className="text-slate-400">React · TypeScript · Tailwind (100% verified profile match)</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 block">Skills Overlap</span>
+                    <span className="text-slate-600 dark:text-slate-400">React · TypeScript · Tailwind (100% verified profile match)</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-[#0e111a] border border-white/[0.06] flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06] flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                   <div>
-                    <span className="font-semibold text-slate-200 block">Experience Requirement</span>
-                    <span className="text-slate-400">4+ years background matches client seniority expectations</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 block">Experience Requirement</span>
+                    <span className="text-slate-600 dark:text-slate-400">4+ years background matches client seniority expectations</span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-[#0e111a] border border-white/[0.06] flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06] flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                   <div>
-                    <span className="font-semibold text-slate-200 block">Budget Target</span>
-                    <span className="text-slate-400">
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 block">Budget Target</span>
+                    <span className="text-slate-600 dark:text-slate-400">
                       Within your ${heroBudget}/hr criteria (${heroBudget <= 50 ? 'Strong alignment' : 'Acceptable range'})
                     </span>
                   </div>
                 </div>
 
-                <div className="p-3 rounded-lg bg-[#0e111a] border border-white/[0.06] flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06] flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                   <div>
-                    <span className="font-semibold text-slate-200 block">Time & Availability</span>
-                    <span className="text-slate-400">
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 block">Time & Availability</span>
+                    <span className="text-slate-600 dark:text-slate-400">
                       Fits your {heroAvailability} hrs/week calendar without conflicting commitments
                     </span>
                   </div>
@@ -775,13 +775,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             {/* Bottom Action Footer */}
-            <div className="pt-4 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3">
-              <span className="text-xs text-slate-400 font-mono">
+            <div className="pt-4 border-t border-slate-200 dark:border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
                 Evaluated against 8 personal criteria · Instant client trust verification
               </span>
               <button
                 onClick={onLoadDemoAndLaunch}
-                className="w-full sm:w-auto px-5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="w-full sm:w-auto px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
               >
                 <span>View Opportunity in Workspace</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -794,15 +794,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           4. PROBLEM SECTION: Editorial Visual Story
       ────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
+      <section className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
             The Traditional Search Friction
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Freelance search shouldn't feel like this.
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             Sorting through unfiltered job boards drains hours of creative energy before you even begin writing a proposal.
           </p>
         </div>
@@ -822,45 +822,45 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 key={i}
                 className={`p-3.5 rounded-xl border transition-colors ${
                   node.highlight
-                    ? 'bg-rose-500/[0.08] border-rose-500/25 text-rose-300'
-                    : 'bg-[#0d1018] border-white/[0.06] text-slate-300'
+                    ? 'bg-rose-50 dark:bg-rose-500/[0.08] border-rose-200 dark:border-rose-500/25 text-rose-700 dark:text-rose-300'
+                    : 'bg-white dark:bg-[#0d1018] border-slate-200 dark:border-white/[0.06] text-slate-800 dark:text-slate-300 shadow-sm'
                 }`}
               >
                 <span className="text-xs font-semibold block mb-1">{node.step}</span>
-                <span className="text-[11px] font-mono text-slate-400">{node.sub}</span>
+                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">{node.sub}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Transition: Transformation into WorkMatch Clarity */}
-        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] p-6 sm:p-10 text-center">
-          <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 block mb-2">
+        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-10 text-center shadow-md dark:shadow-none">
+          <span className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-2">
             The WorkMatch Difference
           </span>
-          <h3 className="text-2xl sm:text-3xl font-semibold text-white mb-4">
+          <h3 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white mb-4">
             WorkMatch makes the decision simpler.
           </h3>
-          <p className="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed mb-8">
+          <p className="text-sm text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed mb-8">
             Instead of manually cross-referencing dozens of job descriptions, WorkMatch scores every listing against your verified stack, hourly rate, and capacity before you even open it.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-            <div className="p-4 rounded-xl bg-[#0e111a] border border-white/[0.06]">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block mb-1">01 · FILTERED INTAKE</span>
-              <p className="text-xs text-slate-400 leading-relaxed">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06]">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block mb-1">01 · FILTERED INTAKE</span>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Connect your platforms once. Listings with low budgets or irrelevant skills are quietly discarded.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-[#0e111a] border border-white/[0.06]">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block mb-1">02 · OBJECTIVE SCORING</span>
-              <p className="text-xs text-slate-400 leading-relaxed">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06]">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block mb-1">02 · OBJECTIVE SCORING</span>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 See a transparent 0–100 recommendation metric calculated from 5 mathematical dimensions.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-[#0e111a] border border-white/[0.06]">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block mb-1">03 · TRUTHFUL PROPOSALS</span>
-              <p className="text-xs text-slate-400 leading-relaxed">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06]">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block mb-1">03 · TRUTHFUL PROPOSALS</span>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Draft compelling proposals constrained strictly by verified work history—never fabricating skills.
               </p>
             </div>
@@ -871,15 +871,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           5. COMPLETE PRODUCT WORKFLOW: 5-Stage Storytelling
       ────────────────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
             End-to-End Workflow
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             The Complete Freelance Workflow
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             From initial multi-channel intake through to application delivery and milestone tracking.
           </p>
         </div>
@@ -919,19 +919,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           ].map((item, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-2xl bg-[#0c0e16] border border-white/[0.08] hover:border-white/[0.16] transition-colors flex flex-col justify-between"
+              className="p-5 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] transition-colors flex flex-col justify-between shadow-sm hover:shadow-md"
             >
               <div>
-                <span className="text-xl font-mono font-semibold text-slate-500 mb-2 block">
+                <span className="text-xl font-mono font-semibold text-slate-400 dark:text-slate-500 mb-2 block">
                   {item.step}
                 </span>
-                <h3 className="text-base font-semibold text-white mb-0.5">
+                <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-0.5">
                   {item.title}
                 </h3>
-                <span className="text-[11px] font-mono text-emerald-400 block mb-2">
+                <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 block mb-2">
                   {item.subtitle}
                 </span>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -943,15 +943,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           6. LIVE OPPORTUNITY MATCH COCKPIT (Decision Engine Deep Dive)
       ────────────────────────────────────────────────────────────── */}
-      <section id="cockpit" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+      <section id="cockpit" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-3">
             Decision Engine
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Live Opportunity Match Cockpit
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             Inspect real contracts evaluated against verified profile bounds, payment security, and workload capacity.
           </p>
         </div>
@@ -964,8 +964,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               onClick={() => setSelectedOppId(opp.id)}
               className={`px-4 py-2 rounded-lg text-xs font-mono transition-all ${
                 selectedOppId === opp.id
-                  ? 'bg-white text-slate-950 font-semibold shadow-sm'
-                  : 'bg-[#0e111a] text-slate-400 hover:text-white border border-white/[0.06]'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-semibold shadow-sm'
+                  : 'bg-white dark:bg-[#0e111a] text-slate-600 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white border border-slate-200 dark:border-white/[0.06] shadow-sm'
               }`}
             >
               {opp.role} · {opp.matchScore} Fit
@@ -974,45 +974,45 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </div>
 
         {/* 2-Column Cockpit Interface */}
-        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] p-6 sm:p-9 shadow-2xl max-w-5xl mx-auto">
+        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-9 shadow-xl dark:shadow-2xl max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Column: Job Intel & Verification (7 cols) */}
             <div className="lg:col-span-7 space-y-5">
               <div>
                 <div className="flex items-center gap-2 text-xs font-mono mb-2">
-                  <span className="px-2 py-0.5 rounded bg-white/[0.06] text-slate-200 border border-white/[0.08]">
+                  <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08]">
                     {currentAnalysisOpp.platform}
                   </span>
-                  <span className="text-slate-400">{currentAnalysisOpp.timeEstimate}</span>
+                  <span className="text-slate-500 dark:text-slate-400">{currentAnalysisOpp.timeEstimate}</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-white leading-snug">
+                <h3 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white leading-snug">
                   {currentAnalysisOpp.title}
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed mt-2">
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
                   {currentAnalysisOpp.summary}
                 </p>
               </div>
 
               {/* Key Metrics Chips */}
               <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                <div className="p-3 rounded-xl bg-[#090b12] border border-white/[0.06]">
-                  <span className="text-slate-400 block text-[10px] uppercase">Offered Budget</span>
-                  <span className="text-white font-semibold text-sm">{currentAnalysisOpp.budget}</span>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06]">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase">Offered Budget</span>
+                  <span className="text-slate-900 dark:text-white font-semibold text-sm">{currentAnalysisOpp.budget}</span>
                 </div>
-                <div className="p-3 rounded-xl bg-[#090b12] border border-white/[0.06]">
-                  <span className="text-slate-400 block text-[10px] uppercase">Client Payment History</span>
-                  <span className="text-emerald-400 font-semibold text-sm">{currentAnalysisOpp.clientRep} ({currentAnalysisOpp.clientSpent})</span>
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06]">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase">Client Payment History</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">{currentAnalysisOpp.clientRep} ({currentAnalysisOpp.clientSpent})</span>
                 </div>
               </div>
 
               {/* "Why this opportunity fits" Checklist */}
               <div className="space-y-2 pt-2">
-                <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block">
+                <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                   Profile Alignment Check
                 </span>
                 {currentAnalysisOpp.whyItFits.map((reason, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-300">
-                    <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                     <span>{reason}</span>
                   </div>
                 ))}
@@ -1021,7 +1021,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <div className="pt-2">
                 <button
                   onClick={() => handleScrollTo('studio')}
-                  className="px-4 py-2 rounded-lg bg-white/[0.06] hover:bg-white text-slate-200 hover:text-slate-950 font-semibold text-xs transition-colors border border-white/[0.1] flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/[0.06] dark:hover:bg-white dark:text-slate-200 dark:hover:text-slate-950 font-semibold text-xs transition-colors border border-slate-200 dark:border-white/[0.1] flex items-center gap-1.5 shadow-sm"
                 >
                   <span>Prepare Draft in Proposal Studio</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1030,16 +1030,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             {/* Right Column: Radial Match Gauge & Factor Breakdown (5 cols) */}
-            <div className="lg:col-span-5 p-5 rounded-xl bg-[#090b12] border border-white/[0.06] space-y-5">
+            <div className="lg:col-span-5 p-5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] space-y-5">
               {/* Circular Gauge Display */}
-              <div className="flex items-center gap-4 pb-4 border-b border-white/[0.06]">
+              <div className="flex items-center gap-4 pb-4 border-b border-slate-200 dark:border-white/[0.06]">
                 <div className="relative w-20 h-20 flex items-center justify-center flex-shrink-0">
                   <svg className="w-20 h-20 -rotate-90" viewBox="0 0 100 100">
                     <circle
                       cx="50"
                       cy="50"
                       r="40"
-                      className="stroke-white/[0.08]"
+                      className="stroke-slate-200 dark:stroke-white/[0.08]"
                       strokeWidth="7"
                       fill="transparent"
                     />
@@ -1047,7 +1047,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       cx="50"
                       cy="50"
                       r="40"
-                      className="stroke-emerald-400 transition-all duration-700 ease-out"
+                      className="stroke-emerald-600 dark:stroke-emerald-400 transition-all duration-700 ease-out"
                       strokeWidth="7"
                       strokeDasharray={2 * Math.PI * 40}
                       strokeDashoffset={2 * Math.PI * 40 - (currentAnalysisOpp.matchScore / 100) * (2 * Math.PI * 40)}
@@ -1056,21 +1056,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-xl font-bold font-mono text-emerald-400 leading-none">
+                    <span className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 leading-none">
                       {currentAnalysisOpp.matchScore}
                     </span>
-                    <span className="text-[9px] font-mono text-slate-400">FIT</span>
+                    <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400">FIT</span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                     Composite Match Metric
                   </span>
-                  <span className="text-xs font-mono font-semibold text-white block">
+                  <span className="text-xs font-mono font-semibold text-slate-900 dark:text-white block">
                     {currentAnalysisOpp.matchScore >= 90 ? 'Priority Opportunity' : 'Strong Alignment'}
                   </span>
-                  <span className="text-[11px] text-slate-400 block">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
                     100% verified profile alignment
                   </span>
                 </div>
@@ -1079,65 +1079,65 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               {/* 5-Dimension Factor Bars */}
               <div className="space-y-3 text-xs font-mono">
                 <div>
-                  <div className="flex justify-between text-slate-300 mb-1">
+                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
                     <span>Skills Overlap</span>
-                    <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.skills}%</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.skills}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
                     <div
-                      className="h-full bg-emerald-400 rounded-full"
+                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
                       style={{ width: `${currentAnalysisOpp.factors.skills}%` }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-slate-300 mb-1">
+                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
                     <span>Budget Alignment</span>
-                    <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.budget}%</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.budget}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
                     <div
-                      className="h-full bg-emerald-400 rounded-full"
+                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
                       style={{ width: `${currentAnalysisOpp.factors.budget}%` }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-slate-300 mb-1">
+                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
                     <span>Experience Seniority</span>
-                    <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.experience}%</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.experience}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
                     <div
-                      className="h-full bg-emerald-400 rounded-full"
+                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
                       style={{ width: `${currentAnalysisOpp.factors.experience}%` }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-slate-300 mb-1">
+                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
                     <span>Availability Capacity</span>
-                    <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.time}%</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.time}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
                     <div
-                      className="h-full bg-emerald-400 rounded-full"
+                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
                       style={{ width: `${currentAnalysisOpp.factors.time}%` }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-slate-300 mb-1">
+                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
                     <span>Client Trust & History</span>
-                    <span className="text-emerald-400 font-semibold">{currentAnalysisOpp.factors.reputation}%</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.reputation}%</span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
                     <div
-                      className="h-full bg-emerald-400 rounded-full"
+                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
                       style={{ width: `${currentAnalysisOpp.factors.reputation}%` }}
                     />
                   </div>
@@ -1151,27 +1151,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           7. INTERACTIVE MATCH FORMULA SIMULATOR (Ported from GitHub)
       ────────────────────────────────────────────────────────────── */}
-      <section id="simulator" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+      <section id="simulator" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
             Mathematical Evaluation
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Test the Opportunity Match Formula
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             Adjust the sliders below to simulate how WorkMatch objectively evaluates any freelance contract listing against your profile.
           </p>
         </div>
 
-        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] p-6 sm:p-9 shadow-2xl max-w-4xl mx-auto">
+        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-9 shadow-xl dark:shadow-2xl max-w-4xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Sliders (7 cols) */}
             <div className="lg:col-span-7 space-y-5">
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-300">Skill Alignment with Profile:</span>
-                  <span className="text-emerald-400 font-semibold">{simSkillFit}%</span>
+                  <span className="text-slate-700 dark:text-slate-300">Skill Alignment with Profile:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{simSkillFit}%</span>
                 </div>
                 <input
                   type="range"
@@ -1179,15 +1179,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   max="100"
                   value={simSkillFit}
                   onChange={e => setSimSkillFit(Number(e.target.value))}
-                  className="w-full accent-emerald-400 cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                  className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-1.5 bg-slate-200 dark:bg-white/10 rounded-lg"
                   aria-label="Skill Alignment"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-300">Verified Experience Depth:</span>
-                  <span className="text-emerald-400 font-semibold">{simExperience}%</span>
+                  <span className="text-slate-700 dark:text-slate-300">Verified Experience Depth:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{simExperience}%</span>
                 </div>
                 <input
                   type="range"
@@ -1195,15 +1195,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   max="100"
                   value={simExperience}
                   onChange={e => setSimExperience(Number(e.target.value))}
-                  className="w-full accent-emerald-400 cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                  className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-1.5 bg-slate-200 dark:bg-white/10 rounded-lg"
                   aria-label="Experience Depth"
                 />
               </div>
 
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-300">Offered Hourly Rate:</span>
-                  <span className="text-white font-semibold">${simHourlyRate}/hr</span>
+                  <span className="text-slate-700 dark:text-slate-300">Offered Hourly Rate:</span>
+                  <span className="text-slate-900 dark:text-white font-semibold">${simHourlyRate}/hr</span>
                 </div>
                 <input
                   type="range"
@@ -1212,21 +1212,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   step="5"
                   value={simHourlyRate}
                   onChange={e => setSimHourlyRate(Number(e.target.value))}
-                  className="w-full accent-emerald-400 cursor-pointer h-1.5 bg-white/10 rounded-lg"
+                  className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-1.5 bg-slate-200 dark:bg-white/10 rounded-lg"
                   aria-label="Hourly Rate"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-1">
                 <div>
-                  <span className="text-xs font-mono text-slate-400 block mb-2">Scope Complexity:</span>
-                  <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08]">
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 block mb-2">Scope Complexity:</span>
+                  <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
                     {(['Focused', 'Moderate', 'Architectural'] as const).map(c => (
                       <button
                         key={c}
                         onClick={() => setSimComplexity(c)}
                         className={`flex-1 py-1 rounded text-[10px] font-mono transition-colors ${
-                          simComplexity === c ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                          simComplexity === c ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                         }`}
                       >
                         {c}
@@ -1236,14 +1236,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
 
                 <div>
-                  <span className="text-xs font-mono text-slate-400 block mb-2">Timeline Flexibility:</span>
-                  <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08]">
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 block mb-2">Timeline Flexibility:</span>
+                  <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
                     {(['Flexible', 'Standard', 'Urgent'] as const).map(d => (
                       <button
                         key={d}
                         onClick={() => setSimDeadline(d)}
                         className={`flex-1 py-1 rounded text-[10px] font-mono transition-colors ${
-                          simDeadline === d ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                          simDeadline === d ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                         }`}
                       >
                         {d}
@@ -1255,8 +1255,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
 
             {/* Simulated Output Gauge (5 cols) */}
-            <div className="lg:col-span-5 p-6 rounded-xl bg-[#090b12] border border-white/[0.06] text-center space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block">
+            <div className="lg:col-span-5 p-6 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-center space-y-4">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                 Calculated Recommendation Score
               </span>
 
@@ -1266,7 +1266,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     cx="50"
                     cy="50"
                     r="40"
-                    className="stroke-white/[0.08]"
+                    className="stroke-slate-200 dark:stroke-white/[0.08]"
                     strokeWidth="7"
                     fill="transparent"
                   />
@@ -1274,7 +1274,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     cx="50"
                     cy="50"
                     r="40"
-                    className="stroke-emerald-400 transition-all duration-500 ease-out"
+                    className="stroke-emerald-600 dark:stroke-emerald-400 transition-all duration-500 ease-out"
                     strokeWidth="7"
                     strokeDasharray={2 * Math.PI * 40}
                     strokeDashoffset={2 * Math.PI * 40 - (computedSimScore / 100) * (2 * Math.PI * 40)}
@@ -1283,18 +1283,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-3xl font-bold font-mono text-emerald-400 leading-none">
+                  <span className="text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 leading-none">
                     {computedSimScore}
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400">/ 100</span>
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">/ 100</span>
                 </div>
               </div>
 
-              <div className="text-xs font-mono text-slate-300">
-                <span className="text-emerald-400 font-semibold">
+              <div className="text-xs font-mono text-slate-700 dark:text-slate-300">
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                   {computedSimScore >= 90 ? 'Priority Application' : computedSimScore >= 80 ? 'Viable Opportunity' : 'Below Profile Threshold'}
                 </span>
-                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                   Formula: 35% Skills + 25% Experience + 20% Budget + 10% Scope + 10% Timeline
                 </p>
               </div>
@@ -1307,7 +1307,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           8. MIDWAY EDITORIAL PHOTOGRAPHY SECTION: Atmospheric Calm
       ────────────────────────────────────────────────────────────── */}
       <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="relative rounded-3xl overflow-hidden min-h-[380px] sm:min-h-[440px] flex items-center justify-center p-8 sm:p-14 border border-white/[0.08] shadow-2xl">
+        <div className="relative rounded-3xl overflow-hidden min-h-[380px] sm:min-h-[440px] flex items-center justify-center p-8 sm:p-14 border border-slate-200 dark:border-white/[0.08] shadow-2xl">
           {/* Authentic High-Quality Real Photography (Unsplash creative professional workspace) */}
           <div
             className="absolute inset-0 bg-cover bg-center grayscale opacity-25"
@@ -1315,7 +1315,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           />
 
           {/* Deep Dark Overlay for Pristine Readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#090b10] via-[#090b10]/80 to-[#090b10]/60 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-950/60 pointer-events-none" />
 
           {/* Minimal Editorial Text */}
           <div className="relative z-10 text-center max-w-2xl mx-auto space-y-5">
@@ -1336,145 +1336,145 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           9. BENTO FEATURES: Refined Layout with Real Product UI
       ────────────────────────────────────────────────────────────── */}
-      <section id="features" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+      <section id="features" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
             Platform Capabilities
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Designed for thoughtful decisions.
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             Every feature in WorkMatch exists to eliminate guesswork and protect your focus.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* 1. Better Matches */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
             <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block">01 · RELEVANCE</span>
-              <h3 className="text-lg font-semibold text-white">Better Matches</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">01 · RELEVANCE</span>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Better Matches</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 See opportunities that match your genuine skills, verified work history, and target rate.
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-2">
-              <div className="flex justify-between items-center text-slate-400">
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-2">
+              <div className="flex justify-between items-center text-slate-600 dark:text-slate-400">
                 <span>TypeScript Architect</span>
-                <span className="text-emerald-400 font-bold">96 Match</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold">96 Match</span>
               </div>
               <div className="flex gap-1.5 flex-wrap">
-                <span className="px-1.5 py-0.5 rounded bg-white/[0.05] text-[10px] text-slate-300">React 18</span>
-                <span className="px-1.5 py-0.5 rounded bg-white/[0.05] text-[10px] text-slate-300">Vite</span>
-                <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 text-[10px] text-emerald-400 border border-emerald-500/20">Verified Fit</span>
+                <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.05] text-[10px] text-slate-700 dark:text-slate-300">React 18</span>
+                <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.05] text-[10px] text-slate-700 dark:text-slate-300">Vite</span>
+                <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 text-[10px]">Verified Fit</span>
               </div>
             </div>
           </div>
 
           {/* 2. Clear Decisions */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
             <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block">02 · TRANSPARENCY</span>
-              <h3 className="text-lg font-semibold text-white">Clear Decisions</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">02 · TRANSPARENCY</span>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Clear Decisions</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Understand exactly why an opportunity fits before spending 30 minutes writing an application.
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-1.5">
-              <div className="flex justify-between text-slate-400 text-[11px]">
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-1.5">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
                 <span>Rate Alignment</span>
-                <span className="text-slate-200">100% Fit</span>
+                <span className="text-slate-900 dark:text-slate-200 font-semibold">100% Fit</span>
               </div>
-              <div className="flex justify-between text-slate-400 text-[11px]">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
                 <span>Timeline Window</span>
-                <span className="text-slate-200">20h Open</span>
+                <span className="text-slate-900 dark:text-slate-200 font-semibold">20h Open</span>
               </div>
-              <div className="flex justify-between text-slate-400 text-[11px]">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
                 <span>Client Reputation</span>
-                <span className="text-emerald-400 font-medium">★ 4.98 Verified</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">★ 4.98 Verified</span>
               </div>
             </div>
           </div>
 
           {/* 3. Your Preferences */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
             <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block">03 · CONTROL</span>
-              <h3 className="text-lg font-semibold text-white">Your Preferences</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">03 · CONTROL</span>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Your Preferences</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Control budget minimums, weekly capacity, complexity, and asynchronous communication requirements.
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-2">
-              <div className="flex justify-between text-slate-400">
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-2">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Minimum Rate Floor:</span>
-                <span className="text-slate-200 font-semibold">$50/hr</span>
+                <span className="text-slate-900 dark:text-slate-200 font-semibold">$50/hr</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Weekly Max:</span>
-                <span className="text-slate-200 font-semibold">25 hrs/wk</span>
+                <span className="text-slate-900 dark:text-slate-200 font-semibold">25 hrs/wk</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-slate-600 dark:text-slate-400">
                 <span>Async-First:</span>
-                <span className="text-emerald-400 font-semibold">Active</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Active</span>
               </div>
             </div>
           </div>
 
           {/* 4. Smart Alerts */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
             <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block">04 · NOTIFICATIONS</span>
-              <h3 className="text-lg font-semibold text-white">Smart Alerts</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">04 · NOTIFICATIONS</span>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Smart Alerts</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Receive quiet notifications only when high-fit listings (≥90 match) appear in your connected marketplaces.
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-1.5">
-              <div className="flex items-center gap-2 text-emerald-400 text-[11px]">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-1.5">
+              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
                 <span>New 94-Score Listing Detected</span>
               </div>
-              <p className="text-[11px] text-slate-400 truncate">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 truncate">
                 Upwork: Senior React Architect ($65/hr)
               </p>
             </div>
           </div>
 
           {/* 5. Proposal Assistance */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
             <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block">05 · TRUTHFULNESS</span>
-              <h3 className="text-lg font-semibold text-white">Proposal Assistance</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">05 · TRUTHFULNESS</span>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Proposal Assistance</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Generate proposal drafts strictly cross-referenced against your declared profile. Zero hallucinated claims.
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono space-y-1.5">
-              <div className="flex items-center gap-1.5 text-emerald-400 text-[11px]">
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-1.5">
+              <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
                 <Check className="w-3.5 h-3.5" />
                 <span>100% Truthfulness Guarantee</span>
               </div>
-              <p className="text-[11px] text-slate-400">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400">
                 Claims cross-checked against profile inventory
               </p>
             </div>
           </div>
 
           {/* 6. Application Tracking */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
             <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-400 font-semibold block">06 · ORGANIZATION</span>
-              <h3 className="text-lg font-semibold text-white">Application Tracking</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">06 · ORGANIZATION</span>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Application Tracking</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Keep opportunities, outreach status, and active contracts unified in a single, distraction-free board.
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#090b12] border border-white/[0.06] text-xs font-mono flex items-center justify-between">
-              <span className="px-2 py-0.5 rounded bg-white/[0.04] text-[10px] text-slate-400">Saved (4)</span>
-              <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-[10px] text-emerald-400">Applied (3)</span>
-              <span className="px-2 py-0.5 rounded bg-white/[0.04] text-[10px] text-slate-400">Active (1)</span>
+            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono flex items-center justify-between">
+              <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.04] text-[10px] text-slate-600 dark:text-slate-400 font-medium">Saved (4)</span>
+              <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 text-[10px] font-semibold">Applied (3)</span>
+              <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.04] text-[10px] text-slate-600 dark:text-slate-400 font-medium">Active (1)</span>
             </div>
           </div>
         </div>
@@ -1483,35 +1483,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           10. PROPOSALS STUDIO (Professional 2-Column Split Layout with Human Review)
       ────────────────────────────────────────────────────────────── */}
-      <section id="studio" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+      <section id="studio" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-3">
             Human-in-the-Loop Workflow
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Authentic Proposals Under Your Control
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             WorkMatch is not an autonomous bot that spams recruiters. It assists your proposal preparation using strictly verified profile facts.
           </p>
         </div>
 
         {/* 2-Column Proposal Studio Layout */}
-        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] shadow-2xl max-w-5xl mx-auto overflow-hidden">
+        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-xl dark:shadow-2xl max-w-5xl mx-auto overflow-hidden">
           {/* Studio Top Bar */}
-          <div className="px-6 py-3 bg-[#090b12] border-b border-white/[0.08] flex items-center justify-between text-xs font-mono text-slate-400 flex-wrap gap-2">
+          <div className="px-6 py-3 bg-slate-50 dark:bg-[#090b12] border-b border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400 flex-wrap gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-slate-300">1. Job Intake</span>
-              <span className="text-white/20">→</span>
-              <span className="text-slate-300">2. Fit Audit</span>
-              <span className="text-white/20">→</span>
-              <span className="text-emerald-400 font-semibold flex items-center gap-1">
+              <span className="text-slate-700 dark:text-slate-300">1. Job Intake</span>
+              <span className="text-slate-300 dark:text-white/20">→</span>
+              <span className="text-slate-700 dark:text-slate-300">2. Fit Audit</span>
+              <span className="text-slate-300 dark:text-white/20">→</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" />
                 3. Truth-Checked Proposal
               </span>
             </div>
 
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400">
               Opportunity: Senior Frontend Architect
             </span>
           </div>
@@ -1519,32 +1519,32 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="p-6 sm:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* Left Column: Fact Verification Checklist (5 cols) */}
-              <div className="lg:col-span-5 p-5 rounded-xl bg-[#090b12] border border-white/[0.06] space-y-4">
-                <div className="pb-3 border-b border-white/[0.06]">
-                  <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block">
+              <div className="lg:col-span-5 p-5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] space-y-4">
+                <div className="pb-3 border-b border-slate-200 dark:border-white/[0.06]">
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                     Verified Profile Claims
                   </span>
-                  <span className="text-xs font-mono text-emerald-400 font-semibold mt-0.5 block">
+                  <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 block">
                     100% Truthfulness Guarantee Active
                   </span>
                 </div>
 
                 <div className="space-y-2 text-xs">
-                  <div className="p-2.5 rounded-lg bg-emerald-500/[0.06] border border-emerald-500/20 text-emerald-300 flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
+                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                     <span>Profile verified for React 18 & TypeScript (4.5 yrs)</span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-emerald-500/[0.06] border border-emerald-500/20 text-emerald-300 flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
+                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                     <span>Offered $45–$65/hr rate is within verified target</span>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-white/[0.04] border border-white/[0.06] text-slate-300 flex items-start gap-2">
-                    <Check className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
+                  <div className="p-2.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06] text-slate-700 dark:text-slate-300 flex items-start gap-2">
+                    <Check className="w-4 h-4 text-slate-500 dark:text-slate-400 mt-0.5 flex-shrink-0" />
                     <span>20 hrs/week schedule matches open calendar capacity</span>
                   </div>
                 </div>
 
-                <div className="pt-2 text-[11px] font-mono text-slate-400 leading-relaxed border-t border-white/[0.06]">
+                <div className="pt-2 text-[11px] font-mono text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-200 dark:border-white/[0.06]">
                   WorkMatch strictly refuses to invent skills or exaggerate experience. Only verified capabilities from your profile are referenced.
                 </div>
               </div>
@@ -1552,11 +1552,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               {/* Right Column: Persona Switcher & Draft Editor (7 cols) */}
               <div className="lg:col-span-7 space-y-4">
                 {/* Persona Tabs */}
-                <div className="flex items-center justify-between gap-2 flex-wrap pb-3 border-b border-white/[0.06]">
-                  <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                <div className="flex items-center justify-between gap-2 flex-wrap pb-3 border-b border-slate-200 dark:border-white/[0.06]">
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     Tone Angle:
                   </span>
-                  <div className="flex rounded-md bg-white/[0.05] p-0.5 border border-white/[0.08] text-xs font-mono">
+                  <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08] text-xs font-mono">
                     {[
                       { id: 'direct', label: 'Direct & Concise' },
                       { id: 'technical', label: 'Technical Architecture' },
@@ -1566,7 +1566,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                         key={t.id}
                         onClick={() => setProposalAngle(t.id as any)}
                         className={`px-3 py-1 rounded transition-colors ${
-                          proposalAngle === t.id ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                          proposalAngle === t.id ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                         }`}
                       >
                         {t.label}
@@ -1576,7 +1576,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
 
                 {/* Proposal Textarea */}
-                <div className="p-4 rounded-xl bg-[#090b12] border border-white/[0.06] font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed min-h-[170px]">
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] font-mono text-xs text-slate-800 dark:text-slate-300 whitespace-pre-wrap leading-relaxed min-h-[170px]">
                   {proposalDraft}
                 </div>
 
@@ -1587,9 +1587,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     id="human-review-check"
                     checked={humanReviewApproved}
                     onChange={e => setHumanReviewApproved(e.target.checked)}
-                    className="accent-emerald-400 rounded cursor-pointer"
+                    className="accent-emerald-600 dark:accent-emerald-400 rounded cursor-pointer"
                   />
-                  <label htmlFor="human-review-check" className="text-slate-300 font-mono text-xs cursor-pointer select-none">
+                  <label htmlFor="human-review-check" className="text-slate-700 dark:text-slate-300 font-mono text-xs cursor-pointer select-none">
                     Human Review: I have inspected and approved this tailored proposal draft.
                   </label>
                 </div>
@@ -1598,7 +1598,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <div className="flex items-center justify-between pt-2">
                   <button
                     onClick={handleCopyProposal}
-                    className="px-3.5 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white text-xs font-mono transition-colors flex items-center gap-1.5"
+                    className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-700 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white text-xs font-mono transition-colors flex items-center gap-1.5 border border-slate-200 dark:border-white/[0.08]"
                   >
                     <Copy className="w-3.5 h-3.5" />
                     <span>{isCopied ? 'Copied to Clipboard' : 'Copy Proposal Draft'}</span>
@@ -1606,7 +1606,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
                   <button
                     onClick={onLoadDemoAndLaunch}
-                    className="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs font-mono transition-colors flex items-center gap-1.5"
+                    className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 font-semibold text-xs font-mono transition-colors flex items-center gap-1.5 shadow-sm"
                   >
                     <span>Open in Proposal Studio</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -1621,47 +1621,47 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           11. COMPARISON MATRIX: WorkMatch vs Manual vs Spam Bots
       ────────────────────────────────────────────────────────────── */}
-      <section id="comparison" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+      <section id="comparison" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
             Market Comparison
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             How WorkMatch Compares
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             See why serious independent professionals choose objective decision intelligence over manual searching and robotic spam bots.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {/* Card 1: Manual Freelancing */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
-                <span className="text-xs font-mono text-slate-400 uppercase">The Old Way</span>
-                <span className="text-xs font-mono text-slate-500">MANUAL</span>
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/[0.08]">
+                <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase font-semibold">The Old Way</span>
+                <span className="text-xs font-mono text-slate-400 dark:text-slate-500 font-bold">MANUAL</span>
               </div>
-              <h3 className="text-lg font-semibold text-slate-200">Manual Job Search</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-200">Manual Job Search</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Exhausting and reliant on unscientific intuition rather than empirical fit data.
               </p>
 
-              <div className="space-y-2.5 text-xs text-slate-300 pt-2">
+              <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 pt-2">
                 <div className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-rose-500 font-bold">✕</span>
                   <span>Hours lost refreshing multiple browser tabs</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-rose-500 font-bold">✕</span>
                   <span>Unfiltered jobs with incompatible budgets</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-rose-500 font-bold">✕</span>
                   <span>Slow drafting misses early high-visibility bid window</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-rose-500 font-bold">✕</span>
                   <span>Unmonitored connect capital and energy waste</span>
                 </div>
               </div>
@@ -1669,32 +1669,32 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Card 2: Generic AI Spam Bots */}
-          <div className="p-6 rounded-2xl bg-[#0e090f] border border-rose-500/20 flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-rose-50/50 dark:bg-[#0e090f] border border-rose-200 dark:border-rose-500/20 flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-rose-500/20">
-                <span className="text-xs font-mono text-rose-400 uppercase">High Risk</span>
-                <span className="text-xs font-mono text-rose-400">UNCONSTRAINED AI</span>
+              <div className="flex items-center justify-between pb-3 border-b border-rose-200 dark:border-rose-500/20">
+                <span className="text-xs font-mono text-rose-600 dark:text-rose-400 uppercase font-semibold">High Risk</span>
+                <span className="text-xs font-mono text-rose-600 dark:text-rose-400 font-bold">UNCONSTRAINED AI</span>
               </div>
-              <h3 className="text-lg font-semibold text-white">Generic AI Spam Bots</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Generic AI Spam Bots</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 Cheap scrapers that flood clients with generic template spam, ruining client trust.
               </p>
 
-              <div className="space-y-2.5 text-xs text-slate-300 pt-2">
+              <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 pt-2">
                 <div className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-rose-500 font-bold">✕</span>
                   <span>Canned templates flagged as spam by client filters</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-rose-500 font-bold">✕</span>
                   <span>Fabricates skills and years of experience (hallucinations)</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-rose-500 font-bold">✕</span>
                   <span>Blind auto-submitting risks marketplace bans</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">✕</span>
+                  <span className="text-rose-500 font-bold">✕</span>
                   <span>Zero consideration for client payment trust</span>
                 </div>
               </div>
@@ -1702,35 +1702,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           {/* Card 3: WorkMatch Decision Intelligence */}
-          <div className="p-6 rounded-2xl bg-[#091114] border border-emerald-500/30 flex flex-col justify-between relative shadow-xl">
+          <div className="p-6 rounded-2xl bg-emerald-50/40 dark:bg-[#091114] border-2 border-emerald-500/50 dark:border-emerald-500/30 flex flex-col justify-between relative shadow-lg">
             <span className="absolute -top-3 right-6 px-2.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-mono font-bold tracking-wider uppercase">
               WorkMatch Standard
             </span>
             <div className="space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20">
-                <span className="text-xs font-mono text-emerald-400 uppercase">Verified Fit</span>
-                <span className="text-xs font-mono text-emerald-400">DECISION ENGINE</span>
+                <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 uppercase font-semibold">Verified Fit</span>
+                <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 font-bold">DECISION ENGINE</span>
               </div>
-              <h3 className="text-lg font-semibold text-white">WorkMatch Platform</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">WorkMatch Platform</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                 Calm discovery, objective multi-factor scoring, and strictly truthful proposal drafts.
               </p>
 
-              <div className="space-y-2.5 text-xs text-slate-200 pt-2">
+              <div className="space-y-2.5 text-xs text-slate-800 dark:text-slate-200 pt-2">
                 <div className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>Normalized intake across Upwork, Fiverr & direct leads</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>100% verified profile skills guarantee—zero fabrication</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>Transparent 5-factor mathematical recommendation scores</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                   <span>Complete human control: review, customize, and approve</span>
                 </div>
               </div>
@@ -1742,27 +1742,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           12. INTERACTIVE ROI CALCULATOR: Reclaimed Time & Capital
       ────────────────────────────────────────────────────────────── */}
-      <section id="roi" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
+      <section id="roi" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
             Efficiency Calculator
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Calculate Time & Capital Reclaimed
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             Estimate how much manual search time and wasted connect capital WorkMatch recovers for you each month.
           </p>
         </div>
 
-        <div className="rounded-2xl bg-[#0c0e16] border border-white/[0.08] p-6 sm:p-9 shadow-xl max-w-4xl mx-auto">
+        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-9 shadow-xl dark:shadow-2xl max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             {/* Left: Proposals Slider (6 cols) */}
             <div className="md:col-span-6 space-y-6">
               <div>
                 <div className="flex justify-between text-xs font-mono mb-2">
-                  <span className="text-slate-300">Monthly Proposals Prepared:</span>
-                  <span className="text-emerald-400 font-bold text-sm">{monthlyProposals} proposals/mo</span>
+                  <span className="text-slate-700 dark:text-slate-300">Monthly Proposals Prepared:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">{monthlyProposals} proposals/mo</span>
                 </div>
                 <input
                   type="range"
@@ -1771,37 +1771,37 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   step="5"
                   value={monthlyProposals}
                   onChange={e => setMonthlyProposals(Number(e.target.value))}
-                  className="w-full accent-emerald-400 cursor-pointer h-2 bg-white/10 rounded-lg"
+                  className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-2 bg-slate-200 dark:bg-white/10 rounded-lg"
                   aria-label="Monthly Proposals"
                 />
-                <div className="flex justify-between text-[11px] font-mono text-slate-400 mt-1">
+                <div className="flex justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-1">
                   <span>5 (Casual)</span>
                   <span>30 (Active)</span>
                   <span>60 (Studio)</span>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Based on an average of 42 minutes spent manually searching, reading mismatched scopes, and drafting initial bids for each client opportunity.
               </p>
             </div>
 
             {/* Right: Computed Reclaimed Metrics (6 cols) */}
             <div className="md:col-span-6 grid grid-cols-2 gap-3 text-center">
-              <div className="p-4 rounded-xl bg-[#090b12] border border-white/[0.06]">
-                <span className="text-3xl font-mono font-bold text-emerald-400 block mb-1">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06]">
+                <span className="text-3xl font-mono font-bold text-emerald-600 dark:text-emerald-400 block mb-1">
                   ~{hoursSavedPerMonth}h
                 </span>
-                <span className="text-xs font-semibold text-white block mb-0.5">Hours Reclaimed</span>
-                <span className="text-[11px] font-mono text-slate-400">Search time saved per month</span>
+                <span className="text-xs font-semibold text-slate-900 dark:text-white block mb-0.5">Hours Reclaimed</span>
+                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Search time saved per month</span>
               </div>
 
-              <div className="p-4 rounded-xl bg-[#090b12] border border-white/[0.06]">
-                <span className="text-3xl font-mono font-bold text-white block mb-1">
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06]">
+                <span className="text-3xl font-mono font-bold text-slate-900 dark:text-white block mb-1">
                   ~{connectsSavedPerMonth}
                 </span>
-                <span className="text-xs font-semibold text-white block mb-0.5">Connects Protected</span>
-                <span className="text-[11px] font-mono text-slate-400">Eliminated mismatched bids</span>
+                <span className="text-xs font-semibold text-slate-900 dark:text-white block mb-0.5">Connects Protected</span>
+                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Eliminated mismatched bids</span>
               </div>
             </div>
           </div>
@@ -1811,15 +1811,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           13. JOB DISCOVERY & APPLICATION PIPELINE
       ────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-white/[0.08]">
+      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
             Real-Time Radar
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Curated Opportunities, Zero Noise
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             Every contract normalized into a clean, readable overview with verified client metrics and transparent match scores.
           </p>
         </div>
@@ -1837,8 +1837,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               onClick={() => setActiveCategory(tab.id as any)}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-colors ${
                 activeCategory === tab.id
-                  ? 'bg-white text-slate-950 font-semibold'
-                  : 'bg-[#0c0e16] text-slate-400 hover:text-white border border-white/[0.06]'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-semibold shadow-sm'
+                  : 'bg-white dark:bg-[#0c0e16] text-slate-600 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white border border-slate-200 dark:border-white/[0.06] shadow-sm'
               }`}
             >
               {tab.label}
@@ -1851,26 +1851,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {filteredOpportunities.map(opp => (
             <div
               key={opp.id}
-              className="p-5 sm:p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] hover:border-white/[0.14] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.14] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md"
             >
               <div className="space-y-2 max-w-xl">
                 <div className="flex items-center gap-2 text-xs font-mono">
-                  <span className="px-2 py-0.5 rounded bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+                  <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.05] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08]">
                     {opp.platform}
                   </span>
-                  <span className="text-slate-400">{opp.timeEstimate}</span>
+                  <span className="text-slate-500 dark:text-slate-400">{opp.timeEstimate}</span>
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold text-white">
+                <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
                   {opp.title}
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-2">
                   {opp.summary}
                 </p>
                 <div className="flex flex-wrap gap-1.5 pt-1">
                   {opp.skills.map((s, i) => (
                     <span
                       key={i}
-                      className="px-2 py-0.5 rounded bg-white/[0.04] text-[11px] font-mono text-slate-300"
+                      className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.04] text-[11px] font-mono text-slate-700 dark:text-slate-300"
                     >
                       {s}
                     </span>
@@ -1879,18 +1879,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
 
               {/* Right: Rate, Match Metric & Action */}
-              <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/[0.06] flex-shrink-0">
+              <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-white/[0.06] flex-shrink-0">
                 <div className="text-left sm:text-right">
-                  <span className="text-sm font-mono font-semibold text-white block">
+                  <span className="text-sm font-mono font-semibold text-slate-900 dark:text-white block">
                     {opp.budget}
                   </span>
-                  <span className="text-xs font-mono text-emerald-400">
+                  <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
                     {opp.matchScore} Fit Score
                   </span>
                 </div>
                 <button
                   onClick={onLoadDemoAndLaunch}
-                  className="px-4 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white text-slate-200 hover:text-slate-950 font-semibold text-xs transition-colors border border-white/[0.1]"
+                  className="px-4 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/[0.06] dark:hover:bg-white dark:text-slate-200 dark:hover:text-slate-950 font-semibold text-xs transition-colors border border-slate-200 dark:border-white/[0.1] shadow-sm"
                 >
                   View in Workspace
                 </button>
@@ -1903,39 +1903,39 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           14. PRICING SECTION: Clean, Transparent Plans
       ────────────────────────────────────────────────────────────── */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
+      <section id="pricing" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
             Transparent Pricing
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Simple, Predictable Plans
           </h2>
-          <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
             No surprise add-ons. Full access to marketplace discovery, scoring, and proposal preparation.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Free Starter */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-sm dark:shadow-none flex flex-col justify-between">
             <div>
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-2">Sandbox</span>
-              <h3 className="text-xl font-semibold text-white mb-1">Free Explorer</h3>
-              <p className="text-xs text-slate-400 mb-6">Explore the recommendation engine with demo data.</p>
-              <div className="text-3xl font-mono font-bold text-white mb-6">$0</div>
+              <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Sandbox</span>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Free Explorer</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">Explore the recommendation engine with demo data.</p>
+              <div className="text-3xl font-mono font-bold text-slate-900 dark:text-white mb-6">$0</div>
 
-              <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Full Mock Simulation Dataset</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>15 Opportunity Fit Audits</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Proposal Assistant Editor</span>
                 </div>
               </div>
@@ -1943,40 +1943,40 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
             <button
               onClick={onLoadDemoAndLaunch}
-              className="mt-8 w-full py-2.5 rounded-lg bg-white/[0.06] hover:bg-white text-slate-200 hover:text-slate-950 font-semibold text-xs transition-colors border border-white/[0.1]"
+              className="mt-8 w-full py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white text-slate-800 dark:text-slate-200 hover:text-slate-950 dark:hover:text-slate-950 font-semibold text-xs transition-colors border border-slate-200 dark:border-white/[0.1]"
             >
               Launch Free Sandbox
             </button>
           </div>
 
           {/* Pro Freelancer (Featured) */}
-          <div className="p-6 rounded-2xl bg-[#101422] border border-emerald-500/30 flex flex-col justify-between relative shadow-xl">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#101422] border-2 border-emerald-500/40 dark:border-emerald-500/40 flex flex-col justify-between relative shadow-xl">
             <span className="absolute -top-3 right-6 px-2.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-mono font-bold tracking-wider uppercase">
               Most Popular
             </span>
             <div>
-              <span className="text-xs font-mono text-emerald-400 uppercase tracking-wider block mb-2">Independent</span>
-              <h3 className="text-xl font-semibold text-white mb-1">Pro Freelancer</h3>
-              <p className="text-xs text-slate-400 mb-6">For craftspeople actively acquiring contracts.</p>
-              <div className="text-3xl font-mono font-bold text-white mb-6">
-                $29 <span className="text-xs font-normal text-slate-400 font-sans">/ month</span>
+              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-2">Independent</span>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Pro Freelancer</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">For craftspeople actively acquiring contracts.</p>
+              <div className="text-3xl font-mono font-bold text-slate-900 dark:text-white mb-6">
+                $29 <span className="text-xs font-normal text-slate-500 dark:text-slate-400 font-sans">/ month</span>
               </div>
 
-              <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Unlimited Marketplace Discovery</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Real-Time Fit Scoring & Alerts</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Truth-Checked Proposal Drafting</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Emergency Safety Kill Switch</span>
                 </div>
               </div>
@@ -1984,33 +1984,33 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
             <button
               onClick={onLaunchApp}
-              className="mt-8 w-full py-2.5 rounded-lg bg-white hover:bg-slate-200 text-slate-950 font-semibold text-xs transition-colors shadow-sm"
+              className="mt-8 w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-950 font-semibold text-xs transition-colors shadow-sm"
             >
               Start Pro Access
             </button>
           </div>
 
           {/* Studio / Agency */}
-          <div className="p-6 rounded-2xl bg-[#0c0e16] border border-white/[0.08] flex flex-col justify-between">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-sm dark:shadow-none flex flex-col justify-between">
             <div>
-              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-2">Team</span>
-              <h3 className="text-xl font-semibold text-white mb-1">Studio / Agency</h3>
-              <p className="text-xs text-slate-400 mb-6">For multi-person teams and talent networks.</p>
-              <div className="text-3xl font-mono font-bold text-white mb-6">
-                $79 <span className="text-xs font-normal text-slate-400 font-sans">/ month</span>
+              <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Team</span>
+              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Studio / Agency</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">For multi-person teams and talent networks.</p>
+              <div className="text-3xl font-mono font-bold text-slate-900 dark:text-white mb-6">
+                $79 <span className="text-xs font-normal text-slate-500 dark:text-slate-400 font-sans">/ month</span>
               </div>
 
-              <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Multi-Profile Capability Management</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Team Workload & Capacity Balancing</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Priority Channel Webhooks</span>
                 </div>
               </div>
@@ -2018,7 +2018,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
             <button
               onClick={onLaunchApp}
-              className="mt-8 w-full py-2.5 rounded-lg bg-white/[0.06] hover:bg-white text-slate-200 hover:text-slate-950 font-semibold text-xs transition-colors border border-white/[0.1]"
+              className="mt-8 w-full py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white text-slate-800 dark:text-slate-200 hover:text-slate-950 dark:hover:text-slate-950 font-semibold text-xs transition-colors border border-slate-200 dark:border-white/[0.1]"
             >
               Open Studio Workspace
             </button>
@@ -2029,15 +2029,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           15. FAQ SECTION: Clear, Human Answers
       ────────────────────────────────────────────────────────────── */}
-      <section id="faq" className="py-20 px-4 sm:px-6 max-w-4xl mx-auto border-t border-white/[0.08]">
+      <section id="faq" className="py-20 px-4 sm:px-6 max-w-4xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
             Common Questions
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
             Frequently Asked Questions
           </h2>
-          <p className="text-sm text-slate-400 leading-relaxed">
+          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
             Everything you need to know about WorkMatch recommendation engine, safety, and privacy.
           </p>
         </div>
@@ -2067,22 +2067,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           ].map((item, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-xl bg-[#0c0e16] border border-white/[0.08] transition-colors"
+              className="p-5 rounded-xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-sm dark:shadow-none transition-colors"
             >
               <button
                 onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                className="w-full text-left flex items-center justify-between gap-4 text-sm font-semibold text-white hover:text-emerald-300 transition-colors"
+                className="w-full text-left flex items-center justify-between gap-4 text-sm font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-300 transition-colors"
                 aria-expanded={openFaq === idx}
               >
                 <span>{item.q}</span>
                 {openFaq === idx ? (
-                  <ChevronUp className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  <ChevronUp className="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" />
                 )}
               </button>
               {openFaq === idx && (
-                <div className="pt-3 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/[0.06] mt-3">
+                <div className="pt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/[0.06] mt-3">
                   {item.a}
                 </div>
               )}
@@ -2094,8 +2094,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       {/* ─────────────────────────────────────────────────────────────
           16. FINAL CTA: Confident, Editorial, Clean
       ────────────────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 sm:px-6 max-w-5xl mx-auto border-t border-white/[0.08]">
-        <div className="rounded-3xl bg-[#0c0e16] border border-white/[0.08] p-8 sm:p-14 text-center max-w-3xl mx-auto shadow-2xl relative overflow-hidden">
+      <section className="py-24 px-4 sm:px-6 max-w-5xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
+        <div className="rounded-3xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-8 sm:p-14 text-center max-w-3xl mx-auto shadow-xl dark:shadow-2xl relative overflow-hidden">
           {/* Subtle real-world photography accent */}
           <div
             className="absolute inset-0 bg-cover bg-center opacity-[0.05] grayscale pointer-events-none"
@@ -2103,13 +2103,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           />
 
           <div className="relative space-y-5">
-            <span className="text-xs font-mono uppercase tracking-wider text-emerald-400 block">
+            <span className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
               Begin Decision Discovery
             </span>
-            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
               Your next opportunity should fit.
             </h2>
-            <p className="text-sm sm:text-base text-slate-400 max-w-lg mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
               Stop sorting through jobs that aren't right for you. Explore the live sandbox demo right now.
             </p>
 
@@ -2117,21 +2117,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <button
                 onClick={onLoadDemoAndLaunch}
                 disabled={isLoadingDemo}
-                className="w-full sm:w-auto px-7 py-3 rounded-lg bg-white hover:bg-slate-100 text-slate-950 font-semibold text-sm transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm"
+                className="w-full sm:w-auto px-7 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-semibold text-sm transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm"
               >
                 {isLoadingDemo ? (
-                  <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white dark:border-slate-900 border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
                     <span>Find Your Matches</span>
-                    <ArrowRight className="w-4 h-4 text-slate-950" />
+                    <ArrowRight className="w-4 h-4 text-white dark:text-slate-950" />
                   </>
                 )}
               </button>
 
               <button
                 onClick={onLaunchApp}
-                className="w-full sm:w-auto px-7 py-3 rounded-lg bg-[#0e111a] hover:bg-[#131724] text-slate-300 border border-white/[0.08] hover:border-white/[0.14] text-sm font-medium transition-all"
+                className="w-full sm:w-auto px-7 py-3 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-[#0e111a] dark:hover:bg-[#131724] text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.14] text-sm font-medium transition-all"
               >
                 Open Workspace Dashboard
               </button>

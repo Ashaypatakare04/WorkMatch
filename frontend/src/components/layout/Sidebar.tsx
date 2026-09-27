@@ -36,14 +36,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'Opportunities',
       icon: Briefcase,
       badge: highMatchCount > 0 ? `${highMatchCount}` : undefined,
-      badgeColor: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+      badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/30'
     },
     {
       id: 'applications',
       label: 'Applications',
       icon: Layers,
       badge: activeAppCount > 0 ? `${activeAppCount}` : undefined,
-      badgeColor: 'bg-sky-500/20 text-sky-400 border-sky-500/30'
+      badgeColor: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-500/20 dark:text-sky-400 dark:border-sky-500/30'
     },
     { id: 'saved', label: 'Saved Jobs', icon: Bookmark },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
