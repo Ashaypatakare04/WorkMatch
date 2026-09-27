@@ -10,6 +10,7 @@
     "start": "node dist/server.js",
     "test": "cross-env NODE_ENV=test tsx --test --test-concurrency=1 src/**/*.test.ts",
     "migrate": "tsx src/database/migrate.ts",
+    "migrate:pg": "tsx src/database/pgMigrate.ts",
     "seed": "tsx src/database/seed.ts"
   },
   "dependencies": {

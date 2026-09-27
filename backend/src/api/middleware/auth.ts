@@ -4,6 +4,10 @@ import { UserSessionPayload } from '../../models/User.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'workmatch-jwt-dev-secret-key-2026';
 
+if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'workmatch-jwt-dev-secret-key-2026')) {
+  console.warn('⚠️ [SECURITY NOTICE] WorkMatch AI running in production with default development JWT_SECRET. Set JWT_SECRET in your environment variables immediately!');
+}
+
 export interface AuthenticatedRequest extends Request {
   user?: UserSessionPayload;
 }

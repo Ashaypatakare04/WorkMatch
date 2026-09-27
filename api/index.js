@@ -33893,6 +33893,9 @@ var FreelancerConnector = class {
 // backend/src/api/middleware/auth.ts
 var import_jsonwebtoken = __toESM(require_jsonwebtoken(), 1);
 var JWT_SECRET = process.env.JWT_SECRET || "workmatch-jwt-dev-secret-key-2026";
+if (process.env.NODE_ENV === "production" && (!process.env.JWT_SECRET || process.env.JWT_SECRET === "workmatch-jwt-dev-secret-key-2026")) {
+  console.warn("\u26A0\uFE0F [SECURITY NOTICE] WorkMatch AI running in production with default development JWT_SECRET. Set JWT_SECRET in your environment variables immediately!");
+}
 function authMiddleware(req, res, next) {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith("Bearer ")) {
@@ -39626,11 +39629,18 @@ ConnectorRegistry.register(new UpworkConnector());
 ConnectorRegistry.register(new FiverrConnector());
 ConnectorRegistry.register(new FreelancerConnector());
 ConnectorRegistry.register(new MockPlatformConnector());
+var corsOrigin = process.env.CORS_ORIGIN || "*";
 app.use((0, import_cors.default)({
-  origin: "*",
+  origin: corsOrigin === "*" ? "*" : corsOrigin.split(",").map((s) => s.trim()),
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
+  next();
+});
 app.use(import_express11.default.json());
 var apiRouter = import_express11.default.Router();
 apiRouter.use("/auth", authRouter);
