@@ -42,11 +42,15 @@ backupRouter.post('/import', (req: AuthenticatedRequest, res: Response): void =>
 });
 
 // Database status & metrics
-backupRouter.get('/status', (req: AuthenticatedRequest, res: Response): void => {
+backupRouter.get('/status', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
-    const userCount = Database.queryOne<{ count: number }>('SELECT COUNT(*) as count FROM users')?.count || 0;
-    const jobCount = Database.queryOne<{ count: number }>('SELECT COUNT(*) as count FROM jobs')?.count || 0;
-    const appCount = Database.queryOne<{ count: number }>('SELECT COUNT(*) as count FROM applications')?.count || 0;
+    const userRow = await Database.queryOneAsync<{ count: string | number }>('SELECT COUNT(*) as count FROM users');
+    const jobRow = await Database.queryOneAsync<{ count: string | number }>('SELECT COUNT(*) as count FROM jobs');
+    const appRow = await Database.queryOneAsync<{ count: string | number }>('SELECT COUNT(*) as count FROM applications');
+
+    const userCount = Number(userRow?.count || 0);
+    const jobCount = Number(jobRow?.count || 0);
+    const appCount = Number(appRow?.count || 0);
 
     res.json({
       success: true,
