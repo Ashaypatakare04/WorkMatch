@@ -1,3 +1,26 @@
+/**
+ * ============================================================================
+ * WORKMATCH PROPOSAL CLAIM VERIFIER & HALLUCINATION TRIPWIRE
+ * ============================================================================
+ *
+ * A core safety pillar of WorkMatch is Truthful AI. Generic LLMs frequently
+ * exaggerate or hallucinate credentials (e.g., claiming "10+ years of React"
+ * when the user has 2 years, or inventing past employers like "Google / Meta").
+ *
+ * ClaimVerifier operates as a strict two-stage audit firewall:
+ * 1. Deterministic Heuristics:
+ *    - Regex audits for numeric years of experience claims (`(\d+)\+? years`).
+ *      Flags any number exceeding the user's declared experience ceiling.
+ *    - Brand/Company audits: Detects mentions of prestigious corporate affiliations
+ *      (e.g., "Fortune 500", "Google", "Amazon") not present in the verified profile bio.
+ *    - Skill cross-referencing: Maps claims against verified skill inventory.
+ * 2. Semantic LLM Audit (AIGateway & CLAIM_VERIFIER_V1):
+ *    - Runs the proposal against a structured verification prompt to identify
+ *      implicit exaggerations or unsupportable technical guarantees.
+ * 3. Deterministic Sanitizer:
+ *    - Automatically rewrites exaggerated experience claims to accurate profile numbers.
+ */
+
 import { UserCapabilityProfile } from '../../models/UserCapabilityProfile.js';
 import { ClaimsVerification } from '../../models/Proposal.js';
 import { AIGateway } from '../gateway/AIGateway.js';
@@ -8,6 +31,10 @@ export class ClaimVerifier {
    * Strictly inspects proposal text against the verified user capability profile.
    * If any unsupported tool, years of experience, or claims are detected,
    * flags them and can sanitize or rewrite them.
+   *
+   * @param proposalContent - The generated proposal draft text.
+   * @param profile - The verified capability profile with declared skills and years.
+   * @returns ClaimsVerification result with verification status, matched skills, and flagged claims.
    */
   public static async verify(
     proposalContent: string,
@@ -17,7 +44,9 @@ export class ClaimVerifier {
     const unsupportedClaims: string[] = [];
     const detectedSkillsUsed: string[] = [];
 
-    // 1. Programmatic deterministic checks
+    // ─────────────────────────────────────────────────────────────
+    // 1. Programmatic Deterministic Checks (Years, Skills, Employers)
+    // ─────────────────────────────────────────────────────────────
     // Check if years claimed exceed profile years
     const yearsMatches = proposalContent.match(/(\d+)\+?\s*years?(?:\s+(?:of|in))?(?:\s+\w+)?\s*(?:experience|working|field|industry)/i);
     if (yearsMatches && yearsMatches[1]) {

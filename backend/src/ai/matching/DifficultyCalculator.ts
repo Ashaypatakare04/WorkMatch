@@ -1,3 +1,27 @@
+/**
+ * ============================================================================
+ * WORKMATCH DIFFICULTY & EFFORT ESTIMATOR
+ * ============================================================================
+ *
+ * This calculator computes an individualized "Difficulty Assessment" for any job.
+ * Note on Scale:
+ * - Scores range from 0 to 100 representing "Accessibility / Ease of Execution".
+ * - A score of 100 means the job is exceptionally straightforward and well within
+ *   the user's comfort zone ("Easy").
+ * - A lower score reflects significant cognitive load, tight deadlines, or unfamiliar tech ("Expert").
+ *
+ * Evaluation Dimensions (9 Weighted Factors):
+ * 1. Skill Match: Coverage of required tools in user's skillset.
+ * 2. Technical Complexity: Architectural depth vs standard tasks.
+ * 3. Experience Seniority: Senior/Lead expectations vs early career.
+ * 4. Time Requirement: Total hours estimated (quick tasks score higher ease).
+ * 5. Client Expectations: Client rating and review feedback history.
+ * 6. Deadline Pressure: Turnaround urgency (flexible vs immediate).
+ * 7. Communication Overhead: Heavy meeting schedule vs async deliverables.
+ * 8. Budget Fairness: Reward relative to scope.
+ * 9. Personal Skill Depth: Average proficiency level (Expert/Advanced/Intermediate).
+ */
+
 import { NormalizedJob } from '../../models/NormalizedJob.js';
 import { JobAnalysis } from '../../models/JobAnalysis.js';
 import { UserCapabilityProfile, DifficultyWeights } from '../../models/UserCapabilityProfile.js';
@@ -11,7 +35,11 @@ export interface DifficultyAssessment {
 export class DifficultyCalculator {
   /**
    * Evaluates job difficulty relative to user's personalized weights and capabilities.
-   * Higher score = easier job according to user preferences.
+   *
+   * @param job - Normalized opportunity metadata.
+   * @param analysis - Extracted requirements, hours, and complexity indicators.
+   * @param profile - Freelancer's skills, proficiency levels, and custom weights.
+   * @returns DifficultyAssessment with overall ease score, human label, and dimension breakdown.
    */
   public static calculate(
     job: NormalizedJob,
@@ -20,7 +48,7 @@ export class DifficultyCalculator {
   ): DifficultyAssessment {
     const weights = profile.preferences.difficulty_weights;
 
-    // Normalize weights to sum to 100
+    // Normalize weights to sum to 1.0 (100%)
     const totalWeight = Object.values(weights).reduce((acc, w) => acc + w, 0) || 100;
     const norm = (w: number) => (w / totalWeight);
 

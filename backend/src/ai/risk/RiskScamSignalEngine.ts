@@ -1,9 +1,40 @@
+/**
+ * ============================================================================
+ * WORKMATCH RISK & SCAM SIGNAL DETECTION ENGINE
+ * ============================================================================
+ *
+ * Freelance marketplaces are plagued by common fraud vectors: fake client
+ * profiles, off-platform redirects (Telegram, WhatsApp), upfront "equipment" fees,
+ * and malicious shortened links.
+ *
+ * The RiskScamSignalEngine protects freelancers through a hybrid defense model:
+ * 1. Fast Deterministic Heuristics:
+ *    - Off-Platform Redirects: Flags attempts to bypass marketplace escrow protections.
+ *    - Upfront Fees: Immediate +60 point risk penalty for "registration" or "deposit" fees.
+ *    - Unrealistic Remuneration: Detects "too good to be true" offers (e.g. $2,000 for data entry).
+ *    - Unpaid Spec Work: Flags demands for free custom labor before contract award.
+ *    - Client Track Record: Penalizes accounts with high job volumes but zero hire rates.
+ * 2. Semantic LLM Threat Analysis:
+ *    - Leverages RISK_ANALYZER_V1 to detect nuanced social engineering or phishing tactics.
+ * 3. Categorical Risk Rating:
+ *    - Low (<35): Verified, safe opportunity with reputable client history.
+ *    - Medium (35–64): Potential caution; proceed with escrow awareness.
+ *    - High (≥65): Critical warning; automated applications blocked.
+ */
+
 import { NormalizedJob } from '../../models/NormalizedJob.js';
 import { JobRisk, RiskLevel } from '../../models/JobRisk.js';
 import { AIGateway } from '../gateway/AIGateway.js';
 import { RISK_ANALYZER_V1 } from '../prompts/risk_analyzer_v1.js';
 
 export class RiskScamSignalEngine {
+  /**
+   * Evaluates an opportunity against scam signatures, off-platform risks, and client behavior.
+   *
+   * @param job - The normalized marketplace opportunity.
+   * @param userId - Optional user ID for AI logging context.
+   * @returns JobRisk analysis including risk level, numerical score (0-100), and warning signals.
+   */
   public static async analyze(job: NormalizedJob, userId?: string): Promise<JobRisk> {
     const warningSignals: string[] = [];
     let baseRiskScore = 10;
@@ -11,7 +42,9 @@ export class RiskScamSignalEngine {
     const lowerDesc = (job.description || '').toLowerCase();
     const lowerTitle = (job.title || '').toLowerCase();
 
-    // 1. Off-platform contact indicators
+    // ─────────────────────────────────────────────────────────────
+    // 1. Off-Platform Contact Indicators (Telegram, WhatsApp, Skype)
+    // ─────────────────────────────────────────────────────────────
     if (lowerDesc.includes('telegram') || lowerDesc.includes('whatsapp') || lowerDesc.includes('skype id') || lowerDesc.includes('contact me on:')) {
       warningSignals.push('Explicit request to communicate outside the platform (Telegram/WhatsApp)');
       baseRiskScore += 45;

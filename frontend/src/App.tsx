@@ -1,3 +1,29 @@
+/**
+ * ============================================================================
+ * WORKMATCH FRONTEND APPLICATION ORCHESTRATOR
+ * ============================================================================
+ *
+ * App.tsx serves as the central root component and state coordinator:
+ *
+ * 1. Global Navigation & Deep Linking:
+ *    - Maps URL hash fragments (#dashboard, #jobs, #automation, etc.) to active views.
+ *    - Defaults to the public interactive 'landing' page for new visitors.
+ *
+ * 2. Enterprise State Architecture:
+ *    - Marketplace Opportunities: Normalized jobs, scores, risk flags, and platform feeds.
+ *    - Applications Kanban: Tracks pipeline states (Saved, Applied, Interview, Offer, Rejected).
+ *    - Automation & Safety: Real-time sync of rate limits, emergency stop, and operating modes.
+ *    - User Capability Profile: Verified skills, experience ceiling, and criteria preferences.
+ *    - Notifications: Real-time high-match alerts and channel delivery statuses.
+ *
+ * 3. Security & Safety Circuit Breakers:
+ *    - Global Emergency Kill Switch: Halts all automated submissions instantaneously.
+ *    - Multi-tenant Session Isolation: Authenticated JWT resolution via `api.getMe()`.
+ *
+ * 4. Interactive Simulation & Demo Mode:
+ *    - 1-click sandbox seeding allowing complete testing without live API keys.
+ */
+
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/layout/Navbar.js';
 import { Sidebar } from './components/layout/Sidebar.js';
@@ -27,6 +53,9 @@ import {
 } from './types/index.js';
 import { api } from './services/api.js';
 
+/**
+ * Resolves the initial active tab from the browser window's hash fragment.
+ */
 const getInitialTab = (): string => {
   if (typeof window !== 'undefined') {
     const hash = window.location.hash.replace('#', '');
@@ -38,7 +67,10 @@ const getInitialTab = (): string => {
 };
 
 export function App() {
+  // Navigation & View Routing State
   const [currentTab, setCurrentTab] = useState<string>(getInitialTab);
+
+  // Core Data Collections
   const [jobs, setJobs] = useState<NormalizedJob[]>([]);
   const [platforms, setPlatforms] = useState<PlatformConnectionState[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);

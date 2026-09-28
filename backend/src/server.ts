@@ -1,3 +1,22 @@
+/**
+ * ============================================================================
+ * WORKMATCH AI BACKEND SERVER & API ENTRYPOINT
+ * ============================================================================
+ *
+ * This file serves as the main application bootstrapper:
+ * 1. Database Migrations: Runs automated schema migrations (SQLite / PostgreSQL)
+ *    upon process start.
+ * 2. Connector Initialization: Registers platform connectors (Upwork, Fiverr,
+ *    Freelancer, Mock Simulation) into the singleton ConnectorRegistry.
+ * 3. Security & Middleware: Configures CORS, strict HTTP headers, and JSON parsers.
+ * 4. Routing & Authentication: Exposes public authentication routes, health probes,
+ *    and protects core API routes via JWT-based authMiddleware.
+ * 5. Cold-Start Seeding: Seeds initial demo accounts and marketplace sample data
+ *    if the database is clean (ideal for Vercel preview environments).
+ * 6. Autonomous Worker: Starts the recurring BackgroundWorker in standalone node
+ *    environments (disabled on serverless lambdas).
+ */
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -32,22 +51,24 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Initialize Database Schema
+// 1. Initialize Database Schema & Tables
 runMigrations();
 
-// Register Platform Connectors
+// 2. Register Platform Connectors into the Central Registry
 ConnectorRegistry.register(new UpworkConnector());
 ConnectorRegistry.register(new FiverrConnector());
 ConnectorRegistry.register(new FreelancerConnector());
 ConnectorRegistry.register(new MockPlatformConnector());
 
-// Global Middlewares
+// 3. Security Middlewares: Cross-Origin Resource Sharing & Secure Headers
 const corsOrigin = process.env.CORS_ORIGIN || '*';
 app.use(cors({
   origin: corsOrigin === '*' ? '*' : corsOrigin.split(',').map(s => s.trim()),
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Basic HTTP Hardening (XSS, MIME sniffing, clickjacking prevention)
 app.use((_req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -56,13 +77,13 @@ app.use((_req, res, next) => {
 });
 app.use(express.json());
 
-// API Router
+// 4. API Router Definition
 const apiRouter = express.Router();
 
-// Public Auth Endpoints
+// Public Authentication Endpoints (Registration & Login)
 apiRouter.use('/auth', authRouter);
 
-// Authenticated Endpoints
+// Authenticated Endpoints (Protected by JWT authMiddleware)
 apiRouter.use('/jobs', authMiddleware, jobsRouter);
 apiRouter.use('/applications', authMiddleware, applicationsRouter);
 apiRouter.use('/platforms', authMiddleware, platformRouter);
@@ -74,7 +95,7 @@ apiRouter.use('/reports', authMiddleware, analyticsRouter);
 apiRouter.use('/demo', authMiddleware, demoRouter);
 apiRouter.use('/backup', authMiddleware, backupRouter);
 
-// Health check endpoint
+// Health check endpoint for uptime monitors and container orchestrators
 apiRouter.get('/health', (req, res) => {
   res.json({
     status: 'HEALTHY',

@@ -1,3 +1,28 @@
+/**
+ * ============================================================================
+ * WORKMATCH AUTOMATION & SAFETY BOUNDARIES CONTROL PANEL
+ * ============================================================================
+ *
+ * AutomationView gives freelancers total control over how WorkMatch interacts
+ * with their connected freelance accounts.
+ *
+ * Key Capabilities:
+ * - Prominent Kill Switch: Engages an immediate system-wide tripwire that blocks
+ *   all automated applications across all platforms.
+ * - Application Mode Tuning:
+ *   1. Manual: Read-only recommendations.
+ *   2. Assisted: AI prepares proposals, human review required before sending.
+ *   3. Auto-Pilot: System submits applications within configured safety bounds.
+ * - Rate Limiting & Spend Caps:
+ *   - Daily & Hourly application ceilings (prevents spam flags).
+ *   - Maximum connect cost threshold (prevents wallet drain).
+ * - Quality Filters:
+ *   - Minimum match score floor (default: 85%).
+ *   - Low-risk only enforcement (filters out scam signals).
+ * - Real-Time Audit Trail: Displays exact timestamps and reasons for every blocked
+ *   or dispatched submission.
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   Bot,

@@ -290,10 +290,20 @@ describe('Phase 2: Live AI Model & Multi-Channel Notification Integration', () =
         platform_job_id: 'up_low',
         title: 'Low Match Job',
         description: 'Basic task',
-        budget: { type: 'hourly', min: 15, max: 20 },
-        client: { name: 'Client A', rating: 4.5, payment_verified: true, country: 'US', jobs_posted: 5 },
+        category: 'Data Entry',
+        budget: { type: 'hourly', min: 15, max: 20, currency: 'USD' },
+        client: { name: 'Client A', rating: 4.5, country: 'US', jobs_posted: 5, reviews: 2, jobs_hired: 1, hire_rate: 0.5 },
         skills: ['General'],
-        published_at: new Date().toISOString(),
+        experience_level: 'Entry',
+        estimated_duration: '1 week',
+        deadline: 'Flexible',
+        posted_at: new Date().toISOString(),
+        competition: { proposal_count: 5 },
+        communication_requirements: [],
+        requirements: [],
+        external_links: [],
+        source_data: {},
+        collected_at: new Date().toISOString(),
         url: 'https://upwork.com'
       };
 
@@ -303,13 +313,16 @@ describe('Phase 2: Live AI Model & Multi-Channel Notification Integration', () =
         overall_score: 60, // Below 85 threshold
         skill_score: 50,
         experience_score: 50,
-        budget_score: 50,
-        client_score: 50,
         difficulty_score: 50,
+        budget_score: 50,
+        time_score: 50,
+        communication_score: 50,
         preference_score: 50,
-        velocity_score: 50,
-        explanation: { why_matches: [], potential_concerns: [], tip: '' },
-        calculated_at: new Date().toISOString()
+        client_quality_score: 50,
+        matched_skills: [],
+        missing_skills: [],
+        explanation: { why_matches: [], why_not_matches: [], concerns: [], estimated_effort: '', potential_value: '' },
+        scored_at: new Date().toISOString()
       };
 
       const lowRisk: JobRisk = {
@@ -317,19 +330,19 @@ describe('Phase 2: Live AI Model & Multi-Channel Notification Integration', () =
         risk_score: 10,
         risk_level: 'Low',
         warning_signals: [],
-        red_flags: [],
-        recommendation: 'Safe to apply'
+        explanation: 'Safe to apply',
+        analyzed_at: new Date().toISOString()
       };
 
       // Dispatch alert - should be ignored due to score < 85
-      const countBefore = NotificationRepository.listByUser(testUserId).length;
+      const countBefore = NotificationRepository.listByUser(testUserId, 200).length;
       await NotificationService.dispatchJobAlert({
         userId: testUserId,
         job: lowScoreJob,
         score: lowScore,
         risk: lowRisk
       });
-      const countAfter = NotificationRepository.listByUser(testUserId).length;
+      const countAfter = NotificationRepository.listByUser(testUserId, 200).length;
       assert.strictEqual(countAfter, countBefore, 'Low match job must not generate alert');
 
       // Now dispatch high match job (score = 92)
@@ -341,7 +354,7 @@ describe('Phase 2: Live AI Model & Multi-Channel Notification Integration', () =
         score: lowScore,
         risk: lowRisk
       });
-      const countFinal = NotificationRepository.listByUser(testUserId).length;
+      const countFinal = NotificationRepository.listByUser(testUserId, 200).length;
       assert.strictEqual(countFinal, countBefore + 1, 'High match job must generate alert');
     });
   });

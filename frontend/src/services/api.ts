@@ -1,3 +1,20 @@
+/**
+ * ============================================================================
+ * WORKMATCH FRONTEND API CLIENT & HTTP TRANSPORT LAYER
+ * ============================================================================
+ *
+ * This module provides a typed, centralized interface for communicating with
+ * the WorkMatch backend API service.
+ *
+ * Key Capabilities:
+ * - JWT Token Management: Persists authorization tokens in localStorage (`workmatch_jwt_token`).
+ * - Request Pipeline: Injects `Authorization: Bearer <token>` headers automatically.
+ * - Global 401 Interception: Dispatches a custom window event (`workmatch:unauthorized`)
+ *   to trigger login modal prompts upon token expiration.
+ * - Modular Domain Operations: Cleanly organizes calls across Jobs, Proposals,
+ *   Kanban Applications, Platforms, Capability Profiles, Automation, and Reports.
+ */
+
 import {
   NormalizedJob,
   JobScore,
@@ -14,6 +31,9 @@ import {
 const BASE_URL = '/api';
 const TOKEN_KEY = 'workmatch_jwt_token';
 
+/**
+ * Retrieves the persisted JWT token from browser localStorage.
+ */
 export function getAuthToken(): string | null {
   if (typeof window !== 'undefined') {
     return localStorage.getItem(TOKEN_KEY);
@@ -21,6 +41,11 @@ export function getAuthToken(): string | null {
   return null;
 }
 
+/**
+ * Updates or clears the JWT token in browser localStorage.
+ *
+ * @param token - The JWT token string or null to sign out.
+ */
 export function setAuthToken(token: string | null): void {
   if (typeof window !== 'undefined') {
     if (token) {
@@ -31,6 +56,9 @@ export function setAuthToken(token: string | null): void {
   }
 }
 
+/**
+ * Generic fetch wrapper handling header injection, serialization, and error handling.
+ */
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = getAuthToken();
   const headers: Record<string, string> = {

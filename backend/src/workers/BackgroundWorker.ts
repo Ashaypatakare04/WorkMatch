@@ -1,3 +1,4 @@
+import { Database } from '../database/connection.js';
 import { ConnectorRegistry } from '../connectors/base/ConnectorRegistry.js';
 import { JobRepository } from '../repositories/JobRepository.js';
 import { UserRepository } from '../repositories/UserRepository.js';
@@ -8,10 +9,33 @@ import { NotificationService } from '../notifications/NotificationService.js';
 import { AutomationController } from '../automation/AutomationController.js';
 import { PlatformRepository } from '../repositories/PlatformRepository.js';
 
+/**
+ * ============================================================================
+ * WORKMATCH BACKGROUND SYNCHRONIZATION WORKER
+ * ============================================================================
+ *
+ * This background worker is the autonomous heartbeat of the WorkMatch engine:
+ * 1. Platform Ingestion: Polls all registered platform connectors (Upwork, Fiverr,
+ *    Freelancer, Mock) for newly published opportunities.
+ * 2. Deduplication & Storage: Passes raw items through the normalization pipeline,
+ *    computing deterministic hashes to prevent duplicate database entries.
+ * 3. AI Analysis & Risk Audits: Runs job content through the JobAnalyzer and
+ *    RiskScamSignalEngine to classify required skills and safety flags.
+ * 4. Multi-Criteria Scoring: Matches each job against user capability profiles
+ *    across 7 distinct dimensions.
+ * 5. Alert Dispatch: Triggers real-time notifications for high-match opportunities (≥85%).
+ * 6. Guardrailed Auto-Pilot: If automated mode is enabled and all safety criteria
+ *    are satisfied, dispatches truth-checked proposals within strict rate limits.
+ */
 export class BackgroundWorker {
   private static isRunning: boolean = false;
   private static syncInterval: NodeJS.Timeout | null = null;
 
+  /**
+   * Starts the recurring background synchronization worker.
+   *
+   * @param intervalMs - Polling interval in milliseconds (defaults to 5 minutes).
+   */
   public static start(intervalMs: number = 300000): void { // Default 5 mins, or triggered on demand
     console.log('[BackgroundWorker] Starting background synchronization worker...');
     if (BackgroundWorker.syncInterval) clearInterval(BackgroundWorker.syncInterval);
@@ -22,6 +46,9 @@ export class BackgroundWorker {
     }, intervalMs);
   }
 
+  /**
+   * Gracefully terminates the background timer (used during testing or shutdown).
+   */
   public static stop(): void {
     if (BackgroundWorker.syncInterval) {
       clearInterval(BackgroundWorker.syncInterval);
@@ -30,7 +57,10 @@ export class BackgroundWorker {
   }
 
   /**
-   * Runs a complete sync and evaluation cycle for a user or all users.
+   * Executes a complete sync, normalization, analysis, scoring, and application cycle.
+   *
+   * @param targetUserId - Optional user ID to restrict processing to a single user.
+   * @returns Aggregate counts of collected, analyzed, notified, and applied jobs.
    */
   public static async runSyncCycle(targetUserId?: string): Promise<{
     jobsCollected: number;
@@ -81,7 +111,7 @@ export class BackgroundWorker {
       } else {
         try {
           const users = Database.query<{ id: string }>('SELECT id FROM users');
-          userIds = users.map(u => u.id);
+          userIds = users.map((u: { id: string }) => u.id);
         } catch {
           userIds = [];
         }

@@ -1,3 +1,16 @@
+/**
+ * ============================================================================
+ * WORKMATCH UNIVERSAL DASHBOARD VIEW
+ * ============================================================================
+ *
+ * DashboardView is the central cockpit for freelancers:
+ * - Real-Time Operational KPIs: High match counts, conversion funnel, connects spent.
+ * - Application Mode Switcher: One-click toggle between Manual, Assisted, and Auto-Pilot.
+ * - Opportunity Radar: Filters and ranks incoming jobs by calculated match score (≥85%).
+ * - Platform Health Monitors: Displays connection status across Upwork, Fiverr, and Freelancer.
+ * - Emergency Safety Override: Unmistakable warning banner if kill switch is engaged.
+ */
+
 import React from 'react';
 import {
   Flame,

@@ -1,3 +1,31 @@
+/**
+ * ============================================================================
+ * WORKMATCH AUTOMATION SAFETY & RATE-LIMITING CONTROLLER
+ * ============================================================================
+ *
+ * Freelance platforms enforce strict terms of service regarding automated
+ * applications, connect consumption, and spam prevention.
+ *
+ * The AutomationController acts as an unbypassable gatekeeper before any
+ * proposal can ever be submitted programmatically.
+ *
+ * The 3 Operational Modes:
+ * 1. MANUAL: Decision support only. Freelancers inspect scores and write/submit proposals themselves.
+ * 2. ASSISTED: AI generates, humanizes, and verifies proposal drafts, but submission is blocked
+ *    until a human explicitly approves and dispatches.
+ * 3. AUTOMATIC: Autonomous submission mode, strictly constrained by 7 safety tripwires:
+ *    - Tripwire 1: Emergency Kill Switch (immediate global freeze).
+ *    - Tripwire 2: Mode validation (must be 'AUTOMATIC' and 'is_active').
+ *    - Tripwire 3: Platform Capability (verifies if the connector allows API applications).
+ *    - Tripwire 4: Daily Rate Limit (prevents account flagging from excessive volume).
+ *    - Tripwire 5: Hourly Rate Limit (rolling 60-minute window check).
+ *    - Tripwire 6: Minimum Match Score Threshold (e.g. ≥ 85%).
+ *    - Tripwire 7: Low-Risk Policy Enforcement (rejects Medium or High risk jobs).
+ *
+ * Audit Trail:
+ * Every decision (both approved and blocked) is written to the immutable automation audit log.
+ */
+
 import { AutomationRepository } from '../repositories/AutomationRepository.js';
 import { ApplicationRepository } from '../repositories/ApplicationRepository.js';
 import { NormalizedJob } from '../models/NormalizedJob.js';
@@ -20,6 +48,9 @@ export class AutomationController {
   /**
    * Strictly evaluates whether an automated application can be submitted for a job.
    * If any safety condition is violated, logs audit rationale and refuses to apply.
+   *
+   * @param params - Context including target job, calculated score, risk profile, and platform connector.
+   * @returns AutomationEvaluationResult indicating whether application was allowed, dispatched, or blocked.
    */
   public static async evaluateAndApply(params: {
     userId: string;

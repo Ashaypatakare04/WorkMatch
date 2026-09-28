@@ -1,3 +1,28 @@
+/**
+ * ============================================================================
+ * WORKMATCH MULTI-CRITERIA MATCHING & SCORING ENGINE
+ * ============================================================================
+ *
+ * The MatchingEngine is responsible for evaluating how well a normalized
+ * marketplace opportunity matches a user's declared capability profile.
+ *
+ * Scoring Architecture (0–100 Scale):
+ * 1. Skill Overlap (30% weight): Ratio of job-required technologies matched in user profile.
+ * 2. Preference Fit (20% weight): Matches user's preferred work categories and penalty for excluded keywords.
+ * 3. Difficulty & Ease (20% weight): Task complexity calculated via DifficultyCalculator.
+ * 4. Budget Viability (15% weight): Compares job remuneration against user's minimum hourly or fixed rate.
+ * 5. Client Quality (15% weight): Evaluates client reputation, review volume, and payment trustworthiness.
+ *
+ * Safety Tripwires & Caps:
+ * - Negative Keywords: If a job mentions any user-excluded keyword (e.g. "cold calling"),
+ *   the overall score is hard-capped at 40/100.
+ * - Risk Assessment: Jobs flagged as 'High Risk' are capped at 45/100; 'Medium Risk' capped at 75/100.
+ *
+ * Transparency & Explainability:
+ * Generates an intuitive ScoreExplanation object with explicit "why_matches" and "concerns"
+ * bullet points, so users never have to guess why a recommendation was made.
+ */
+
 import { NormalizedJob } from '../../models/NormalizedJob.js';
 import { JobAnalysis } from '../../models/JobAnalysis.js';
 import { JobRisk } from '../../models/JobRisk.js';
@@ -6,6 +31,15 @@ import { JobScore, ScoreExplanation } from '../../models/JobScore.js';
 import { DifficultyCalculator } from './DifficultyCalculator.js';
 
 export class MatchingEngine {
+  /**
+   * Evaluates an opportunity across all capability and preference dimensions.
+   *
+   * @param job - The normalized marketplace opportunity.
+   * @param analysis - Extracted technical requirements and complexity metrics.
+   * @param risk - Scam signals and client payment risk evaluation.
+   * @param profile - The freelancer's verified skills, experience, and criteria.
+   * @returns JobScore containing dimension scores (0-100) and rationale.
+   */
   public static match(
     job: NormalizedJob,
     analysis: JobAnalysis,
@@ -15,7 +49,10 @@ export class MatchingEngine {
     const userSkills = profile.skills.map(s => s.skill_name.toLowerCase());
     const requiredSkills = analysis.required_skills.map(s => s.toLowerCase());
 
+    // ─────────────────────────────────────────────────────────────
     // 1. Skill Match & Identification
+    // Computes bidirectional substring matching between user inventory and requirements
+    // ─────────────────────────────────────────────────────────────
     const matchedSkills: string[] = [];
     const missingSkills: string[] = [];
 
@@ -33,7 +70,10 @@ export class MatchingEngine {
       : 0.8;
     const skillScore = Math.round(skillRatio * 100);
 
+    // ─────────────────────────────────────────────────────────────
     // 2. Experience Match
+    // Adjusts score based on declared seniority requirements vs user experience years
+    // ─────────────────────────────────────────────────────────────
     let experienceScore = 85;
     const expReq = (analysis.experience_requirement || '').toLowerCase();
     if (expReq.includes('expert') && profile.years_experience < 4) {
@@ -44,11 +84,17 @@ export class MatchingEngine {
       experienceScore = 95;
     }
 
-    // 3. Difficulty Match (using DifficultyCalculator)
+    // ─────────────────────────────────────────────────────────────
+    // 3. Difficulty Match
+    // Uses the dedicated DifficultyCalculator to assess duration and cognitive load
+    // ─────────────────────────────────────────────────────────────
     const difficultyAssessment = DifficultyCalculator.calculate(job, analysis, profile);
     const difficultyScore = difficultyAssessment.score;
 
-    // 4. Budget Match
+    // ─────────────────────────────────────────────────────────────
+    // 4. Budget Viability Match
+    // Evaluates project or hourly budget against the user's minimum acceptable floor
+    // ─────────────────────────────────────────────────────────────
     let budgetScore = 80;
     const jobBudget = job.budget?.max || job.budget?.min || 0;
     if (jobBudget >= profile.preferences.min_budget * 1.5) {
@@ -59,7 +105,10 @@ export class MatchingEngine {
       budgetScore = 55;
     }
 
-    // 5. Time Match (hours per day/project limits)
+    // ─────────────────────────────────────────────────────────────
+    // 5. Time & Workload Match
+    // Compares estimated task duration against freelancer's available daily hours
+    // ─────────────────────────────────────────────────────────────
     let timeScore = 85;
     const estHours = analysis.estimated_hours || 2;
     if (estHours <= profile.availability_hours_per_day) {
@@ -70,7 +119,10 @@ export class MatchingEngine {
       timeScore = 60;
     }
 
-    // 6. Communication Match
+    // ─────────────────────────────────────────────────────────────
+    // 6. Communication Overhead Match
+    // Synchronous call vs async message expectations
+    // ─────────────────────────────────────────────────────────────
     let communicationScore = 90;
     if (profile.preferences.preferred_communication_level === 'Low') {
       if (analysis.communication_level === 'Low') communicationScore = 98;
@@ -80,7 +132,10 @@ export class MatchingEngine {
       communicationScore = 90;
     }
 
+    // ─────────────────────────────────────────────────────────────
     // 7. Preference & Exclusion Match
+    // Enforces user category targets and applies hard penalties for negative keywords
+    // ─────────────────────────────────────────────────────────────
     let preferenceScore = 90;
     const lowerTitle = (job.title || '').toLowerCase();
     const lowerDesc = (job.description || '').toLowerCase();
@@ -89,7 +144,7 @@ export class MatchingEngine {
     const concerns: string[] = [];
     let hasExcludedKeyword = false;
 
-    // Check excluded keywords
+    // Check excluded keywords (e.g. cold calling, telemarketing)
     for (const excl of profile.preferences.excluded_keywords || []) {
       const lowerExcl = excl.toLowerCase();
       if (lowerTitle.includes(lowerExcl) || lowerDesc.includes(lowerExcl)) {
@@ -100,7 +155,7 @@ export class MatchingEngine {
       }
     }
 
-    // Check category preference
+    // Check category alignment
     const jobCategory = job.category || '';
     const catMatched = (profile.preferences.preferred_categories || []).some(cat =>
       jobCategory.toLowerCase().includes(cat.toLowerCase()) || cat.toLowerCase().includes(jobCategory.toLowerCase())
@@ -113,7 +168,10 @@ export class MatchingEngine {
       whyNotMatches.push(`Category "${jobCategory}" is outside your primary target categories`);
     }
 
-    // 8. Client Quality
+    // ─────────────────────────────────────────────────────────────
+    // 8. Client Quality & Reputation
+    // Rewarding verified track records; cautioning against unrated or poor clients
+    // ─────────────────────────────────────────────────────────────
     let clientQualityScore = 75;
     const clientRating = job.client?.rating;
     const clientReviews = job.client?.reviews || 0;
@@ -125,7 +183,7 @@ export class MatchingEngine {
       concerns.push(`Client has below-average rating (${clientRating}★)`);
     }
 
-    // Highlight matched skills
+    // Highlight matched vs missing skills for UI display
     if (matchedSkills.length > 0) {
       whyMatches.push(`Skills match your profile: ${matchedSkills.slice(0, 3).join(', ')}`);
     }
@@ -133,7 +191,7 @@ export class MatchingEngine {
       whyNotMatches.push(`Requires unlisted skills: ${missingSkills.slice(0, 3).join(', ')}`);
     }
 
-    // Highlight communication & workload
+    // Communication & risk alerts
     if (analysis.communication_level === 'Low') {
       whyMatches.push('Low communication overhead fits your preferred working mode');
     }
@@ -141,8 +199,15 @@ export class MatchingEngine {
       concerns.push(`High risk signals flagged: ${risk.warning_signals.join('; ')}`);
     }
 
-    // 9. Overall Weighted Score (0 to 100)
-    // Formula balances skill competence (30%), preference fit (20%), difficulty ease (20%), budget (15%), client (15%)
+    // ─────────────────────────────────────────────────────────────
+    // 9. Overall Weighted Score Calculation (0 to 100)
+    // Formula balances:
+    // - Skill Competence: 30%
+    // - Preference Fit:   20%
+    // - Difficulty Ease:  20%
+    // - Budget Floor:     15%
+    // - Client Quality:   15%
+    // ─────────────────────────────────────────────────────────────
     let overallScore = Math.round(
       (skillScore * 0.30) +
       (preferenceScore * 0.20) +
@@ -151,12 +216,12 @@ export class MatchingEngine {
       (clientQualityScore * 0.15)
     );
 
-    // Apply exclusion keyword cap
+    // Hard tripwire: Cap score at 40 if any user-excluded keyword is present
     if (hasExcludedKeyword) {
       overallScore = Math.min(overallScore, 40);
     }
 
-    // Apply risk penalty
+    // Safety tripwire: Cap score if scam/payment risk is elevated
     if (risk.risk_level === 'High') {
       overallScore = Math.min(overallScore, 45);
     } else if (risk.risk_level === 'Medium') {

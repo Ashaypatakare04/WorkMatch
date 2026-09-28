@@ -1,3 +1,26 @@
+/**
+ * ============================================================================
+ * WORKMATCH JOB DETAILS & PROPOSAL STUDIO MODAL
+ * ============================================================================
+ *
+ * JobDetailsModal is an in-depth decision and proposal workbench:
+ *
+ * Tab 1: Opportunity Analysis
+ * - Transparent Fit Breakdown: Displays progress bars across 5 core dimensions
+ *   (Skills, Experience, Difficulty, Budget, Client Reputation).
+ * - Risk & Scam Signals: Clear warning badges if off-platform communication or
+ *   unrealistic rates are detected.
+ * - Client Background: Star ratings, reviews count, and payment verification state.
+ *
+ * Tab 2: Proposal Studio
+ * - Multi-Variant Generation: Generates 4 distinct stylistic drafts (Direct,
+ *   Conversational, Technical, Detailed).
+ * - Claim Verification Audit: Displays badges confirming truthfulness against the
+ *   user's profile inventory.
+ * - Interactive Draft Editor: Live text area allowing customized tweaking before
+ *   copying to clipboard or dispatching to the platform.
+ */
+
 import React, { useState } from 'react';
 import {
   X,
