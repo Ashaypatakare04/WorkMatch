@@ -291,4 +291,91 @@ export class UserRepository {
       ]
     );
   }
+
+  public static changePassword(userId: string, newPasswordHash: string): boolean {
+    const now = new Date().toISOString();
+    const result = Database.execute(
+      `UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?`,
+      [newPasswordHash, now, userId]
+    );
+    return result.changes > 0;
+  }
+
+  public static createPasswordResetToken(userId: string, expiresInMs: number = 3600000): string {
+    const rawToken = `rst_${Date.now()}_${Math.random().toString(36).substring(2, 10)}${Math.random().toString(36).substring(2, 10)}`;
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + expiresInMs).toISOString();
+
+    Database.execute(
+      `INSERT INTO password_resets (id, user_id, token_hash, expires_at, created_at)
+       VALUES (?, ?, ?, ?, ?)`,
+      [`pr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`, userId, rawToken, expiresAt, now.toISOString()]
+    );
+
+    return rawToken;
+  }
+
+  public static validatePasswordResetToken(token: string): { valid: boolean; userId?: string } {
+    const row = Database.queryOne<{ id: string; user_id: string; expires_at: string; used_at: string | null }>(
+      `SELECT * FROM password_resets WHERE token_hash = ? AND used_at IS NULL`,
+      [token]
+    );
+
+    if (!row) return { valid: false };
+
+    const expires = new Date(row.expires_at).getTime();
+    if (Date.now() > expires) {
+      return { valid: false };
+    }
+
+    return { valid: true, userId: row.user_id };
+  }
+
+  public static resetPasswordWithToken(token: string, newPasswordHash: string): boolean {
+    const check = UserRepository.validatePasswordResetToken(token);
+    if (!check.valid || !check.userId) return false;
+
+    const now = new Date().toISOString();
+    return Database.transaction(() => {
+      Database.execute(
+        `UPDATE password_resets SET used_at = ? WHERE token_hash = ?`,
+        [now, token]
+      );
+      const res = Database.execute(
+        `UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?`,
+        [newPasswordHash, now, check.userId]
+      );
+      return res.changes > 0;
+    });
+  }
+
+  public static async findByEmailAsync(email: string): Promise<User | null> {
+    const row = await Database.queryOneAsync<any>('SELECT * FROM users WHERE email = ?', [email.toLowerCase().trim()]);
+    if (!row) return null;
+    return {
+      id: row.id,
+      email: row.email,
+      password_hash: row.password_hash,
+      full_name: row.full_name,
+      is_admin: Boolean(row.is_admin),
+      plan_type: row.plan_type,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    };
+  }
+
+  public static async findByIdAsync(id: string): Promise<User | null> {
+    const row = await Database.queryOneAsync<any>('SELECT * FROM users WHERE id = ?', [id]);
+    if (!row) return null;
+    return {
+      id: row.id,
+      email: row.email,
+      full_name: row.full_name,
+      is_admin: Boolean(row.is_admin),
+      plan_type: row.plan_type,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    };
+  }
 }
+

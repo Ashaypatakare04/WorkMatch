@@ -15,6 +15,10 @@ export class UpworkConnector implements PlatformConnector {
 
   private mockFallback = new MockPlatformConnector();
   private isConnected: boolean = true;
+  private cachedJobs: NormalizedJob[] = [];
+  private lastFetchedAt: number = 0;
+  private readonly CACHE_TTL_MS: number = 60 * 1000; // 60 seconds TTL
+
   private hasLiveCredentials: boolean = Boolean(
     process.env.UPWORK_RSS_URL ||
     (process.env.UPWORK_CLIENT_ID && process.env.UPWORK_CLIENT_SECRET) ||
@@ -58,21 +62,33 @@ export class UpworkConnector implements PlatformConnector {
   public async getJobs(filter?: PlatformJobFilter): Promise<NormalizedJob[]> {
     if (!this.isConnected) return [];
 
+    // Return cached feed if within TTL to prevent platform IP rate limits
+    const now = Date.now();
+    if (this.cachedJobs.length > 0 && now - this.lastFetchedAt < this.CACHE_TTL_MS) {
+      return this.cachedJobs.slice(0, filter?.limit || 20);
+    }
+
     const rssUrl = process.env.UPWORK_RSS_URL;
     if (rssUrl) {
+      const targetUrl = process.env.RSS_PROXY_URL
+        ? `${process.env.RSS_PROXY_URL}${encodeURIComponent(rssUrl)}`
+        : rssUrl;
+
       try {
-        const res = await fetch(rssUrl, {
+        const res = await fetch(targetUrl, {
           headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) WorkMatch/1.0',
+            'User-Agent': process.env.FEED_USER_AGENT || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) WorkMatch/1.0',
             Accept: 'application/rss+xml, application/xml, text/xml'
           },
-          signal: AbortSignal.timeout(6000)
+          signal: AbortSignal.timeout(8000)
         });
 
         if (res.ok) {
           const xml = await res.text();
           const parsedJobs = this.parseRssFeed(xml);
           if (parsedJobs.length > 0) {
+            this.cachedJobs = parsedJobs;
+            this.lastFetchedAt = Date.now();
             return parsedJobs.slice(0, filter?.limit || 20);
           }
         }

@@ -128,6 +128,59 @@ export class Database {
     return { changes: res.changes };
   }
 
+  public static async transactionAsync<T>(callback: () => Promise<T>): Promise<T> {
+    if (Database.isPostgres()) {
+      const pool = Database.getPgPool();
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        const result = await callback();
+        await client.query('COMMIT');
+        return result;
+      } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+      } finally {
+        client.release();
+      }
+    }
+
+    const db = Database.get();
+    db.exec('BEGIN TRANSACTION;');
+    try {
+      const result = await callback();
+      db.exec('COMMIT;');
+      return result;
+    } catch (error) {
+      db.exec('ROLLBACK;');
+      throw error;
+    }
+  }
+
+  public static async isHealthy(): Promise<{ status: 'HEALTHY' | 'UNHEALTHY'; engine: string; latencyMs: number; error?: string }> {
+    const start = Date.now();
+    try {
+      if (Database.isPostgres()) {
+        const pool = Database.getPgPool();
+        await pool.query('SELECT 1');
+      } else {
+        Database.queryOne('SELECT 1');
+      }
+      return {
+        status: 'HEALTHY',
+        engine: Database.getEngineName(),
+        latencyMs: Date.now() - start
+      };
+    } catch (err: any) {
+      return {
+        status: 'UNHEALTHY',
+        engine: Database.getEngineName(),
+        latencyMs: Date.now() - start,
+        error: err.message
+      };
+    }
+  }
+
   // ─────────────────────────────────────────────────────────────
   // State Backup & Restore (Prevents Data Loss on Serverless restarts)
   // ─────────────────────────────────────────────────────────────

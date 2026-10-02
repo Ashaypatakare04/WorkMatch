@@ -8,6 +8,7 @@ import { MatchingEngine } from '../../ai/matching/MatchingEngine.js';
 import { ProposalGenerator } from '../../ai/proposals/ProposalGenerator.js';
 import { ApplicationRepository } from '../../repositories/ApplicationRepository.js';
 import { BackgroundWorker } from '../../workers/BackgroundWorker.js';
+import { SubscriptionService } from '../../services/SubscriptionService.js';
 
 export const jobsRouter = Router();
 
@@ -115,10 +116,22 @@ jobsRouter.delete('/:id/action', (req: AuthenticatedRequest, res: Response): voi
   }
 });
 
-// Trigger proposal generation
+// Trigger proposal generation with quota check
 jobsRouter.post('/:id/proposal', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const userId = req.user?.userId || 'user_default';
+
+    // Verify monthly proposal quota
+    const quota = SubscriptionService.checkProposalQuota(userId);
+    if (!quota.allowed) {
+      res.status(403).json({
+        error: 'QUOTA_EXCEEDED',
+        message: `Monthly proposal quota of ${quota.limit} reached on ${quota.planType} tier. Upgrade to Pro for 150 proposals/month.`,
+        usage: quota
+      });
+      return;
+    }
+
     const job = JobRepository.findById(req.params.id);
     if (!job) {
       res.status(404).json({ error: 'Job not found' });
@@ -136,12 +149,83 @@ jobsRouter.post('/:id/proposal', async (req: AuthenticatedRequest, res: Response
 
     res.json({
       success: true,
-      proposals: savedProposals
+      proposals: savedProposals,
+      usage: SubscriptionService.getUserUsage(userId)
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Real-time AI Proposal Generation via Server-Sent Events (SSE)
+const handleProposalStream = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const userId = req.user?.userId || 'user_default';
+
+  // Set standard SSE streaming headers
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  if (typeof (res as any).flushHeaders === 'function') {
+    (res as any).flushHeaders();
+  }
+
+  const sendEvent = (event: string, data: any) => {
+    res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+  };
+
+  try {
+    const quota = SubscriptionService.checkProposalQuota(userId);
+    if (!quota.allowed) {
+      sendEvent('error', {
+        error: 'QUOTA_EXCEEDED',
+        message: `Monthly proposal quota of ${quota.limit} reached on ${quota.planType} tier. Upgrade to Pro for unlimited generation.`,
+        usage: quota
+      });
+      res.end();
+      return;
+    }
+
+    const job = JobRepository.findById(req.params.id);
+    if (!job) {
+      sendEvent('error', { error: 'Job not found' });
+      res.end();
+      return;
+    }
+
+    const profile = UserRepository.getProfile(userId);
+    if (!profile) {
+      sendEvent('error', { error: 'User capability profile not found' });
+      res.end();
+      return;
+    }
+
+    sendEvent('status', { stage: 'analyzing', message: 'Analyzing job scope and matching competencies...' });
+    sendEvent('status', { stage: 'generating', message: 'Synthesizing tailored proposal variants...' });
+
+    const proposals = await ProposalGenerator.generateVariants(job, profile);
+
+    sendEvent('status', { stage: 'verifying', message: 'Running truthfulness and claims verification...' });
+
+    const savedProposals = proposals.map(p => {
+      const saved = ApplicationRepository.saveProposal(p);
+      sendEvent('variant', { variant: saved });
+      return saved;
+    });
+
+    sendEvent('complete', {
+      proposals: savedProposals,
+      usage: SubscriptionService.getUserUsage(userId)
+    });
+    res.end();
+  } catch (err: any) {
+    sendEvent('error', { error: err.message });
+    res.end();
+  }
+};
+
+jobsRouter.get('/:id/proposal/stream', handleProposalStream);
+jobsRouter.post('/:id/proposal/stream', handleProposalStream);
 
 // Trigger manual platform synchronization
 jobsRouter.post('/sync', async (req: AuthenticatedRequest, res: Response): Promise<void> => {

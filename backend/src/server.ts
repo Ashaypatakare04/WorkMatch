@@ -21,6 +21,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { runMigrations } from './database/migrate.js';
+import { Database } from './database/connection.js';
 import { ConnectorRegistry } from './connectors/base/ConnectorRegistry.js';
 import { UpworkConnector } from './connectors/upwork/UpworkConnector.js';
 import { FiverrConnector } from './connectors/fiverr/FiverrConnector.js';
@@ -28,6 +29,7 @@ import { FreelancerConnector } from './connectors/freelancer/FreelancerConnector
 import { MockPlatformConnector } from './connectors/mock/MockPlatformConnector.js';
 import { authMiddleware } from './api/middleware/auth.js';
 import { errorHandler } from './api/middleware/errorHandler.js';
+import { requestLogger, Logger } from './utils/logger.js';
 
 import { authRouter } from './api/routes/authRoutes.js';
 import { jobsRouter } from './api/routes/jobsRoutes.js';
@@ -39,6 +41,7 @@ import { notificationRouter } from './api/routes/notificationRoutes.js';
 import { analyticsRouter } from './api/routes/analyticsRoutes.js';
 import { demoRouter } from './api/routes/demoRoutes.js';
 import { backupRouter } from './api/routes/backupRoutes.js';
+import { billingRouter } from './api/routes/billingRoutes.js';
 import { BackgroundWorker } from './workers/BackgroundWorker.js';
 
 import { UserRepository } from './repositories/UserRepository.js';
@@ -63,9 +66,17 @@ ConnectorRegistry.register(new MockPlatformConnector());
 // 3. Security Middlewares: Cross-Origin Resource Sharing & Secure Headers
 const corsOrigin = process.env.CORS_ORIGIN || '*';
 app.use(cors({
-  origin: corsOrigin === '*' ? '*' : corsOrigin.split(',').map(s => s.trim()),
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (corsOrigin === '*' || corsOrigin.split(',').map(s => s.trim()).includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Test-Rate-Limit']
 }));
 
 // Basic HTTP Hardening (XSS, MIME sniffing, clickjacking prevention)
@@ -76,6 +87,7 @@ app.use((_req, res, next) => {
   next();
 });
 app.use(express.json());
+app.use(requestLogger);
 
 // 4. API Router Definition
 const apiRouter = express.Router();
@@ -94,16 +106,32 @@ apiRouter.use('/analytics', authMiddleware, analyticsRouter);
 apiRouter.use('/reports', authMiddleware, analyticsRouter);
 apiRouter.use('/demo', authMiddleware, demoRouter);
 apiRouter.use('/backup', authMiddleware, backupRouter);
+apiRouter.use('/billing', billingRouter);
 
 // Health check endpoint for uptime monitors and container orchestrators
-apiRouter.get('/health', (req, res) => {
-  res.json({
-    status: 'HEALTHY',
-    service: 'WorkMatch AI Core',
-    timestamp: new Date().toISOString(),
-    connectors: ConnectorRegistry.getAll().map(c => ({ id: c.platformId, name: c.name }))
-  });
+apiRouter.get('/health', async (_req, res) => {
+  try {
+    const dbHealth = await Database.isHealthy();
+    const isHealthy = dbHealth.status === 'HEALTHY';
+    res.status(isHealthy ? 200 : 503).json({
+      status: isHealthy ? 'HEALTHY' : 'DEGRADED',
+      service: 'WorkMatch AI Core',
+      timestamp: new Date().toISOString(),
+      database: dbHealth,
+      connectors: ConnectorRegistry.getAll().map(c => ({ id: c.platformId, name: c.name }))
+    });
+  } catch (err: any) {
+    console.error('❌ [Health Check Route Error]:', err);
+    res.status(500).json({
+      status: 'UNHEALTHY',
+      service: 'WorkMatch AI Core',
+      error: err.message
+    });
+  }
 });
+
+
+
 
 // Mount on both /api and / to seamlessly handle Vercel rewrites and direct calls
 app.use('/api', apiRouter);

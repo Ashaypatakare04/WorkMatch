@@ -295,5 +295,31 @@ export const api = {
 
   isAuthenticated(): boolean {
     return Boolean(getAuthToken());
+  },
+
+  // Billing & Subscriptions
+  async getBillingPlans() {
+    const res = await request<{ success: boolean; plans: any[] }>('/billing/plans');
+    return res.plans;
+  },
+
+  async getBillingUsage() {
+    const res = await request<{ success: boolean; usage: any }>('/billing/usage');
+    return res.usage;
+  },
+
+  async upgradePlan(planType: 'personal' | 'pro' | 'team') {
+    const res = await request<{ success: boolean; message: string; usage: any }>('/billing/upgrade', {
+      method: 'POST',
+      body: JSON.stringify({ planType })
+    });
+    return res;
+  },
+
+  async cancelSubscription() {
+    const res = await request<{ success: boolean; message: string; usage: any }>('/billing/cancel', {
+      method: 'POST'
+    });
+    return res;
   }
 };

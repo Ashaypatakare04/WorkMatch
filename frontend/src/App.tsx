@@ -22,25 +22,29 @@
  *
  * 4. Interactive Simulation & Demo Mode:
  *    - 1-click sandbox seeding allowing complete testing without live API keys.
+ *    - Real-time in-app Toast feedback system.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { Navbar } from './components/layout/Navbar.js';
 import { Sidebar } from './components/layout/Sidebar.js';
 import { MobileNav } from './components/layout/MobileNav.js';
-import { DashboardView } from './components/dashboard/DashboardView.js';
-import { JobsView } from './components/jobs/JobsView.js';
-import { ApplicationsView } from './components/applications/ApplicationsView.js';
-import { AnalyticsView } from './components/analytics/AnalyticsView.js';
-import { ReportsView } from './components/reports/ReportsView.js';
-import { PlatformsView } from './components/platforms/PlatformsView.js';
-import { ProfileView } from './components/profile/ProfileView.js';
-import { AutomationView } from './components/automation/AutomationView.js';
-import { SettingsView } from './components/settings/SettingsView.js';
 import { JobDetailsModal } from './components/jobs/JobDetailsModal.js';
-import { LandingPage } from './components/landing/LandingPage.js';
 import { AuthModal } from './components/auth/AuthModal.js';
 import { ErrorBoundary } from './components/common/ErrorBoundary.js';
+import { ToastProvider, useToast } from './components/common/Toast.js';
+
+// Lazy-loaded views for optimal code-splitting and faster initial page loads
+const DashboardView = React.lazy(() => import('./components/dashboard/DashboardView.js').then(m => ({ default: m.DashboardView })));
+const JobsView = React.lazy(() => import('./components/jobs/JobsView.js').then(m => ({ default: m.JobsView })));
+const ApplicationsView = React.lazy(() => import('./components/applications/ApplicationsView.js').then(m => ({ default: m.ApplicationsView })));
+const AnalyticsView = React.lazy(() => import('./components/analytics/AnalyticsView.js').then(m => ({ default: m.AnalyticsView })));
+const ReportsView = React.lazy(() => import('./components/reports/ReportsView.js').then(m => ({ default: m.ReportsView })));
+const PlatformsView = React.lazy(() => import('./components/platforms/PlatformsView.js').then(m => ({ default: m.PlatformsView })));
+const ProfileView = React.lazy(() => import('./components/profile/ProfileView.js').then(m => ({ default: m.ProfileView })));
+const AutomationView = React.lazy(() => import('./components/automation/AutomationView.js').then(m => ({ default: m.AutomationView })));
+const SettingsView = React.lazy(() => import('./components/settings/SettingsView.js').then(m => ({ default: m.SettingsView })));
+const LandingPage = React.lazy(() => import('./components/landing/LandingPage.js').then(m => ({ default: m.LandingPage })));
 
 import {
   NormalizedJob,
@@ -52,6 +56,20 @@ import {
   Application
 } from './types/index.js';
 import { api } from './services/api.js';
+
+/**
+ * Loading spinner placeholder during asynchronous chunk fetching
+ */
+function ViewLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs text-slate-400 font-medium tracking-wide">Loading view...</span>
+      </div>
+    </div>
+  );
+}
 
 /**
  * Resolves the initial active tab from the browser window's hash fragment.
@@ -66,7 +84,9 @@ const getInitialTab = (): string => {
   return 'landing';
 };
 
-export function App() {
+function AppContent() {
+  const { success, warning, error, info } = useToast();
+
   // Navigation & View Routing State
   const [currentTab, setCurrentTab] = useState<string>(getInitialTab);
 
@@ -159,12 +179,14 @@ export function App() {
 
   const handleAuthSuccess = (user: any) => {
     setCurrentUser(user);
+    success('Welcome to WorkMatch AI', `Signed in as ${user.full_name}`);
     loadInitialData();
   };
 
   const handleLogout = () => {
     api.logout();
     setCurrentUser(null);
+    success('Signed Out', 'You have been successfully signed out.');
     loadInitialData();
   };
 
@@ -195,8 +217,10 @@ export function App() {
       }
       await api.triggerDemoSeed();
       await loadInitialData();
-    } catch (err) {
+      success('Demo Dataset Seeded', '30 normalized jobs across Upwork, Fiverr, and Freelancer loaded.');
+    } catch (err: any) {
       console.error('Failed to seed demo dataset:', err);
+      error('Demo Seeding Failed', err.message);
     } finally {
       setIsLoadingDemo(false);
     }
@@ -208,8 +232,10 @@ export function App() {
     try {
       await api.syncPlatforms();
       await loadInitialData();
-    } catch (err) {
+      success('Platforms Synchronized', 'Ingestion feeds refreshed with latest opportunities.');
+    } catch (err: any) {
       console.error('Failed to sync platforms:', err);
+      error('Sync Failed', err.message);
     } finally {
       setIsSyncing(false);
     }
@@ -220,9 +246,10 @@ export function App() {
     try {
       const res = await api.triggerEmergencyStop();
       setAutomationSettings(res.settings);
-      alert('EMERGENCY KILL SWITCH ACTIVATED: Automated submissions halted.');
-    } catch (err) {
+      warning('KILL SWITCH ENGAGED', 'Automated submissions halted immediately. Switched to manual mode.');
+    } catch (err: any) {
       console.error('Failed to engage emergency stop:', err);
+      error('Emergency Stop Failed', err.message);
     }
   };
 
@@ -233,8 +260,10 @@ export function App() {
       setJobs(prev =>
         prev.map(j => (j.id === jobId ? { ...j, user_action: 'saved' } : j))
       );
-    } catch (err) {
+      success('Opportunity Saved', 'Added to your bookmarked pipeline.');
+    } catch (err: any) {
       console.error('Failed to save job:', err);
+      error('Failed to save job', err.message);
     }
   };
 
@@ -246,8 +275,10 @@ export function App() {
         prev.map(j => (j.id === jobId ? { ...j, user_action: 'ignored', ignore_reason: reason } : j))
       );
       api.getLearnedInsights().then(res => setLearnedInsights(res));
-    } catch (err) {
+      success('Feedback Logged', 'Preference weights adjusted based on your feedback.');
+    } catch (err: any) {
       console.error('Failed to ignore job:', err);
+      error('Failed to ignore job', err.message);
     }
   };
 
@@ -258,7 +289,7 @@ export function App() {
       setJobs(prev =>
         prev.map(j => (j.id === jobId ? { ...j, user_action: null } : j))
       );
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to remove job action:', err);
     }
   };
@@ -271,8 +302,10 @@ export function App() {
       setApplications(updatedApps);
       const updatedAnalytics = await api.getAnalytics();
       setAnalytics(updatedAnalytics);
-    } catch (err) {
+      success('Application Tracked', 'Opportunity moved to Applied stage in Kanban.');
+    } catch (err: any) {
       console.error('Failed to submit application:', err);
+      error('Submission Failed', err.message);
     }
   };
 
@@ -284,8 +317,10 @@ export function App() {
       setApplications(updated);
       const updatedAnalytics = await api.getAnalytics();
       setAnalytics(updatedAnalytics);
-    } catch (err) {
+      success('Pipeline Updated', `Application moved to ${status}.`);
+    } catch (err: any) {
       console.error('Failed to update application status:', err);
+      error('Update Failed', err.message);
     }
   };
 
@@ -294,8 +329,10 @@ export function App() {
     try {
       const updated = await api.updateAutomationSettings({ application_mode: newMode, is_active: newMode === 'AUTOMATIC' });
       setAutomationSettings(updated);
-    } catch (err) {
+      success('Mode Updated', `Operating mode set to ${newMode}.`);
+    } catch (err: any) {
       console.error('Failed to update mode:', err);
+      error('Mode Update Failed', err.message);
     }
   };
 
@@ -309,11 +346,13 @@ export function App() {
   if (currentTab === 'landing') {
     return (
       <ErrorBoundary>
-        <LandingPage
-          onLaunchApp={() => handleNavigateTab('dashboard')}
-          onLoadDemoAndLaunch={handleLoadDemoAndLaunch}
-          isLoadingDemo={isLoadingDemo}
-        />
+        <Suspense fallback={<ViewLoading />}>
+          <LandingPage
+            onLaunchApp={() => handleNavigateTab('dashboard')}
+            onLoadDemoAndLaunch={handleLoadDemoAndLaunch}
+            isLoadingDemo={isLoadingDemo}
+          />
+        </Suspense>
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
@@ -354,113 +393,122 @@ export function App() {
 
           {/* Content View Area */}
           <main className="flex-1 p-3.5 sm:p-6 md:p-8 pb-28 md:pb-8 max-w-7xl mx-auto w-full overflow-x-hidden">
-            {currentTab === 'dashboard' && (
-              <DashboardView
-                jobs={jobs}
-                platforms={platforms}
-                automationSettings={automationSettings}
-                analytics={analytics}
-                onViewJob={setSelectedJob}
-                onNavigate={handleNavigateTab}
-                onLoadDemo={handleLoadDemo}
-                onUpdateMode={handleUpdateMode}
-                isLoadingDemo={isLoadingDemo}
-              />
-            )}
+            <Suspense fallback={<ViewLoading />}>
+              {currentTab === 'dashboard' && (
+                <DashboardView
+                  jobs={jobs}
+                  platforms={platforms}
+                  automationSettings={automationSettings}
+                  analytics={analytics}
+                  onViewJob={setSelectedJob}
+                  onNavigate={handleNavigateTab}
+                  onLoadDemo={handleLoadDemo}
+                  onUpdateMode={handleUpdateMode}
+                  isLoadingDemo={isLoadingDemo}
+                />
+              )}
 
-            {currentTab === 'jobs' && (
-              <JobsView
-                jobs={jobs}
-                onViewJob={setSelectedJob}
-                onSaveJob={handleSaveJob}
-                onIgnoreJob={handleIgnoreJob}
-                onRemoveAction={handleRemoveAction}
-                filterStatus="active"
-              />
-            )}
+              {currentTab === 'jobs' && (
+                <JobsView
+                  jobs={jobs}
+                  onViewJob={setSelectedJob}
+                  onSaveJob={handleSaveJob}
+                  onIgnoreJob={handleIgnoreJob}
+                  onRemoveAction={handleRemoveAction}
+                  filterStatus="active"
+                />
+              )}
 
-            {currentTab === 'saved' && (
-              <JobsView
-                jobs={jobs}
-                onViewJob={setSelectedJob}
-                onSaveJob={handleSaveJob}
-                onIgnoreJob={handleIgnoreJob}
-                onRemoveAction={handleRemoveAction}
-                filterStatus="saved"
-              />
-            )}
+              {currentTab === 'saved' && (
+                <JobsView
+                  jobs={jobs}
+                  onViewJob={setSelectedJob}
+                  onSaveJob={handleSaveJob}
+                  onIgnoreJob={handleIgnoreJob}
+                  onRemoveAction={handleRemoveAction}
+                  filterStatus="saved"
+                />
+              )}
 
-            {currentTab === 'applications' && (
-              <ApplicationsView
-                applications={applications}
-                onUpdateStatus={handleUpdateAppStatus}
-              />
-            )}
+              {currentTab === 'applications' && (
+                <ApplicationsView
+                  applications={applications}
+                  onUpdateStatus={handleUpdateAppStatus}
+                />
+              )}
 
-            {currentTab === 'analytics' && (
-              <AnalyticsView
-                analytics={analytics}
-                onNavigateToReports={() => handleNavigateTab('reports')}
-              />
-            )}
+              {currentTab === 'analytics' && (
+                <AnalyticsView
+                  analytics={analytics}
+                  onNavigateToReports={() => handleNavigateTab('reports')}
+                />
+              )}
 
-            {currentTab === 'reports' && (
-              <ReportsView />
-            )}
+              {currentTab === 'reports' && (
+                <ReportsView />
+              )}
 
-            {currentTab === 'platforms' && (
-              <PlatformsView
-                platforms={platforms}
-                onConnect={async (platformId, creds) => {
-                  await api.connectPlatform(platformId, creds);
-                  const p = await api.getPlatforms();
-                  setPlatforms(p);
-                }}
-                onDisconnect={async platformId => {
-                  await api.disconnectPlatform(platformId);
-                  const p = await api.getPlatforms();
-                  setPlatforms(p);
-                }}
-              />
-            )}
+              {currentTab === 'platforms' && (
+                <PlatformsView
+                  platforms={platforms}
+                  onConnect={async (platformId, creds) => {
+                    await api.connectPlatform(platformId, creds);
+                    const p = await api.getPlatforms();
+                    setPlatforms(p);
+                    success('Platform Connected', `${platformId.toUpperCase()} settings saved.`);
+                  }}
+                  onDisconnect={async platformId => {
+                    await api.disconnectPlatform(platformId);
+                    const p = await api.getPlatforms();
+                    setPlatforms(p);
+                    info('Platform Disconnected', `${platformId.toUpperCase()} integration disabled.`);
+                  }}
+                />
+              )}
 
-            {currentTab === 'profile' && profile && (
-              <ProfileView
-                profile={profile}
-                learnedInsights={learnedInsights}
-                onUpdateProfile={async updated => {
-                  const res = await api.updateProfile(updated);
-                  setProfile(res);
-                }}
-                onUpdateSkills={async skills => {
-                  const res = await api.updateSkills(skills);
-                  setProfile(prev => (prev ? { ...prev, skills: res } : null));
-                }}
-                onUpdatePreferences={async prefs => {
-                  const res = await api.updatePreferences(prefs);
-                  setProfile(prev => (prev ? { ...prev, preferences: res } : null));
-                }}
-                onRefreshLearned={async () => {
-                  const res = await api.refreshLearnedInsights();
-                  setLearnedInsights(res);
-                }}
-              />
-            )}
+              {currentTab === 'profile' && profile && (
+                <ProfileView
+                  profile={profile}
+                  learnedInsights={learnedInsights}
+                  onUpdateProfile={async updated => {
+                    const res = await api.updateProfile(updated);
+                    setProfile(res);
+                    success('Profile Saved', 'Capability profile updated.');
+                  }}
+                  onUpdateSkills={async skills => {
+                    const res = await api.updateSkills(skills);
+                    setProfile(prev => (prev ? { ...prev, skills: res } : null));
+                    success('Skills Saved', 'Verified skills inventory updated.');
+                  }}
+                  onUpdatePreferences={async prefs => {
+                    const res = await api.updatePreferences(prefs);
+                    setProfile(prev => (prev ? { ...prev, preferences: res } : null));
+                    success('Preferences Saved', 'Matching criteria weights saved.');
+                  }}
+                  onRefreshLearned={async () => {
+                    const res = await api.refreshLearnedInsights();
+                    setLearnedInsights(res);
+                    success('Insights Refreshed', 'Preference patterns updated.');
+                  }}
+                />
+              )}
 
-            {currentTab === 'automation' && automationSettings && (
-              <AutomationView
-                settings={automationSettings}
-                onUpdateSettings={async updated => {
-                  const res = await api.updateAutomationSettings(updated);
-                  setAutomationSettings(res);
-                }}
-                onEmergencyStop={handleEmergencyStop}
-              />
-            )}
+              {currentTab === 'automation' && automationSettings && (
+                <AutomationView
+                  settings={automationSettings}
+                  onUpdateSettings={async updated => {
+                    const res = await api.updateAutomationSettings(updated);
+                    setAutomationSettings(res);
+                    success('Safety Settings Saved', 'Automation rate limits updated.');
+                  }}
+                  onEmergencyStop={handleEmergencyStop}
+                />
+              )}
 
-            {currentTab === 'settings' && (
-              <SettingsView />
-            )}
+              {currentTab === 'settings' && (
+                <SettingsView />
+              )}
+            </Suspense>
           </main>
         </div>
 
@@ -500,6 +548,14 @@ export function App() {
         />
       </div>
     </ErrorBoundary>
+  );
+}
+
+export function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }
 

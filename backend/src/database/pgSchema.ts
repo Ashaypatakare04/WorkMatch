@@ -1,6 +1,8 @@
 // WorkMatch AI PostgreSQL Relational Database Schema DDL
+// Aligned 100% with SQLite schema.sql (20 core tables + password_resets)
+
 export const PG_SCHEMA_SQL = `
--- 1. Users table
+-- 1. Users table (Multi-user ready)
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(128) PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -12,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 2. User Profiles
+-- 2. User Profiles (Capability Profiles)
 CREATE TABLE IF NOT EXISTS user_profiles (
     id VARCHAR(128) PRIMARY KEY,
     user_id VARCHAR(128) UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -28,7 +30,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 3. User Skills
+-- 3. User Skills (Verified & Unverified)
 CREATE TABLE IF NOT EXISTS user_skills (
     id VARCHAR(128) PRIMARY KEY,
     user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -41,7 +43,7 @@ CREATE TABLE IF NOT EXISTS user_skills (
     UNIQUE(user_id, skill_name)
 );
 
--- 4. User Preferences
+-- 4. User Preferences & Weights
 CREATE TABLE IF NOT EXISTS user_preferences (
     id VARCHAR(128) PRIMARY KEY,
     user_id VARCHAR(128) UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -54,22 +56,28 @@ CREATE TABLE IF NOT EXISTS user_preferences (
     preferred_deadline VARCHAR(64) NOT NULL DEFAULT 'Flexible',
     preferred_communication_level VARCHAR(64) NOT NULL DEFAULT 'Low',
     preferred_max_tasks INTEGER NOT NULL DEFAULT 5,
-    difficulty_weights TEXT NOT NULL DEFAULT '{}',
-    scoring_thresholds TEXT NOT NULL DEFAULT '{}',
+    difficulty_weights TEXT NOT NULL DEFAULT '{"skill_match":25,"technical_complexity":15,"experience_requirement":10,"time_requirement":10,"client_expectations":10,"deadline":5,"communication":5,"budget":10,"personal_skill":10}',
+    scoring_thresholds TEXT NOT NULL DEFAULT '{"high_match":85,"possible_match":70}',
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 5. User Exclusions
-CREATE TABLE IF NOT EXISTS user_exclusions (
+-- 5. Platform Connections
+CREATE TABLE IF NOT EXISTS platform_connections (
     id VARCHAR(128) PRIMARY KEY,
     user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    rule_type VARCHAR(64) NOT NULL,
-    rule_value TEXT NOT NULL,
-    is_active INTEGER NOT NULL DEFAULT 1,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+    platform_id VARCHAR(64) NOT NULL,
+    status VARCHAR(32) NOT NULL DEFAULT 'DISCONNECTED',
+    mode VARCHAR(32) NOT NULL DEFAULT 'MOCK',
+    auth_data_encrypted TEXT,
+    capabilities TEXT NOT NULL DEFAULT '{"job_search":true,"job_details":true,"client_details":true,"applications":false,"application_status":false}',
+    last_sync_at TIMESTAMP WITH TIME ZONE,
+    last_sync_status VARCHAR(64) DEFAULT 'IDLE',
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    UNIQUE(user_id, platform_id)
 );
 
--- 6. Jobs Catalog
+-- 6. Jobs (Normalized)
 CREATE TABLE IF NOT EXISTS jobs (
     id VARCHAR(128) PRIMARY KEY,
     platform VARCHAR(64) NOT NULL,
@@ -77,52 +85,49 @@ CREATE TABLE IF NOT EXISTS jobs (
     url TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL,
-    category VARCHAR(128) NOT NULL DEFAULT 'General',
-    skills TEXT NOT NULL DEFAULT '[]',
+    category VARCHAR(128) NOT NULL,
     budget_type VARCHAR(32) NOT NULL DEFAULT 'fixed',
     budget_min REAL,
     budget_max REAL,
     budget_currency VARCHAR(16) NOT NULL DEFAULT 'USD',
     experience_level VARCHAR(64) NOT NULL DEFAULT 'Intermediate',
-    estimated_duration VARCHAR(128) NOT NULL DEFAULT 'Flexible',
-    deadline VARCHAR(128) NOT NULL DEFAULT 'Flexible',
+    estimated_duration VARCHAR(128) NOT NULL DEFAULT '',
+    deadline VARCHAR(128) NOT NULL DEFAULT '',
     posted_at TIMESTAMP WITH TIME ZONE NOT NULL,
     client_name VARCHAR(255) NOT NULL DEFAULT '',
     client_country VARCHAR(128) NOT NULL DEFAULT '',
     client_rating REAL,
-    client_reviews INTEGER,
+    client_reviews_count INTEGER,
     client_jobs_posted INTEGER,
     client_jobs_hired INTEGER,
     client_hire_rate REAL,
-    proposal_count INTEGER,
+    proposal_count INTEGER DEFAULT 0,
     communication_requirements TEXT NOT NULL DEFAULT '[]',
     requirements TEXT NOT NULL DEFAULT '[]',
     external_links TEXT NOT NULL DEFAULT '[]',
     source_data TEXT NOT NULL DEFAULT '{}',
-    collected_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    content_hash VARCHAR(64) NOT NULL,
-    UNIQUE(platform, platform_job_id)
+    hash VARCHAR(128) UNIQUE NOT NULL,
+    collected_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 7. Job Analyses
+-- 7. Job Analyses (Extracted by AI)
 CREATE TABLE IF NOT EXISTS job_analyses (
     id VARCHAR(128) PRIMARY KEY,
     job_id VARCHAR(128) UNIQUE NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
-    summary TEXT NOT NULL DEFAULT '',
-    explicit_requirements TEXT NOT NULL DEFAULT '[]',
-    implicit_expectations TEXT NOT NULL DEFAULT '[]',
-    technical_complexity VARCHAR(64) NOT NULL DEFAULT 'Moderate',
-    experience_requirement VARCHAR(64) NOT NULL DEFAULT 'Intermediate',
-    time_requirement_hours REAL NOT NULL DEFAULT 4,
-    deadline_urgency VARCHAR(64) NOT NULL DEFAULT 'Standard',
-    communication_load VARCHAR(64) NOT NULL DEFAULT 'Low',
-    potential_risks TEXT NOT NULL DEFAULT '[]',
-    red_flags TEXT NOT NULL DEFAULT '[]',
-    detected_skills TEXT NOT NULL DEFAULT '[]',
+    required_skills TEXT NOT NULL DEFAULT '[]',
+    optional_skills TEXT NOT NULL DEFAULT '[]',
+    experience_requirement VARCHAR(64) NOT NULL DEFAULT '',
+    technical_complexity VARCHAR(32) NOT NULL DEFAULT 'Low',
+    estimated_hours REAL NOT NULL DEFAULT 2.0,
+    step_count INTEGER NOT NULL DEFAULT 1,
+    communication_level VARCHAR(32) NOT NULL DEFAULT 'Low',
+    deadline_pressure VARCHAR(32) NOT NULL DEFAULT 'Low',
+    budget_quality VARCHAR(32) NOT NULL DEFAULT 'Fair',
+    client_expectations TEXT NOT NULL DEFAULT '',
     analyzed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 8. Job Scores
+-- 8. Job Scores (Personalized per user)
 CREATE TABLE IF NOT EXISTS job_scores (
     id VARCHAR(128) PRIMARY KEY,
     job_id VARCHAR(128) NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -130,36 +135,38 @@ CREATE TABLE IF NOT EXISTS job_scores (
     overall_score REAL NOT NULL,
     skill_score REAL NOT NULL,
     experience_score REAL NOT NULL,
-    budget_score REAL NOT NULL,
-    client_score REAL NOT NULL,
     difficulty_score REAL NOT NULL,
+    budget_score REAL NOT NULL,
+    time_score REAL NOT NULL,
+    communication_score REAL NOT NULL,
     preference_score REAL NOT NULL,
-    velocity_score REAL NOT NULL,
-    explanation_json TEXT NOT NULL DEFAULT '{}',
-    calculated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    UNIQUE(user_id, job_id)
+    client_quality_score REAL NOT NULL,
+    matched_skills TEXT NOT NULL DEFAULT '[]',
+    missing_skills TEXT NOT NULL DEFAULT '[]',
+    explanation TEXT NOT NULL DEFAULT '{}',
+    scored_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    UNIQUE(job_id, user_id)
 );
 
--- 9. Job Risks
+-- 9. Job Risks (Scam / Warning signals)
 CREATE TABLE IF NOT EXISTS job_risks (
     id VARCHAR(128) PRIMARY KEY,
     job_id VARCHAR(128) UNIQUE NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
-    risk_score REAL NOT NULL DEFAULT 0,
     risk_level VARCHAR(32) NOT NULL DEFAULT 'Low',
+    risk_score REAL NOT NULL DEFAULT 0,
     warning_signals TEXT NOT NULL DEFAULT '[]',
-    red_flags TEXT NOT NULL DEFAULT '[]',
-    recommendation TEXT NOT NULL DEFAULT '',
+    explanation TEXT NOT NULL DEFAULT '',
     analyzed_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 10. Job Actions
-CREATE TABLE IF NOT EXISTS job_actions (
+-- 10. Saved / Ignored Jobs
+CREATE TABLE IF NOT EXISTS saved_jobs (
     id VARCHAR(128) PRIMARY KEY,
     user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     job_id VARCHAR(128) NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
-    action VARCHAR(32) NOT NULL,
+    status VARCHAR(32) NOT NULL,
     reason TEXT NOT NULL DEFAULT '',
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     UNIQUE(user_id, job_id)
 );
 
@@ -179,7 +186,7 @@ CREATE TABLE IF NOT EXISTS proposals (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 12. Applications
+-- 12. Applications Pipeline & Tracking
 CREATE TABLE IF NOT EXISTS applications (
     id VARCHAR(128) PRIMARY KEY,
     job_id VARCHAR(128) NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
@@ -196,7 +203,7 @@ CREATE TABLE IF NOT EXISTS applications (
     UNIQUE(user_id, job_id)
 );
 
--- 13. Application Events
+-- 13. Application Events (Audit trail)
 CREATE TABLE IF NOT EXISTS application_events (
     id VARCHAR(128) PRIMARY KEY,
     application_id VARCHAR(128) NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
@@ -205,7 +212,7 @@ CREATE TABLE IF NOT EXISTS application_events (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 14. User Feedback
+-- 14. User Feedback & Learning
 CREATE TABLE IF NOT EXISTS user_feedback (
     id VARCHAR(128) PRIMARY KEY,
     user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -229,7 +236,7 @@ CREATE TABLE IF NOT EXISTS learned_preferences (
     last_updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
--- 16. Automation Settings
+-- 16. Automation Settings & Hard Safety Controls
 CREATE TABLE IF NOT EXISTS automation_settings (
     id VARCHAR(128) PRIMARY KEY,
     user_id VARCHAR(128) UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -303,10 +310,42 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
+-- 21. Password Resets (Secure Account Recovery)
+CREATE TABLE IF NOT EXISTS password_resets (
+    id VARCHAR(128) PRIMARY KEY,
+    user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token_hash VARCHAR(128) NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    used_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+-- 22. Subscriptions & Billing
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id VARCHAR(128) PRIMARY KEY,
+    user_id VARCHAR(128) NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider VARCHAR(64) NOT NULL,
+    subscription_id VARCHAR(128) NOT NULL,
+    customer_id VARCHAR(128) NOT NULL,
+    plan_type VARCHAR(64) NOT NULL,
+    status VARCHAR(64) NOT NULL,
+    current_period_start TIMESTAMP WITH TIME ZONE,
+    current_period_end TIMESTAMP WITH TIME ZONE,
+    cancel_at_period_end BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_subscriptions_user UNIQUE (user_id)
+);
+
 -- Performance Indexes
-CREATE INDEX IF NOT EXISTS idx_jobs_hash ON jobs(content_hash);
+CREATE INDEX IF NOT EXISTS idx_jobs_hash ON jobs(hash);
+CREATE INDEX IF NOT EXISTS idx_jobs_platform ON jobs(platform);
+CREATE INDEX IF NOT EXISTS idx_jobs_category ON jobs(category);
 CREATE INDEX IF NOT EXISTS idx_jobs_posted_at ON jobs(posted_at DESC);
 CREATE INDEX IF NOT EXISTS idx_job_scores_user_score ON job_scores(user_id, overall_score DESC);
 CREATE INDEX IF NOT EXISTS idx_applications_user_status ON applications(user_id, status);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_sent ON notifications(user_id, sent_at DESC);
+CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token_hash);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_sub_id ON subscriptions(subscription_id);
 `;

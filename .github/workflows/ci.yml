@@ -1,0 +1,58 @@
+name: WorkMatch AI CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    name: Test & Build Verification
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Database Migrations
+        run: npm run migrate
+        env:
+          NODE_ENV: test
+          DATABASE_PATH: ./data/test.sqlite
+
+      - name: Execute Automated Test Suite (100% Pass Required)
+        run: npm test
+        env:
+          NODE_ENV: test
+          DATABASE_PATH: ./data/test.sqlite
+          JWT_SECRET: ci-test-secret-must-be-at-least-32-chars-long
+
+      - name: Build Backend (esbuild bundle)
+        run: npm run build:backend
+
+      - name: Build Frontend (Vite production bundle)
+        run: npm run build:frontend
+
+      - name: Verify Build Artifacts
+        run: |
+          test -f api/index.js || { echo "api/index.js missing"; exit 1; }
+          test -f frontend/dist/index.html || { echo "frontend/dist/index.html missing"; exit 1; }
+          echo "All production build artifacts successfully verified!"

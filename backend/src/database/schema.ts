@@ -310,6 +310,33 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     created_at TEXT NOT NULL
 );
 
+-- 21. Password Resets (Secure Account Recovery)
+CREATE TABLE IF NOT EXISTS password_resets (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token_hash TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    used_at TEXT,
+    created_at TEXT NOT NULL
+);
+
+-- 22. Subscriptions & Billing
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider TEXT NOT NULL, -- 'stripe', 'lemonsqueezy', 'mock'
+    subscription_id TEXT NOT NULL,
+    customer_id TEXT NOT NULL,
+    plan_type TEXT NOT NULL, -- 'personal', 'pro', 'team'
+    status TEXT NOT NULL, -- 'active', 'trialing', 'past_due', 'canceled'
+    current_period_start TEXT,
+    current_period_end TEXT,
+    cancel_at_period_end INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    UNIQUE(user_id)
+);
+
 -- Indexes for performance
 CREATE INDEX IF NOT EXISTS idx_jobs_platform ON jobs(platform);
 CREATE INDEX IF NOT EXISTS idx_jobs_category ON jobs(category);
@@ -317,4 +344,8 @@ CREATE INDEX IF NOT EXISTS idx_jobs_posted_at ON jobs(posted_at);
 CREATE INDEX IF NOT EXISTS idx_job_scores_user_score ON job_scores(user_id, overall_score);
 CREATE INDEX IF NOT EXISTS idx_applications_user_status ON applications(user_id, status);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_sent ON notifications(user_id, sent_at);
+CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token_hash);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_sub_id ON subscriptions(subscription_id);
 `;
+

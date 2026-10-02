@@ -41,6 +41,8 @@ export interface AutomationEvaluationResult {
   reason: string;
   applied: boolean;
   applicationId?: string;
+  proposalId?: string;
+  copilotReady?: boolean;
   error?: string;
 }
 
@@ -48,6 +50,7 @@ export class AutomationController {
   /**
    * Strictly evaluates whether an automated application can be submitted for a job.
    * If any safety condition is violated, logs audit rationale and refuses to apply.
+   * In ASSISTED mode, generates claim-verified drafts and moves application to proposal_generated.
    *
    * @param params - Context including target job, calculated score, risk profile, and platform connector.
    * @returns AutomationEvaluationResult indicating whether application was allowed, dispatched, or blocked.
@@ -70,6 +73,9 @@ export class AutomationController {
 
     // 2. Check System Application Mode
     if (settings.application_mode !== 'AUTOMATIC' || !settings.is_active) {
+      if (settings.application_mode === 'ASSISTED' && settings.is_active) {
+        return await this.evaluateAndDraftAssisted(params, settings);
+      }
       return {
         allowed: false,
         reason: `APPLICATION_MODE_NOT_AUTOMATIC: Current mode is ${settings.application_mode}`,
@@ -222,6 +228,148 @@ export class AutomationController {
         error: err.message
       };
     }
+  }
+
+  /**
+   * Safe Copilot Draft Flow for Assisted mode or human-in-the-loop workflows.
+   * Creates claim-verified proposal drafts and sets application state to proposal_generated
+   * without violating freelance platform Terms of Service (e.g. Upwork, Fiverr).
+   */
+  public static async evaluateAndDraftAssisted(
+    params: {
+      userId: string;
+      job: NormalizedJob;
+      score: JobScore;
+      risk: JobRisk;
+      profile: UserCapabilityProfile;
+      connector?: PlatformConnector;
+    },
+    settings: ReturnType<typeof AutomationRepository.getSettings>
+  ): Promise<AutomationEvaluationResult> {
+    if (settings.emergency_stop) {
+      this.recordAudit(params.userId, params.job.id, 'COPILOT_BLOCKED', 'Emergency stop is active');
+      return { allowed: false, reason: 'EMERGENCY_STOP_ACTIVE: Global kill-switch is engaged', applied: false };
+    }
+
+    if (params.score.overall_score < settings.min_match_score) {
+      return {
+        allowed: false,
+        reason: `SCORE_TOO_LOW: Match score (${params.score.overall_score}) is below required minimum (${settings.min_match_score})`,
+        applied: false
+      };
+    }
+
+    if (settings.require_low_risk_only && params.risk.risk_level !== 'Low') {
+      this.recordAudit(params.userId, params.job.id, 'COPILOT_BLOCKED', `Risk level ${params.risk.risk_level} exceeds Low-risk policy`);
+      return {
+        allowed: false,
+        reason: `RISK_TOO_HIGH: Risk level is ${params.risk.risk_level}, requires Low Risk only`,
+        applied: false
+      };
+    }
+
+    if (settings.allowed_categories.length > 0 && !settings.allowed_categories.includes(params.job.category)) {
+      return {
+        allowed: false,
+        reason: `CATEGORY_NOT_ALLOWED: Category "${params.job.category}" is not in whitelist`,
+        applied: false
+      };
+    }
+
+    if (settings.excluded_categories.includes(params.job.category)) {
+      return {
+        allowed: false,
+        reason: `CATEGORY_EXCLUDED: Category "${params.job.category}" is in blacklist`,
+        applied: false
+      };
+    }
+
+    const existing = Database.queryOne<{ id: string; status: string }>(
+      'SELECT id, status FROM applications WHERE user_id = ? AND job_id = ?',
+      [params.userId, params.job.id]
+    );
+    if (existing && existing.status !== 'discovered' && existing.status !== 'analyzed') {
+      return {
+        allowed: false,
+        reason: 'DUPLICATE_APPLICATION: Application already exists for this job',
+        applied: false
+      };
+    }
+
+    try {
+      const proposals = await ProposalGenerator.generateVariants(params.job, params.profile);
+      const selectedProposal = proposals.find(p => p.style === 'direct') || proposals[0];
+      const savedProposal = ApplicationRepository.saveProposal(selectedProposal);
+
+      const connectCost = (params.job.source_data?.connects_required as number) || 4;
+      const app = ApplicationRepository.createOrUpdate({
+        job_id: params.job.id,
+        user_id: params.userId,
+        proposal_id: savedProposal.id,
+        status: 'proposal_generated',
+        mode: 'assisted',
+        connect_cost: connectCost,
+        notes: `Assisted Copilot: Proposal draft created for ${params.job.platform} and ready for 1-click human dispatch.`
+      });
+
+      this.recordAudit(
+        params.userId,
+        params.job.id,
+        'COPILOT_DRAFT_CREATED',
+        `Generated ${selectedProposal.style} draft proposal ready for human review`
+      );
+
+      return {
+        allowed: true,
+        applied: false,
+        copilotReady: true,
+        applicationId: app.id,
+        proposalId: savedProposal.id,
+        reason: 'Assisted Copilot: Proposal draft created and ready for human review'
+      };
+    } catch (err: any) {
+      this.recordAudit(params.userId, params.job.id, 'COPILOT_ERROR', err.message);
+      return {
+        allowed: false,
+        applied: false,
+        reason: 'Error occurred during assisted proposal generation',
+        error: err.message
+      };
+    }
+  }
+
+  /**
+   * Explicitly drafts a copilot proposal and links it to an application in proposal_generated state.
+   */
+  public static async generateCopilotDraft(params: {
+    userId: string;
+    job: NormalizedJob;
+    profile: UserCapabilityProfile;
+    preferredStyle?: string;
+  }): Promise<{ proposal: any; applicationId: string }> {
+    const proposals = await ProposalGenerator.generateVariants(params.job, params.profile);
+    const selectedProposal =
+      proposals.find(p => p.style === (params.preferredStyle || 'direct')) || proposals[0];
+    const savedProposal = ApplicationRepository.saveProposal(selectedProposal);
+
+    const app = ApplicationRepository.createOrUpdate({
+      job_id: params.job.id,
+      user_id: params.userId,
+      proposal_id: savedProposal.id,
+      status: 'proposal_generated',
+      mode: 'assisted',
+      connect_cost: (params.job.source_data?.connects_required as number) || 4,
+      notes: `Copilot draft generated (${selectedProposal.style} style)`
+    });
+
+    this.recordAudit(
+      params.userId,
+      params.job.id,
+      'COPILOT_MANUAL_DRAFT',
+      `Manual copilot draft generated (${selectedProposal.style})`
+    );
+
+    return { proposal: savedProposal, applicationId: app.id };
   }
 
   private static recordAudit(userId: string, jobId: string, action: string, message: string): void {

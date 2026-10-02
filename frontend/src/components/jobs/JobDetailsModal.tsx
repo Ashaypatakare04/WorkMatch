@@ -44,6 +44,7 @@ import {
 } from 'lucide-react';
 import { NormalizedJob, Proposal } from '../../types/index.js';
 import { api } from '../../services/api.js';
+import { useToast } from '../common/Toast.js';
 
 interface JobDetailsModalProps {
   job: NormalizedJob;
@@ -68,6 +69,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
   const [copied, setCopied] = useState<boolean>(false);
   const [copiedDesc, setCopiedDesc] = useState<boolean>(false);
   const [showExplanation, setShowExplanation] = useState<boolean>(true);
+  const { success: showToastSuccess, info: showToastInfo } = useToast();
 
   const score = job.score;
   const risk = job.risk;
@@ -93,7 +95,32 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
   const handleCopy = () => {
     navigator.clipboard.writeText(editableContent);
     setCopied(true);
+    showToastSuccess('Copied to Clipboard', 'Proposal text copied. Ready to paste on platform.');
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCopilotDispatch = () => {
+    if (!editableContent.trim()) return;
+    navigator.clipboard.writeText(editableContent);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+
+    // Track as assisted application in the user pipeline
+    onApply(job.id, currentProposal?.id);
+
+    // Open platform job url in new tab
+    if (job.url && job.url !== '#') {
+      window.open(job.url, '_blank', 'noopener,noreferrer');
+      showToastSuccess(
+        '1-Click Copilot Launched!',
+        `Proposal copied to clipboard & opened ${job.platform.toUpperCase()} in a new tab. Paste & submit!`
+      );
+    } else {
+      showToastInfo(
+        'Proposal Copied',
+        `Proposal copied to clipboard. (Platform URL not available for mock demo)`
+      );
+    }
   };
 
   const handleCopyDesc = () => {
@@ -497,6 +524,15 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                     </div>
                   </div>
 
+                  {/* ToS-Safe Assisted Copilot Advice Banner */}
+                  <div className="p-3 sm:p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-800 dark:text-blue-200 flex items-start gap-2.5">
+                    <ShieldCheck className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                    <div className="leading-relaxed">
+                      <span className="font-bold">ToS-Safe Assisted Copilot: </span>
+                      Freelance platforms (Upwork, Fiverr) strictly forbid automated submission bots. WorkMatch protects your account by generating verified drafts that you can review, tweak, and 1-click copy &amp; open directly on {job.platform}.
+                    </div>
+                  </div>
+
                   {/* Editable Proposal Content */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
@@ -560,16 +596,26 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                 <span>{isGenerating ? 'Drafting...' : 'Draft Proposal'}</span>
               </button>
             ) : (
-              <button
-                onClick={() => {
-                  onApply(job.id, currentProposal?.id);
-                  onClose();
-                }}
-                className="w-2/3 sm:w-auto flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white dark:text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all active:scale-95"
-              >
-                <Send className="w-4 h-4" />
-                <span>Submit &amp; Track</span>
-              </button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  onClick={handleCopilotDispatch}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-600 hover:from-indigo-400 hover:to-blue-500 text-white font-display font-bold text-xs shadow-md transition-all active:scale-95"
+                  title="Copy proposal and open platform job page in a new tab (100% ToS-safe)"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>1-Click Copilot</span>
+                </button>
+                <button
+                  onClick={() => {
+                    onApply(job.id, currentProposal?.id);
+                    onClose();
+                  }}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white dark:text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all active:scale-95"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Mark Applied</span>
+                </button>
+              </div>
             )}
           </div>
         </div>

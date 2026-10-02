@@ -1,10 +1,12 @@
+export type PlanType = 'personal' | 'pro' | 'team';
+
 export interface User {
   id: string;
   email: string;
   password_hash?: string;
   full_name: string;
   is_admin: boolean;
-  plan_type: 'personal' | 'pro' | 'team';
+  plan_type: PlanType;
   created_at: string;
   updated_at: string;
 }
