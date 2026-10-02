@@ -284,6 +284,30 @@ export const api = {
     return res;
   },
 
+  async oauthLogin(provider: 'google' | 'github', payload?: { token?: string; profile?: any }) {
+    const res = await request<{ success: boolean; token: string; user: any }>('/auth/oauth', {
+      method: 'POST',
+      body: JSON.stringify({
+        provider,
+        ...(payload || {})
+      })
+    });
+    if (res.token) setAuthToken(res.token);
+    return res;
+  },
+
+  getOAuthUrl(provider: 'google' | 'github') {
+    return `/api/auth/${provider}`;
+  },
+
+  setAuthToken(token: string | null): void {
+    setAuthToken(token);
+  },
+
+  getAuthToken(): string | null {
+    return getAuthToken();
+  },
+
   async getMe() {
     const res = await request<{ success: boolean; user: any }>('/auth/me');
     return res.user;

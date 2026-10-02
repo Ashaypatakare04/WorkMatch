@@ -32752,10 +32752,13 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
+    password_hash TEXT NOT NULL DEFAULT '',
     full_name TEXT NOT NULL,
     is_admin INTEGER NOT NULL DEFAULT 0,
     plan_type TEXT NOT NULL DEFAULT 'personal',
+    provider TEXT NOT NULL DEFAULT 'email',
+    provider_id TEXT,
+    avatar_url TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
 );
@@ -33108,6 +33111,18 @@ function runMigrations() {
     }
   }
   Database.exec(schemaSql);
+  try {
+    Database.exec("ALTER TABLE users ADD COLUMN provider TEXT NOT NULL DEFAULT 'email';");
+  } catch {
+  }
+  try {
+    Database.exec("ALTER TABLE users ADD COLUMN provider_id TEXT;");
+  } catch {
+  }
+  try {
+    Database.exec("ALTER TABLE users ADD COLUMN avatar_url TEXT;");
+  } catch {
+  }
   console.log("[Database] Database schema initialized successfully.");
 }
 if (process.argv[1] && (process.argv[1].endsWith("migrate.ts") || process.argv[1].endsWith("migrate.js"))) {
@@ -34241,9 +34256,21 @@ var UserRepository = class _UserRepository {
   static create(user) {
     const now = (/* @__PURE__ */ new Date()).toISOString();
     Database.execute(
-      `INSERT INTO users (id, email, password_hash, full_name, is_admin, plan_type, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user.id, user.email, user.password_hash || "", user.full_name, user.is_admin ? 1 : 0, user.plan_type, now, now]
+      `INSERT INTO users (id, email, password_hash, full_name, is_admin, plan_type, provider, provider_id, avatar_url, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        user.id,
+        user.email,
+        user.password_hash || "",
+        user.full_name,
+        user.is_admin ? 1 : 0,
+        user.plan_type || "personal",
+        user.provider || "email",
+        user.provider_id || null,
+        user.avatar_url || null,
+        now,
+        now
+      ]
     );
     Database.execute(
       `INSERT INTO user_profiles (id, user_id, headline, bio, years_experience, hourly_rate, availability_hours_per_day, availability_days_per_week, preferred_working_hours, max_simultaneous_projects, created_at, updated_at)
@@ -34322,6 +34349,9 @@ var UserRepository = class _UserRepository {
       full_name: row.full_name,
       is_admin: Boolean(row.is_admin),
       plan_type: row.plan_type,
+      provider: row.provider || "email",
+      provider_id: row.provider_id || void 0,
+      avatar_url: row.avatar_url || void 0,
       created_at: row.created_at,
       updated_at: row.updated_at
     };
@@ -34332,12 +34362,68 @@ var UserRepository = class _UserRepository {
     return {
       id: row.id,
       email: row.email,
+      password_hash: row.password_hash,
       full_name: row.full_name,
       is_admin: Boolean(row.is_admin),
       plan_type: row.plan_type,
+      provider: row.provider || "email",
+      provider_id: row.provider_id || void 0,
+      avatar_url: row.avatar_url || void 0,
       created_at: row.created_at,
       updated_at: row.updated_at
     };
+  }
+  static findByProvider(provider, providerId) {
+    const row = Database.queryOne("SELECT * FROM users WHERE provider = ? AND provider_id = ?", [provider, providerId]);
+    if (!row) return null;
+    return {
+      id: row.id,
+      email: row.email,
+      password_hash: row.password_hash,
+      full_name: row.full_name,
+      is_admin: Boolean(row.is_admin),
+      plan_type: row.plan_type,
+      provider: row.provider || "email",
+      provider_id: row.provider_id || void 0,
+      avatar_url: row.avatar_url || void 0,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    };
+  }
+  static findOrCreateOAuthUser(params) {
+    const normalizedEmail = params.email.toLowerCase().trim();
+    let existingUser = this.findByProvider(params.provider, params.provider_id);
+    if (existingUser) {
+      if (params.avatar_url && params.avatar_url !== existingUser.avatar_url) {
+        Database.execute("UPDATE users SET avatar_url = ?, updated_at = ? WHERE id = ?", [
+          params.avatar_url,
+          (/* @__PURE__ */ new Date()).toISOString(),
+          existingUser.id
+        ]);
+        existingUser.avatar_url = params.avatar_url;
+      }
+      return existingUser;
+    }
+    existingUser = this.findByEmail(normalizedEmail);
+    if (existingUser) {
+      Database.execute(
+        "UPDATE users SET provider = ?, provider_id = ?, avatar_url = COALESCE(?, avatar_url), updated_at = ? WHERE id = ?",
+        [params.provider, params.provider_id, params.avatar_url || null, (/* @__PURE__ */ new Date()).toISOString(), existingUser.id]
+      );
+      return this.findById(existingUser.id);
+    }
+    const newId = `usr_${params.provider}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    return this.create({
+      id: newId,
+      email: normalizedEmail,
+      full_name: params.full_name || `${params.provider} User`,
+      password_hash: "",
+      is_admin: false,
+      plan_type: "personal",
+      provider: params.provider,
+      provider_id: params.provider_id,
+      avatar_url: params.avatar_url
+    });
   }
   static getProfile(userId) {
     const profRow = Database.queryOne("SELECT * FROM user_profiles WHERE user_id = ?", [userId]);
@@ -40469,6 +40555,16 @@ var automationSettingsUpdateSchema = external_exports.object({
   max_budget_limit: external_exports.number().nonnegative().optional(),
   require_low_risk_only: external_exports.boolean().or(external_exports.number().min(0).max(1)).optional()
 });
+var oauthExchangeSchema = external_exports.object({
+  provider: external_exports.enum(["google", "github", "linkedin"]),
+  token: external_exports.string().optional(),
+  profile: external_exports.object({
+    id: external_exports.string().optional(),
+    email: external_exports.string().email().optional(),
+    name: external_exports.string().optional(),
+    avatar: external_exports.string().url().optional()
+  }).optional()
+});
 
 // backend/src/api/middleware/rateLimiter.ts
 var InMemoryRateLimiter = class {
@@ -40727,6 +40823,217 @@ authRouter.get("/me", authMiddleware, (req, res) => {
   }
   res.json({ success: true, user });
 });
+function getOAuthCallbackUrl(req, provider) {
+  const envVar = process.env[`${provider.toUpperCase()}_REDIRECT_URI`];
+  if (envVar && envVar.trim()) {
+    return envVar.trim();
+  }
+  const host = req.get("host") || "localhost:4000";
+  const protocol = req.protocol === "https" || req.get("x-forwarded-proto") === "https" ? "https" : "http";
+  return `${protocol}://${host}/api/auth/${provider}/callback`;
+}
+authRouter.get("/google", (req, res) => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const callbackUrl = getOAuthCallbackUrl(req, "google");
+  if (clientId && clientId.trim() && !clientId.includes("mock") && !clientId.includes("placeholder")) {
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(
+      clientId
+    )}&redirect_uri=${encodeURIComponent(callbackUrl)}&response_type=code&scope=openid%20email%20profile&access_type=offline&prompt=select_account`;
+    res.redirect(authUrl);
+  } else {
+    res.redirect(`${callbackUrl}?code=sandbox_demo_google_code`);
+  }
+});
+authRouter.get("/google/callback", async (req, res) => {
+  try {
+    const code = req.query.code ? String(req.query.code) : "";
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const callbackUrl = getOAuthCallbackUrl(req, "google");
+    let googleProfile;
+    if (!code || code === "sandbox_demo_google_code" || !clientId || !clientSecret || clientId.includes("placeholder")) {
+      googleProfile = {
+        email: "alex.google@workmatch.local",
+        full_name: "Alex Mercer (Google)",
+        provider_id: "goog_sandbox_1001",
+        avatar_url: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100"
+      };
+    } else {
+      const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          code,
+          client_id: clientId,
+          client_secret: clientSecret,
+          redirect_uri: callbackUrl,
+          grant_type: "authorization_code"
+        })
+      });
+      const tokenData = await tokenRes.json();
+      if (!tokenRes.ok || !tokenData.access_token) {
+        throw new Error(tokenData.error_description || "Failed to exchange Google OAuth code");
+      }
+      const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` }
+      });
+      const userData = await userRes.json();
+      if (!userData || !userData.email) {
+        throw new Error("Could not retrieve user email from Google");
+      }
+      googleProfile = {
+        email: userData.email,
+        full_name: userData.name || userData.email.split("@")[0],
+        provider_id: userData.id || userData.sub,
+        avatar_url: userData.picture
+      };
+    }
+    const user = UserRepository.findOrCreateOAuthUser({
+      email: googleProfile.email,
+      full_name: googleProfile.full_name,
+      provider: "google",
+      provider_id: googleProfile.provider_id,
+      avatar_url: googleProfile.avatar_url
+    });
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      isAdmin: user.is_admin,
+      planType: user.plan_type
+    });
+    setAuthCookie(res, token);
+    const frontendUrl = process.env.FRONTEND_URL || "";
+    const redirectUrl = frontendUrl ? `${frontendUrl}/?token=${token}#dashboard` : `/?token=${token}#dashboard`;
+    res.redirect(redirectUrl);
+  } catch (err) {
+    res.status(500).send(`OAuth Google Error: ${err.message}`);
+  }
+});
+authRouter.get("/github", (req, res) => {
+  const clientId = process.env.GITHUB_CLIENT_ID;
+  const callbackUrl = getOAuthCallbackUrl(req, "github");
+  if (clientId && clientId.trim() && !clientId.includes("mock") && !clientId.includes("placeholder")) {
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(
+      clientId
+    )}&redirect_uri=${encodeURIComponent(callbackUrl)}&scope=user:email`;
+    res.redirect(authUrl);
+  } else {
+    res.redirect(`${callbackUrl}?code=sandbox_demo_github_code`);
+  }
+});
+authRouter.get("/github/callback", async (req, res) => {
+  try {
+    const code = req.query.code ? String(req.query.code) : "";
+    const clientId = process.env.GITHUB_CLIENT_ID;
+    const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+    const callbackUrl = getOAuthCallbackUrl(req, "github");
+    let ghProfile;
+    if (!code || code === "sandbox_demo_github_code" || !clientId || !clientSecret || clientId.includes("placeholder")) {
+      ghProfile = {
+        email: "dev.github@workmatch.local",
+        full_name: "GitHub Engineer",
+        provider_id: "gh_sandbox_2002",
+        avatar_url: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100"
+      };
+    } else {
+      const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+          redirect_uri: callbackUrl
+        })
+      });
+      const tokenData = await tokenRes.json();
+      if (!tokenRes.ok || !tokenData.access_token) {
+        throw new Error(tokenData.error_description || "Failed to exchange GitHub OAuth code");
+      }
+      const userRes = await fetch("https://api.github.com/user", {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`,
+          "User-Agent": "WorkMatch-AI"
+        }
+      });
+      const userData = await userRes.json();
+      let email = userData.email;
+      if (!email) {
+        const emailsRes = await fetch("https://api.github.com/user/emails", {
+          headers: {
+            Authorization: `Bearer ${tokenData.access_token}`,
+            "User-Agent": "WorkMatch-AI"
+          }
+        });
+        const emailsData = await emailsRes.json();
+        const primaryEmail = Array.isArray(emailsData) ? emailsData.find((e) => e.primary && e.verified) || emailsData[0] : null;
+        email = primaryEmail ? primaryEmail.email : `${userData.login}@users.noreply.github.com`;
+      }
+      ghProfile = {
+        email,
+        full_name: userData.name || userData.login,
+        provider_id: String(userData.id),
+        avatar_url: userData.avatar_url
+      };
+    }
+    const user = UserRepository.findOrCreateOAuthUser({
+      email: ghProfile.email,
+      full_name: ghProfile.full_name,
+      provider: "github",
+      provider_id: ghProfile.provider_id,
+      avatar_url: ghProfile.avatar_url
+    });
+    const token = generateToken({
+      userId: user.id,
+      email: user.email,
+      isAdmin: user.is_admin,
+      planType: user.plan_type
+    });
+    setAuthCookie(res, token);
+    const frontendUrl = process.env.FRONTEND_URL || "";
+    const redirectUrl = frontendUrl ? `${frontendUrl}/?token=${token}#dashboard` : `/?token=${token}#dashboard`;
+    res.redirect(redirectUrl);
+  } catch (err) {
+    res.status(500).send(`OAuth GitHub Error: ${err.message}`);
+  }
+});
+authRouter.post(
+  "/oauth",
+  validateBody(oauthExchangeSchema),
+  async (req, res) => {
+    try {
+      const { provider, profile } = req.body;
+      const email = profile?.email || (provider === "google" ? "alex.google@workmatch.local" : "dev.github@workmatch.local");
+      const fullName = profile?.name || (provider === "google" ? "Alex Mercer (Google)" : "GitHub Engineer");
+      const providerId = profile?.id || `${provider}_id_${Date.now()}`;
+      const avatarUrl = profile?.avatar || (provider === "google" ? "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" : "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100");
+      const user = UserRepository.findOrCreateOAuthUser({
+        email,
+        full_name: fullName,
+        provider,
+        provider_id: providerId,
+        avatar_url: avatarUrl
+      });
+      const token = generateToken({
+        userId: user.id,
+        email: user.email,
+        isAdmin: user.is_admin,
+        planType: user.plan_type
+      });
+      setAuthCookie(res, token);
+      res.json({
+        success: true,
+        token,
+        user
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  }
+);
 
 // backend/src/api/routes/jobsRoutes.ts
 var import_express2 = __toESM(require_express2(), 1);
@@ -43224,7 +43531,7 @@ var AutomationController = class {
       "COPILOT_MANUAL_DRAFT",
       `Manual copilot draft generated (${selectedProposal.style})`
     );
-    return { proposal: savedProposal, applicationId: app2.id };
+    return { proposal: savedProposal, applicationId: app2.id || "" };
   }
   static recordAudit(userId, jobId, action, message) {
     const now = (/* @__PURE__ */ new Date()).toISOString();

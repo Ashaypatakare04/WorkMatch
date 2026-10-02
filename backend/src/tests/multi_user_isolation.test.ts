@@ -1,11 +1,16 @@
-import { test, describe } from 'node:test';
+import { test, describe, before } from 'node:test';
 import assert from 'node:assert';
+import { runMigrations } from '../database/migrate.js';
 import { UserRepository } from '../repositories/UserRepository.js';
 import { JobRepository } from '../repositories/JobRepository.js';
 import { ApplicationRepository } from '../repositories/ApplicationRepository.js';
 import { Proposal } from '../models/Proposal.js';
 
 describe('Multi-User Architecture and Data Isolation', () => {
+  before(() => {
+    runMigrations();
+  });
+
   test('should guarantee complete data isolation between separate users', () => {
     const timestamp = Date.now();
     const userA = `user_alpha_${timestamp}`;

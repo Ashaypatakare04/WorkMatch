@@ -148,3 +148,16 @@ export const automationSettingsUpdateSchema = z.object({
   max_budget_limit: z.number().nonnegative().optional(),
   require_low_risk_only: z.boolean().or(z.number().min(0).max(1)).optional()
 });
+
+export const oauthExchangeSchema = z.object({
+  provider: z.enum(['google', 'github', 'linkedin']),
+  token: z.string().optional(),
+  profile: z
+    .object({
+      id: z.string().optional(),
+      email: z.string().email().optional(),
+      name: z.string().optional(),
+      avatar: z.string().url().optional()
+    })
+    .optional()
+});

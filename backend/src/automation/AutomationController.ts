@@ -369,7 +369,7 @@ export class AutomationController {
       `Manual copilot draft generated (${selectedProposal.style})`
     );
 
-    return { proposal: savedProposal, applicationId: app.id };
+    return { proposal: savedProposal, applicationId: app.id || '' };
   }
 
   private static recordAudit(userId: string, jobId: string, action: string, message: string): void {

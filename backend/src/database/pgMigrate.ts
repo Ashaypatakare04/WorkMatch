@@ -20,6 +20,23 @@ export async function runPgMigrations(connectionString?: string): Promise<boolea
   try {
     console.log('[PostgreSQL Migration] Executing WorkMatch AI PostgreSQL Schema DDL...');
     await client.query(PG_SCHEMA_SQL);
+
+    // Idempotent column migrations for users table (OAuth support)
+    await client.query(`
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'provider') THEN
+          ALTER TABLE users ADD COLUMN provider VARCHAR(64) NOT NULL DEFAULT 'email';
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'provider_id') THEN
+          ALTER TABLE users ADD COLUMN provider_id VARCHAR(255);
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'avatar_url') THEN
+          ALTER TABLE users ADD COLUMN avatar_url TEXT;
+        END IF;
+      END $$;
+    `);
+
     console.log('[PostgreSQL Migration] PostgreSQL tables and indexes provisioned successfully.');
     return true;
   } catch (err: any) {

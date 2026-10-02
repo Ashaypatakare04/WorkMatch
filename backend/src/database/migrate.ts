@@ -19,6 +19,24 @@ export function runMigrations(): void {
   }
 
   Database.exec(schemaSql);
+
+  // Idempotent column migrations for users table (OAuth support)
+  try {
+    Database.exec("ALTER TABLE users ADD COLUMN provider TEXT NOT NULL DEFAULT 'email';");
+  } catch {
+    // Column already exists
+  }
+  try {
+    Database.exec("ALTER TABLE users ADD COLUMN provider_id TEXT;");
+  } catch {
+    // Column already exists
+  }
+  try {
+    Database.exec("ALTER TABLE users ADD COLUMN avatar_url TEXT;");
+  } catch {
+    // Column already exists
+  }
+
   console.log('[Database] Database schema initialized successfully.');
 }
 

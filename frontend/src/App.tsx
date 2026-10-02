@@ -150,6 +150,17 @@ function AppContent() {
   };
 
   useEffect(() => {
+    // Process OAuth callback token from query parameter if present
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const oauthToken = searchParams.get('token');
+      if (oauthToken) {
+        api.setAuthToken(oauthToken);
+        const cleanPath = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanPath || '/');
+      }
+    }
+
     loadInitialData();
 
     const handleUnauthorized = () => {

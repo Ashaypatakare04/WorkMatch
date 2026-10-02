@@ -5,10 +5,13 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
+    password_hash TEXT NOT NULL DEFAULT '',
     full_name TEXT NOT NULL,
     is_admin INTEGER NOT NULL DEFAULT 0,
     plan_type TEXT NOT NULL DEFAULT 'personal', -- 'personal', 'pro', 'team'
+    provider TEXT NOT NULL DEFAULT 'email',     -- 'email', 'google', 'github', 'linkedin'
+    provider_id TEXT,
+    avatar_url TEXT,
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
 );

@@ -12,9 +12,21 @@ export class UserRepository {
   public static create(user: Omit<User, 'id' | 'created_at' | 'updated_at'> & { id: string }): User {
     const now = new Date().toISOString();
     Database.execute(
-      `INSERT INTO users (id, email, password_hash, full_name, is_admin, plan_type, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user.id, user.email, user.password_hash || '', user.full_name, user.is_admin ? 1 : 0, user.plan_type, now, now]
+      `INSERT INTO users (id, email, password_hash, full_name, is_admin, plan_type, provider, provider_id, avatar_url, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        user.id,
+        user.email,
+        user.password_hash || '',
+        user.full_name,
+        user.is_admin ? 1 : 0,
+        user.plan_type || 'personal',
+        user.provider || 'email',
+        user.provider_id || null,
+        user.avatar_url || null,
+        now,
+        now
+      ]
     );
 
     // Initialize default profile
@@ -103,6 +115,9 @@ export class UserRepository {
       full_name: row.full_name,
       is_admin: Boolean(row.is_admin),
       plan_type: row.plan_type,
+      provider: row.provider || 'email',
+      provider_id: row.provider_id || undefined,
+      avatar_url: row.avatar_url || undefined,
       created_at: row.created_at,
       updated_at: row.updated_at
     };
@@ -114,12 +129,82 @@ export class UserRepository {
     return {
       id: row.id,
       email: row.email,
+      password_hash: row.password_hash,
       full_name: row.full_name,
       is_admin: Boolean(row.is_admin),
       plan_type: row.plan_type,
+      provider: row.provider || 'email',
+      provider_id: row.provider_id || undefined,
+      avatar_url: row.avatar_url || undefined,
       created_at: row.created_at,
       updated_at: row.updated_at
     };
+  }
+
+  public static findByProvider(provider: string, providerId: string): User | null {
+    const row = Database.queryOne<any>('SELECT * FROM users WHERE provider = ? AND provider_id = ?', [provider, providerId]);
+    if (!row) return null;
+    return {
+      id: row.id,
+      email: row.email,
+      password_hash: row.password_hash,
+      full_name: row.full_name,
+      is_admin: Boolean(row.is_admin),
+      plan_type: row.plan_type,
+      provider: row.provider || 'email',
+      provider_id: row.provider_id || undefined,
+      avatar_url: row.avatar_url || undefined,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    };
+  }
+
+  public static findOrCreateOAuthUser(params: {
+    email: string;
+    full_name: string;
+    provider: 'google' | 'github' | 'linkedin';
+    provider_id: string;
+    avatar_url?: string;
+  }): User {
+    const normalizedEmail = params.email.toLowerCase().trim();
+
+    // 1. Check if user exists by provider & provider_id
+    let existingUser = this.findByProvider(params.provider, params.provider_id);
+    if (existingUser) {
+      if (params.avatar_url && params.avatar_url !== existingUser.avatar_url) {
+        Database.execute('UPDATE users SET avatar_url = ?, updated_at = ? WHERE id = ?', [
+          params.avatar_url,
+          new Date().toISOString(),
+          existingUser.id
+        ]);
+        existingUser.avatar_url = params.avatar_url;
+      }
+      return existingUser;
+    }
+
+    // 2. Check if user exists with matching email (Account linking)
+    existingUser = this.findByEmail(normalizedEmail);
+    if (existingUser) {
+      Database.execute(
+        'UPDATE users SET provider = ?, provider_id = ?, avatar_url = COALESCE(?, avatar_url), updated_at = ? WHERE id = ?',
+        [params.provider, params.provider_id, params.avatar_url || null, new Date().toISOString(), existingUser.id]
+      );
+      return this.findById(existingUser.id)!;
+    }
+
+    // 3. New User Registration via OAuth
+    const newId = `usr_${params.provider}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    return this.create({
+      id: newId,
+      email: normalizedEmail,
+      full_name: params.full_name || `${params.provider} User`,
+      password_hash: '',
+      is_admin: false,
+      plan_type: 'personal',
+      provider: params.provider,
+      provider_id: params.provider_id,
+      avatar_url: params.avatar_url
+    });
   }
 
   public static getProfile(userId: string): UserCapabilityProfile | null {

@@ -15,6 +15,8 @@
 import { Database } from '../database/connection.js';
 import { PlanType } from '../models/User.js';
 
+export type { PlanType };
+
 export interface PlanLimits {
   name: string;
   planType: PlanType;

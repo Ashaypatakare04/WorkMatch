@@ -6,10 +6,13 @@ export const PG_SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(128) PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
+    password_hash TEXT NOT NULL DEFAULT '',
     full_name VARCHAR(255) NOT NULL,
     is_admin INTEGER NOT NULL DEFAULT 0,
     plan_type VARCHAR(64) NOT NULL DEFAULT 'personal',
+    provider VARCHAR(64) NOT NULL DEFAULT 'email',
+    provider_id VARCHAR(255),
+    avatar_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );

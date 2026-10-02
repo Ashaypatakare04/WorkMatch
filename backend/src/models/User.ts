@@ -1,4 +1,5 @@
 export type PlanType = 'personal' | 'pro' | 'team';
+export type AuthProvider = 'email' | 'google' | 'github' | 'linkedin';
 
 export interface User {
   id: string;
@@ -7,6 +8,9 @@ export interface User {
   full_name: string;
   is_admin: boolean;
   plan_type: PlanType;
+  provider?: AuthProvider;
+  provider_id?: string;
+  avatar_url?: string;
   created_at: string;
   updated_at: string;
 }
