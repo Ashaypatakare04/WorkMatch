@@ -33,25 +33,25 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               Conversion Intelligence
             </span>
-            <span className="text-xs text-slate-500 font-mono">Real-time Pipeline</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Real-time Pipeline</span>
           </div>
-          <h1 className="text-2xl font-bold font-display text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
+          <h1 className="text-2xl sm:text-3xl font-bold font-display text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
             Performance Analytics &amp; Yield
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-2xl leading-relaxed">
             Measure proposal win rate, connect expenditure efficiency, and interview velocity across all connected freelance channels.
           </p>
         </div>
 
         <button
           onClick={onNavigateToReports}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white dark:text-surface-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition active:scale-[0.98] self-start sm:self-auto"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white dark:text-surface-950 text-xs sm:text-sm font-bold shadow-lg shadow-emerald-500/20 transition active:scale-[0.98] self-start sm:self-auto"
         >
-          <FileText className="w-3.5 h-3.5" />
+          <FileText className="w-4 h-4" />
           <span>Generate Statement Audit</span>
         </button>
       </div>
@@ -61,16 +61,16 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         {/* KPI 1: Average Match Score */}
         <div className="card-primary rounded-3xl p-5 relative overflow-hidden space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Avg Opportunity Match</span>
-            <div className="w-7 h-7 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 dark:text-amber-400">
-              <Sparkles className="w-3.5 h-3.5" />
+            <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold">Avg Opportunity Match</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500 dark:text-amber-400">
+              <Sparkles className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">
+          <div className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">
             {metrics?.average_match_score || 87.5}%
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-amber-600 dark:text-amber-400 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 shadow-glow-amber" />
+          <div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 font-medium">
+            <span className="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 shadow-glow-amber" />
             <span>High-accuracy algorithm fit</span>
           </div>
         </div>
@@ -78,35 +78,35 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         {/* KPI 2: Application Interview Rate */}
         <div className="card-primary rounded-3xl p-5 relative overflow-hidden space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Interview Conversion Rate</span>
-            <div className="w-7 h-7 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
-              <TrendingUp className="w-3.5 h-3.5" />
+            <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold">Interview Conversion</span>
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+              <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">
+          <div className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">
             {metrics?.applications && metrics.applications > 0
               ? `${Math.round(((metrics.interviews || 0) / metrics.applications) * 100)}%`
               : '25%'}
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-cyan-600 dark:text-cyan-400 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 dark:bg-cyan-400 shadow-glow-cyan" />
-            <span>2.8x market average benchmark</span>
+          <div className="flex items-center gap-1.5 text-xs text-cyan-600 dark:text-cyan-400 font-medium">
+            <span className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 shadow-glow-cyan" />
+            <span>2.8x market benchmark</span>
           </div>
         </div>
 
         {/* KPI 3: Contracts Won */}
         <div className="card-primary rounded-3xl p-5 relative overflow-hidden space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Contracts Won (Hired)</span>
-            <div className="w-7 h-7 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-              <Award className="w-3.5 h-3.5" />
+            <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold">Contracts Won (Hired)</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <Award className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">
+          <div className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">
             {metrics?.hires || 0}
           </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-glow-emerald" />
+          <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-glow-emerald" />
             <span>Active client retainers</span>
           </div>
         </div>
@@ -114,17 +114,17 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         {/* KPI 4: Connects Capital */}
         <div className="card-primary rounded-3xl p-5 relative overflow-hidden space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Connects Invested</span>
-            <div className="w-7 h-7 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-              <Zap className="w-3.5 h-3.5" />
+            <span className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold">Connects Invested</span>
+            <div className="w-8 h-8 rounded-xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+              <Zap className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">
+          <div className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white font-mono tracking-tight">
             {metrics?.total_connects_spent || 0}
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
             <span>Est.</span>
-            <span className="font-mono text-slate-800 dark:text-slate-200">
+            <span className="font-mono text-slate-800 dark:text-slate-200 font-semibold">
               ~${((metrics?.total_connects_spent || 0) * 0.15).toFixed(2)} USD
             </span>
             <span>expenditure</span>
@@ -137,13 +137,15 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         {/* Category Breakdown */}
         <div className="card-primary rounded-3xl p-6 sm:p-7 space-y-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <PieChart className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
-              <h3 className="text-sm font-bold font-display text-slate-900 dark:text-white">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                <PieChart className="w-4 h-4" />
+              </div>
+              <h3 className="text-base font-bold font-display text-slate-900 dark:text-white">
                 Opportunities by Niche &amp; Category
               </h3>
             </div>
-            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Market Depth</span>
+            <span className="text-xs font-mono text-slate-500 dark:text-slate-400">Market Depth</span>
           </div>
 
           <div className="space-y-3.5">
@@ -155,15 +157,15 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
             ]).map((cat, idx) => {
               const pct = Math.round((cat.count / totalCategoryJobs) * 100);
               return (
-                <div key={idx} className="space-y-1.5 p-2.5 rounded-2xl bg-slate-100/70 dark:bg-surface-950/40 border border-slate-200/70 dark:border-white/[0.04]">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-medium text-slate-800 dark:text-slate-200">{cat.name}</span>
+                <div key={idx} className="space-y-2 p-3 rounded-2xl bg-slate-100/70 dark:bg-surface-950/40 border border-slate-200/70 dark:border-white/[0.04]">
+                  <div className="flex justify-between items-center text-xs sm:text-sm">
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{cat.name}</span>
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-slate-500 dark:text-slate-400">{cat.count} jobs</span>
-                      <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold text-[11px]">{pct}%</span>
+                      <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold text-xs">{pct}%</span>
                     </div>
                   </div>
-                  <div className="w-full bg-slate-200 dark:bg-surface-800 h-2 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-200 dark:bg-surface-800 h-2.5 rounded-full overflow-hidden">
                     <div
                       className="bg-gradient-to-r from-emerald-500 to-cyan-500 h-full rounded-full transition-all duration-500"
                       style={{ width: `${pct}%` }}
@@ -178,23 +180,25 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
         {/* Proposal Style Performance */}
         <div className="card-primary rounded-3xl p-6 sm:p-7 space-y-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-              <h3 className="text-sm font-bold font-display text-slate-900 dark:text-white">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+              <h3 className="text-base font-bold font-display text-slate-900 dark:text-white">
                 Proposal Persona Conversion Velocity
               </h3>
             </div>
-            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">A/B Evaluation</span>
+            <span className="text-xs font-mono text-slate-500 dark:text-slate-400">A/B Evaluation</span>
           </div>
 
           <div className="overflow-x-auto border border-slate-200 dark:border-white/[0.06] rounded-2xl">
-            <table className="w-full text-xs text-left">
+            <table className="w-full text-xs sm:text-sm text-left">
               <thead className="bg-slate-100 dark:bg-surface-950/70 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-white/[0.06]">
                 <tr>
-                  <th className="py-3 px-4 font-semibold">Persona Style</th>
-                  <th className="py-3 px-4 font-semibold">Dispatched</th>
-                  <th className="py-3 px-4 font-semibold">Interviews</th>
-                  <th className="py-3 px-4 font-semibold text-right">Win Rate</th>
+                  <th className="py-3.5 px-4 font-semibold">Persona Style</th>
+                  <th className="py-3.5 px-4 font-semibold">Dispatched</th>
+                  <th className="py-3.5 px-4 font-semibold">Interviews</th>
+                  <th className="py-3.5 px-4 font-semibold text-right">Win Rate</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-white/[0.04] text-slate-700 dark:text-slate-300">
@@ -212,20 +216,20 @@ export const AnalyticsView: React.FC<AnalyticsViewProps> = ({
 
                   return (
                     <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-surface-800/40 transition">
-                      <td className="py-3 px-4 capitalize font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                      <td className="py-3.5 px-4 capitalize font-semibold text-slate-900 dark:text-white flex items-center gap-2">
                         <span>{ps.style}</span>
                         {isTop && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                             TOP
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-mono">{ps.applications}</td>
-                      <td className="py-3 px-4 font-mono text-emerald-600 dark:text-emerald-400 font-medium">
+                      <td className="py-3.5 px-4 font-mono">{ps.applications}</td>
+                      <td className="py-3.5 px-4 font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
                         {ps.interviews}
                       </td>
-                      <td className="py-3 px-4 font-mono font-bold text-right">
-                        <span className={`px-2.5 py-1 rounded-lg ${
+                      <td className="py-3.5 px-4 font-mono font-bold text-right">
+                        <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
                           rate >= 25
                             ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20'
                             : 'bg-slate-100 dark:bg-surface-800 text-slate-600 dark:text-slate-300'

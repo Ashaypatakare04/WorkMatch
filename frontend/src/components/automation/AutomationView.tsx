@@ -114,36 +114,36 @@ export const AutomationView: React.FC<AutomationViewProps> = ({
       <div className="card-primary rounded-3xl p-6 sm:p-7 space-y-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Bot className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-            <h3 className="text-sm font-bold font-display text-slate-900 dark:text-white">
+            <Bot className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+            <h3 className="text-base font-bold font-display text-slate-900 dark:text-white">
               Application Operating Mode
             </h3>
           </div>
-          <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Step-by-Step Approval Level</span>
+          <span className="text-xs font-mono text-slate-500 dark:text-slate-400 font-semibold">Step-by-Step Approval Level</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
           {/* Mode 1: Manual / Alert Only */}
           <div
             onClick={() => setMode('MANUAL')}
             className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3 relative overflow-hidden ${
               mode === 'MANUAL'
-                ? 'bg-cyan-500/10 border-cyan-500/40 text-slate-900 dark:text-white shadow-glow-cyan'
+                ? 'bg-cyan-500/10 border-cyan-500/50 text-slate-900 dark:text-white shadow-sm ring-1 ring-cyan-500/30'
                 : 'bg-slate-100/70 dark:bg-surface-950/60 border-slate-200/80 dark:border-white/[0.06] text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/20'
             }`}
           >
             <div className="flex items-center justify-between font-bold">
-              <span className="font-display text-slate-900 dark:text-white text-sm">Mode 1: Alert Only</span>
+              <span className="font-display text-slate-900 dark:text-white text-base">Mode 1: Alert Only</span>
               {mode === 'MANUAL' && (
                 <span className="w-5 h-5 rounded-full bg-cyan-500 text-white dark:text-surface-950 flex items-center justify-center">
                   <Check className="w-3.5 h-3.5" />
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               Scans 24/7, scores matching opportunities, and sends instant alerts. Zero proposal submissions without explicit human manual click.
             </p>
-            <span className="inline-block text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-slate-200/80 dark:bg-surface-800 text-slate-700 dark:text-slate-300">
+            <span className="inline-block text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-slate-200/80 dark:bg-surface-800 text-slate-700 dark:text-slate-300">
               100% Observer
             </span>
           </div>
@@ -153,22 +153,22 @@ export const AutomationView: React.FC<AutomationViewProps> = ({
             onClick={() => setMode('ASSISTED')}
             className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3 relative overflow-hidden ${
               mode === 'ASSISTED'
-                ? 'bg-amber-500/10 border-amber-500/40 text-slate-900 dark:text-white shadow-glow-amber'
+                ? 'bg-amber-500/10 border-amber-500/50 text-slate-900 dark:text-white shadow-sm ring-1 ring-amber-500/30'
                 : 'bg-slate-100/70 dark:bg-surface-950/60 border-slate-200/80 dark:border-white/[0.06] text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/20'
             }`}
           >
             <div className="flex items-center justify-between font-bold">
-              <span className="font-display text-slate-900 dark:text-white text-sm">Mode 2: Assisted Pilot</span>
+              <span className="font-display text-slate-900 dark:text-white text-base">Mode 2: Assisted Pilot</span>
               {mode === 'ASSISTED' && (
                 <span className="w-5 h-5 rounded-full bg-amber-500 text-white dark:text-surface-950 flex items-center justify-center">
                   <Check className="w-3.5 h-3.5" />
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               AI pre-drafts tailored proposals and runs truthfulness checks. You review the final text and click &ldquo;Confirm &amp; Send&rdquo;.
             </p>
-            <span className="inline-block text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+            <span className="inline-block text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30">
               Co-Pilot (Recommended)
             </span>
           </div>
@@ -178,22 +178,22 @@ export const AutomationView: React.FC<AutomationViewProps> = ({
             onClick={() => setMode('AUTOMATIC')}
             className={`p-5 rounded-2xl border transition-all cursor-pointer space-y-3 relative overflow-hidden ${
               mode === 'AUTOMATIC'
-                ? 'bg-emerald-500/10 border-emerald-500/40 text-slate-900 dark:text-white shadow-glow-emerald'
+                ? 'bg-emerald-500/10 border-emerald-500/50 text-slate-900 dark:text-white shadow-sm ring-1 ring-emerald-500/30'
                 : 'bg-slate-100/70 dark:bg-surface-950/60 border-slate-200/80 dark:border-white/[0.06] text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/20'
             }`}
           >
             <div className="flex items-center justify-between font-bold">
-              <span className="font-display text-slate-900 dark:text-white text-sm">Mode 3: Autonomous</span>
+              <span className="font-display text-slate-900 dark:text-white text-base">Mode 3: Autonomous</span>
               {mode === 'AUTOMATIC' && (
                 <span className="w-5 h-5 rounded-full bg-emerald-500 text-white dark:text-surface-950 flex items-center justify-center">
                   <Check className="w-3.5 h-3.5" />
                 </span>
               )}
             </div>
-            <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               Submits proposals automatically strictly when every hard safety limit, risk threshold, and budget rule below is fully satisfied.
             </p>
-            <span className="inline-block text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+            <span className="inline-block text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30">
               Autonomous
             </span>
           </div>
@@ -204,77 +204,77 @@ export const AutomationView: React.FC<AutomationViewProps> = ({
       <div className="card-primary rounded-3xl p-6 sm:p-7 space-y-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            <h3 className="text-sm font-bold font-display text-slate-900 dark:text-white">
+            <Lock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <h3 className="text-base font-bold font-display text-slate-900 dark:text-white">
               Hard Safety Guardrails &amp; Rate Limits
             </h3>
           </div>
-          <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Strict Circuit Breakers</span>
+          <span className="text-xs font-mono text-slate-500 dark:text-slate-400 font-semibold">Strict Circuit Breakers</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-          <div className="p-4 rounded-2xl bg-slate-100/70 dark:bg-surface-950/50 border border-slate-200/80 dark:border-white/[0.06] space-y-2">
-            <label className="block text-slate-700 dark:text-slate-300 font-medium">Max Applications / Day:</label>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs sm:text-sm">
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-100/70 dark:bg-surface-950/50 border border-slate-200/80 dark:border-white/[0.06] space-y-2">
+            <label className="block text-slate-800 dark:text-slate-200 font-semibold">Max Applications / Day:</label>
             <input
               type="number"
               min="1"
               max="20"
               value={maxDaily}
               onChange={e => setMaxDaily(Number(e.target.value))}
-              className="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:border-emerald-500/50"
+              className="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-slate-900 dark:text-white font-mono text-base font-bold focus:outline-none focus:border-emerald-500/50"
             />
-            <span className="text-[10px] text-slate-500 block font-mono">
+            <span className="text-xs text-slate-500 block font-mono">
               Applied today: {settings.applications_today_count}
             </span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-100/70 dark:bg-surface-950/50 border border-slate-200/80 dark:border-white/[0.06] space-y-2">
-            <label className="block text-slate-700 dark:text-slate-300 font-medium">Max Applications / Hour:</label>
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-100/70 dark:bg-surface-950/50 border border-slate-200/80 dark:border-white/[0.06] space-y-2">
+            <label className="block text-slate-800 dark:text-slate-200 font-semibold">Max Applications / Hour:</label>
             <input
               type="number"
               min="1"
               max="5"
               value={maxHourly}
               onChange={e => setMaxHourly(Number(e.target.value))}
-              className="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:border-emerald-500/50"
+              className="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-slate-900 dark:text-white font-mono text-base font-bold focus:outline-none focus:border-emerald-500/50"
             />
-            <span className="text-[10px] text-slate-500 block font-mono">
+            <span className="text-xs text-slate-500 block font-mono">
               Anti-spam throttle
             </span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-100/70 dark:bg-surface-950/50 border border-slate-200/80 dark:border-white/[0.06] space-y-2">
-            <label className="block text-slate-700 dark:text-slate-300 font-medium">Minimum Match Score:</label>
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-100/70 dark:bg-surface-950/50 border border-slate-200/80 dark:border-white/[0.06] space-y-2">
+            <label className="block text-slate-800 dark:text-slate-200 font-semibold">Minimum Match Score:</label>
             <input
               type="number"
               min="70"
               max="99"
               value={minScore}
               onChange={e => setMinScore(Number(e.target.value))}
-              className="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:border-emerald-500/50"
+              className="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-slate-900 dark:text-white font-mono text-base font-bold focus:outline-none focus:border-emerald-500/50"
             />
-            <span className="text-[10px] text-slate-500 block font-mono">
+            <span className="text-xs text-slate-500 block font-mono">
               Threshold to qualify
             </span>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-100/70 dark:bg-surface-950/50 border border-slate-200/80 dark:border-white/[0.06] space-y-2">
-            <label className="block text-slate-700 dark:text-slate-300 font-medium">Max Connects / Application:</label>
+          <div className="p-4 sm:p-5 rounded-2xl bg-slate-100/70 dark:bg-surface-950/50 border border-slate-200/80 dark:border-white/[0.06] space-y-2">
+            <label className="block text-slate-800 dark:text-slate-200 font-semibold">Max Connects / Application:</label>
             <input
               type="number"
               min="1"
               max="16"
               value={maxCost}
               onChange={e => setMaxCost(Number(e.target.value))}
-              className="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-white/10 rounded-xl p-2.5 text-slate-900 dark:text-white font-mono text-sm focus:outline-none focus:border-emerald-500/50"
+              className="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-slate-900 dark:text-white font-mono text-base font-bold focus:outline-none focus:border-emerald-500/50"
             />
-            <span className="text-[10px] text-slate-500 block font-mono">
+            <span className="text-xs text-slate-500 block font-mono">
               Cost per proposal cap
             </span>
           </div>
         </div>
 
-        <div className="pt-4 border-t border-slate-200 dark:border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+        <div className="pt-4 border-t border-slate-200 dark:border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs sm:text-sm">
           <label className="flex items-center gap-2.5 text-slate-700 dark:text-slate-200 cursor-pointer select-none">
             <input
               type="checkbox"
@@ -282,16 +282,16 @@ export const AutomationView: React.FC<AutomationViewProps> = ({
               onChange={e => setLowRiskOnly(e.target.checked)}
               className="w-4 h-4 rounded text-emerald-500 accent-emerald-500 focus:ring-emerald-500 cursor-pointer"
             />
-            <span className="font-medium">
+            <span className="font-semibold">
               Require Low-Risk jobs only (strictly disqualify Medium and High risk opportunities)
             </span>
           </label>
 
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-white dark:text-surface-950 text-xs font-bold shadow-lg shadow-emerald-500/20 transition active:scale-[0.98]"
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white dark:text-slate-950 text-xs sm:text-sm font-bold shadow-glow-emerald transition active:scale-[0.98]"
           >
-            {saveSuccess ? <Check className="w-3.5 h-3.5" /> : <Save className="w-3.5 h-3.5" />}
+            {saveSuccess ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
             <span>{saveSuccess ? 'Guardrails Saved!' : 'Save Safety Limits'}</span>
           </button>
         </div>

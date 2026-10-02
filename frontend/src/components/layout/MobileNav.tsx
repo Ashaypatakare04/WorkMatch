@@ -243,10 +243,10 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                     <button
                       key={item.id}
                       onClick={() => handleSelectTab(item.id)}
-                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium transition active:scale-98 ${
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition active:scale-98 ${
                         isActive
                           ? 'bg-emerald-50 dark:bg-gradient-to-r dark:from-emerald-500/15 dark:to-cyan-500/10 text-emerald-700 dark:text-white font-semibold border border-emerald-500/30'
-                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-surface-900 hover:text-slate-900 dark:hover:text-white'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-surface-900 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -254,7 +254,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                         <span>{item.label}</span>
                       </div>
                       {item.badge && (
-                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${item.badgeColor || 'bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400'}`}>
+                        <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full border ${item.badgeColor || 'bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400'}`}>
                           {item.badge}
                         </span>
                       )}
