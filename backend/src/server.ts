@@ -61,7 +61,9 @@ runMigrations();
 ConnectorRegistry.register(new UpworkConnector());
 ConnectorRegistry.register(new FiverrConnector());
 ConnectorRegistry.register(new FreelancerConnector());
-ConnectorRegistry.register(new MockPlatformConnector());
+if (process.env.NODE_ENV === 'test' || process.env.ENABLE_MOCK_PLATFORM === 'true') {
+  ConnectorRegistry.register(new MockPlatformConnector());
+}
 
 // 3. Security Middlewares: Cross-Origin Resource Sharing & Secure Headers
 const corsOrigin = process.env.CORS_ORIGIN || '*';
@@ -217,8 +219,8 @@ export async function ensureInitialSeed(): Promise<void> {
   }
 }
 
-// Trigger initial check
-if (process.env.NODE_ENV !== 'test') {
+// Optional Initial Seed for Local Demos (disabled by default in live production)
+if (process.env.ENABLE_DEMO_SEED === 'true') {
   ensureInitialSeed().catch(err => console.warn('[WorkMatch AI] Seed initialization warning:', err));
 }
 

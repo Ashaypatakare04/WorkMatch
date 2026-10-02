@@ -160,7 +160,9 @@ export const JobsView: React.FC<JobsViewProps> = ({
               <option value="upwork">Upwork Only</option>
               <option value="fiverr">Fiverr Only</option>
               <option value="freelancer">Freelancer Only</option>
-              <option value="mock">Simulator Feed</option>
+              {jobs.some(j => j.platform === 'mock') && (
+                <option value="mock">Simulator Feed</option>
+              )}
             </select>
           </div>
 

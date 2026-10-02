@@ -32516,234 +32516,6 @@ var TypeOverrides = import_lib.default.TypeOverrides;
 var defaults = import_lib.default.defaults;
 var esm_default = import_lib.default;
 
-// backend/src/database/connection.ts
-var { Pool: Pool2 } = esm_default;
-var isVercel = Boolean(process.env.VERCEL);
-var DB_PATH = process.env.DATABASE_PATH || (isVercel ? path.join(os.tmpdir(), "workmatch.sqlite") : path.resolve(process.cwd(), "data", "workmatch.sqlite"));
-var DB_DIR = path.dirname(DB_PATH);
-if (!fs.existsSync(DB_DIR)) {
-  try {
-    fs.mkdirSync(DB_DIR, { recursive: true });
-  } catch (err) {
-    console.warn(`[Database] Directory creation notice for ${DB_DIR}:`, err);
-  }
-}
-var Database = class _Database {
-  static instance = null;
-  static pgPool = null;
-  static isPostgres() {
-    return Boolean(process.env.DATABASE_URL || process.env.POSTGRES_URL);
-  }
-  static getEngineName() {
-    return _Database.isPostgres() ? "PostgreSQL" : "SQLite";
-  }
-  static get() {
-    if (!_Database.instance) {
-      _Database.instance = new DatabaseSync(DB_PATH);
-      _Database.instance.exec("PRAGMA foreign_keys = ON;");
-      _Database.instance.exec("PRAGMA journal_mode = WAL;");
-      _Database.instance.exec("PRAGMA busy_timeout = 5000;");
-    }
-    return _Database.instance;
-  }
-  static getPgPool() {
-    if (!_Database.pgPool) {
-      const url = process.env.DATABASE_URL || process.env.POSTGRES_URL || "";
-      _Database.pgPool = new Pool2({
-        connectionString: url,
-        ssl: url.includes("localhost") ? false : { rejectUnauthorized: false }
-      });
-    }
-    return _Database.pgPool;
-  }
-  /**
-   * Translates SQLite `?` placeholder parameters to PostgreSQL `$1, $2, ...` syntax.
-   */
-  static toPostgresSql(sql) {
-    let index = 1;
-    return sql.replace(/\?/g, () => `$${index++}`);
-  }
-  static query(sql, params = []) {
-    const db = _Database.get();
-    const stmt = db.prepare(sql);
-    return stmt.all(...params);
-  }
-  static queryOne(sql, params = []) {
-    const results = _Database.query(sql, params);
-    return results.length > 0 ? results[0] : null;
-  }
-  static execute(sql, params = []) {
-    const db = _Database.get();
-    const stmt = db.prepare(sql);
-    const result = stmt.run(...params);
-    return {
-      changes: Number(result.changes || 0),
-      lastInsertRowid: result.lastInsertRowid
-    };
-  }
-  static exec(script) {
-    const db = _Database.get();
-    db.exec(script);
-  }
-  static transaction(callback) {
-    const db = _Database.get();
-    db.exec("BEGIN TRANSACTION;");
-    try {
-      const result = callback();
-      db.exec("COMMIT;");
-      return result;
-    } catch (error) {
-      db.exec("ROLLBACK;");
-      throw error;
-    }
-  }
-  // ─────────────────────────────────────────────────────────────
-  // Asynchronous Database Methods (supports PostgreSQL & SQLite)
-  // ─────────────────────────────────────────────────────────────
-  static async queryAsync(sql, params = []) {
-    if (_Database.isPostgres()) {
-      const pool = _Database.getPgPool();
-      const pgSql = _Database.toPostgresSql(sql);
-      const res = await pool.query(pgSql, params);
-      return res.rows;
-    }
-    return _Database.query(sql, params);
-  }
-  static async queryOneAsync(sql, params = []) {
-    const results = await _Database.queryAsync(sql, params);
-    return results.length > 0 ? results[0] : null;
-  }
-  static async executeAsync(sql, params = []) {
-    if (_Database.isPostgres()) {
-      const pool = _Database.getPgPool();
-      const pgSql = _Database.toPostgresSql(sql);
-      const res2 = await pool.query(pgSql, params);
-      return { changes: res2.rowCount || 0 };
-    }
-    const res = _Database.execute(sql, params);
-    return { changes: res.changes };
-  }
-  static async transactionAsync(callback) {
-    if (_Database.isPostgres()) {
-      const pool = _Database.getPgPool();
-      const client = await pool.connect();
-      try {
-        await client.query("BEGIN");
-        const result = await callback();
-        await client.query("COMMIT");
-        return result;
-      } catch (err) {
-        await client.query("ROLLBACK");
-        throw err;
-      } finally {
-        client.release();
-      }
-    }
-    const db = _Database.get();
-    db.exec("BEGIN TRANSACTION;");
-    try {
-      const result = await callback();
-      db.exec("COMMIT;");
-      return result;
-    } catch (error) {
-      db.exec("ROLLBACK;");
-      throw error;
-    }
-  }
-  static async isHealthy() {
-    const start = Date.now();
-    try {
-      if (_Database.isPostgres()) {
-        const pool = _Database.getPgPool();
-        await pool.query("SELECT 1");
-      } else {
-        _Database.queryOne("SELECT 1");
-      }
-      return {
-        status: "HEALTHY",
-        engine: _Database.getEngineName(),
-        latencyMs: Date.now() - start
-      };
-    } catch (err) {
-      return {
-        status: "UNHEALTHY",
-        engine: _Database.getEngineName(),
-        latencyMs: Date.now() - start,
-        error: err.message
-      };
-    }
-  }
-  // ─────────────────────────────────────────────────────────────
-  // State Backup & Restore (Prevents Data Loss on Serverless restarts)
-  // ─────────────────────────────────────────────────────────────
-  static exportState(userId) {
-    const tables = [
-      "users",
-      "user_profiles",
-      "user_skills",
-      "user_preferences",
-      "automation_settings",
-      "applications",
-      "notification_preferences"
-    ];
-    const state = {};
-    for (const table of tables) {
-      if (userId) {
-        if (table === "users") {
-          state[table] = _Database.query("SELECT * FROM users WHERE id = ?", [userId]);
-        } else {
-          state[table] = _Database.query(`SELECT * FROM ${table} WHERE user_id = ?`, [userId]);
-        }
-      } else {
-        state[table] = _Database.query(`SELECT * FROM ${table}`);
-      }
-    }
-    return state;
-  }
-  static importState(state) {
-    const tableOrder = [
-      "users",
-      "user_profiles",
-      "user_skills",
-      "user_preferences",
-      "automation_settings",
-      "jobs",
-      "applications",
-      "notification_preferences"
-    ];
-    const sortedEntries = Object.entries(state).sort(([a], [b]) => {
-      const idxA = tableOrder.indexOf(a);
-      const idxB = tableOrder.indexOf(b);
-      return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
-    });
-    _Database.transaction(() => {
-      for (const [table, rows] of sortedEntries) {
-        if (!Array.isArray(rows) || rows.length === 0) continue;
-        for (const row of rows) {
-          const keys = Object.keys(row);
-          const placeholders = keys.map(() => "?").join(", ");
-          const values = Object.values(row);
-          _Database.execute(
-            `INSERT OR REPLACE INTO ${table} (${keys.join(", ")}) VALUES (${placeholders})`,
-            values
-          );
-        }
-      }
-    });
-  }
-  static close() {
-    if (_Database.instance) {
-      _Database.instance.close();
-      _Database.instance = null;
-    }
-    if (_Database.pgPool) {
-      _Database.pgPool.end().catch(() => {
-      });
-      _Database.pgPool = null;
-    }
-  }
-};
-
 // backend/src/database/schema.ts
 var SCHEMA_SQL = `
 PRAGMA foreign_keys = ON;
@@ -33097,6 +32869,255 @@ CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token_ha
 CREATE INDEX IF NOT EXISTS idx_subscriptions_user ON subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_sub_id ON subscriptions(subscription_id);
 `;
+
+// backend/src/database/connection.ts
+var { Pool: Pool2 } = esm_default;
+var isVercel = Boolean(process.env.VERCEL);
+var isTest = process.env.NODE_ENV === "test";
+function getDatabasePath() {
+  if (process.env.DATABASE_PATH) return process.env.DATABASE_PATH;
+  const dbFilename = isTest ? "workmatch.test.sqlite" : "workmatch.sqlite";
+  if (isVercel) {
+    return path.join(os.tmpdir(), dbFilename);
+  }
+  const isInsideBackend = path.basename(process.cwd()) === "backend";
+  const targetDir = isInsideBackend ? path.resolve(process.cwd(), "..", "data") : path.resolve(process.cwd(), "data");
+  return path.join(targetDir, dbFilename);
+}
+var DB_PATH = getDatabasePath();
+var DB_DIR = path.dirname(DB_PATH);
+if (!fs.existsSync(DB_DIR)) {
+  try {
+    fs.mkdirSync(DB_DIR, { recursive: true });
+  } catch (err) {
+    console.warn(`[Database] Directory creation notice for ${DB_DIR}:`, err);
+  }
+}
+var Database = class _Database {
+  static instance = null;
+  static pgPool = null;
+  static isPostgres() {
+    return Boolean(process.env.DATABASE_URL || process.env.POSTGRES_URL);
+  }
+  static getEngineName() {
+    return _Database.isPostgres() ? "PostgreSQL" : "SQLite";
+  }
+  static get() {
+    if (!_Database.instance) {
+      _Database.instance = new DatabaseSync(DB_PATH);
+      _Database.instance.exec("PRAGMA foreign_keys = ON;");
+      _Database.instance.exec("PRAGMA journal_mode = WAL;");
+      _Database.instance.exec("PRAGMA busy_timeout = 5000;");
+      try {
+        const tableCheck = _Database.instance.prepare(
+          "SELECT count(*) as count FROM sqlite_master WHERE type='table' AND name='users';"
+        ).get();
+        if (!tableCheck || tableCheck.count === 0) {
+          _Database.instance.exec(SCHEMA_SQL);
+        }
+      } catch (err) {
+        console.warn("[Database] Auto-schema init warning:", err);
+      }
+    }
+    return _Database.instance;
+  }
+  static getPgPool() {
+    if (!_Database.pgPool) {
+      const url = process.env.DATABASE_URL || process.env.POSTGRES_URL || "";
+      _Database.pgPool = new Pool2({
+        connectionString: url,
+        ssl: url.includes("localhost") ? false : { rejectUnauthorized: false }
+      });
+    }
+    return _Database.pgPool;
+  }
+  /**
+   * Translates SQLite `?` placeholder parameters to PostgreSQL `$1, $2, ...` syntax.
+   */
+  static toPostgresSql(sql) {
+    let index = 1;
+    return sql.replace(/\?/g, () => `$${index++}`);
+  }
+  static query(sql, params = []) {
+    const db = _Database.get();
+    const stmt = db.prepare(sql);
+    return stmt.all(...params);
+  }
+  static queryOne(sql, params = []) {
+    const results = _Database.query(sql, params);
+    return results.length > 0 ? results[0] : null;
+  }
+  static execute(sql, params = []) {
+    const db = _Database.get();
+    const stmt = db.prepare(sql);
+    const result = stmt.run(...params);
+    return {
+      changes: Number(result.changes || 0),
+      lastInsertRowid: result.lastInsertRowid
+    };
+  }
+  static exec(script) {
+    const db = _Database.get();
+    db.exec(script);
+  }
+  static transaction(callback) {
+    const db = _Database.get();
+    db.exec("BEGIN TRANSACTION;");
+    try {
+      const result = callback();
+      db.exec("COMMIT;");
+      return result;
+    } catch (error) {
+      db.exec("ROLLBACK;");
+      throw error;
+    }
+  }
+  // ─────────────────────────────────────────────────────────────
+  // Asynchronous Database Methods (supports PostgreSQL & SQLite)
+  // ─────────────────────────────────────────────────────────────
+  static async queryAsync(sql, params = []) {
+    if (_Database.isPostgres()) {
+      const pool = _Database.getPgPool();
+      const pgSql = _Database.toPostgresSql(sql);
+      const res = await pool.query(pgSql, params);
+      return res.rows;
+    }
+    return _Database.query(sql, params);
+  }
+  static async queryOneAsync(sql, params = []) {
+    const results = await _Database.queryAsync(sql, params);
+    return results.length > 0 ? results[0] : null;
+  }
+  static async executeAsync(sql, params = []) {
+    if (_Database.isPostgres()) {
+      const pool = _Database.getPgPool();
+      const pgSql = _Database.toPostgresSql(sql);
+      const res2 = await pool.query(pgSql, params);
+      return { changes: res2.rowCount || 0 };
+    }
+    const res = _Database.execute(sql, params);
+    return { changes: res.changes };
+  }
+  static async transactionAsync(callback) {
+    if (_Database.isPostgres()) {
+      const pool = _Database.getPgPool();
+      const client = await pool.connect();
+      try {
+        await client.query("BEGIN");
+        const result = await callback();
+        await client.query("COMMIT");
+        return result;
+      } catch (err) {
+        await client.query("ROLLBACK");
+        throw err;
+      } finally {
+        client.release();
+      }
+    }
+    const db = _Database.get();
+    db.exec("BEGIN TRANSACTION;");
+    try {
+      const result = await callback();
+      db.exec("COMMIT;");
+      return result;
+    } catch (error) {
+      db.exec("ROLLBACK;");
+      throw error;
+    }
+  }
+  static async isHealthy() {
+    const start = Date.now();
+    try {
+      if (_Database.isPostgres()) {
+        const pool = _Database.getPgPool();
+        await pool.query("SELECT 1");
+      } else {
+        _Database.queryOne("SELECT 1");
+      }
+      return {
+        status: "HEALTHY",
+        engine: _Database.getEngineName(),
+        latencyMs: Date.now() - start
+      };
+    } catch (err) {
+      return {
+        status: "UNHEALTHY",
+        engine: _Database.getEngineName(),
+        latencyMs: Date.now() - start,
+        error: err.message
+      };
+    }
+  }
+  // ─────────────────────────────────────────────────────────────
+  // State Backup & Restore (Prevents Data Loss on Serverless restarts)
+  // ─────────────────────────────────────────────────────────────
+  static exportState(userId) {
+    const tables = [
+      "users",
+      "user_profiles",
+      "user_skills",
+      "user_preferences",
+      "automation_settings",
+      "applications",
+      "notification_preferences"
+    ];
+    const state = {};
+    for (const table of tables) {
+      if (userId) {
+        if (table === "users") {
+          state[table] = _Database.query("SELECT * FROM users WHERE id = ?", [userId]);
+        } else {
+          state[table] = _Database.query(`SELECT * FROM ${table} WHERE user_id = ?`, [userId]);
+        }
+      } else {
+        state[table] = _Database.query(`SELECT * FROM ${table}`);
+      }
+    }
+    return state;
+  }
+  static importState(state) {
+    const tableOrder = [
+      "users",
+      "user_profiles",
+      "user_skills",
+      "user_preferences",
+      "automation_settings",
+      "jobs",
+      "applications",
+      "notification_preferences"
+    ];
+    const sortedEntries = Object.entries(state).sort(([a], [b]) => {
+      const idxA = tableOrder.indexOf(a);
+      const idxB = tableOrder.indexOf(b);
+      return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
+    });
+    _Database.transaction(() => {
+      for (const [table, rows] of sortedEntries) {
+        if (!Array.isArray(rows) || rows.length === 0) continue;
+        for (const row of rows) {
+          const keys = Object.keys(row);
+          const placeholders = keys.map(() => "?").join(", ");
+          const values = Object.values(row);
+          _Database.execute(
+            `INSERT OR REPLACE INTO ${table} (${keys.join(", ")}) VALUES (${placeholders})`,
+            values
+          );
+        }
+      }
+    });
+  }
+  static close() {
+    if (_Database.instance) {
+      _Database.instance.close();
+      _Database.instance = null;
+    }
+    if (_Database.pgPool) {
+      _Database.pgPool.end().catch(() => {
+      });
+      _Database.pgPool = null;
+    }
+  }
+};
 
 // backend/src/database/migrate.ts
 var __filename = fileURLToPath(import.meta.url);
@@ -45135,7 +45156,9 @@ runMigrations();
 ConnectorRegistry.register(new UpworkConnector());
 ConnectorRegistry.register(new FiverrConnector());
 ConnectorRegistry.register(new FreelancerConnector());
-ConnectorRegistry.register(new MockPlatformConnector());
+if (process.env.NODE_ENV === "test" || process.env.ENABLE_MOCK_PLATFORM === "true") {
+  ConnectorRegistry.register(new MockPlatformConnector());
+}
 var corsOrigin = process.env.CORS_ORIGIN || "*";
 app.use((0, import_cors.default)({
   origin: (origin, callback) => {
@@ -45262,7 +45285,7 @@ async function ensureInitialSeed() {
     console.warn("[WorkMatch AI] Automatic seed notice:", err);
   }
 }
-if (process.env.NODE_ENV !== "test") {
+if (process.env.ENABLE_DEMO_SEED === "true") {
   ensureInitialSeed().catch((err) => console.warn("[WorkMatch AI] Seed initialization warning:", err));
 }
 if (!process.env.VERCEL && process.env.NODE_ENV !== "test") {

@@ -7,7 +7,22 @@ import pg from 'pg';
 const { Pool } = pg;
 
 const isVercel = Boolean(process.env.VERCEL);
-const DB_PATH = process.env.DATABASE_PATH || (isVercel ? path.join(os.tmpdir(), 'workmatch.sqlite') : path.resolve(process.cwd(), 'data', 'workmatch.sqlite'));
+const isTest = process.env.NODE_ENV === 'test';
+
+function getDatabasePath(): string {
+  if (process.env.DATABASE_PATH) return process.env.DATABASE_PATH;
+  const dbFilename = isTest ? 'workmatch.test.sqlite' : 'workmatch.sqlite';
+  if (isVercel) {
+    return path.join(os.tmpdir(), dbFilename);
+  }
+  const isInsideBackend = path.basename(process.cwd()) === 'backend';
+  const targetDir = isInsideBackend
+    ? path.resolve(process.cwd(), '..', 'data')
+    : path.resolve(process.cwd(), 'data');
+  return path.join(targetDir, dbFilename);
+}
+
+const DB_PATH = getDatabasePath();
 const DB_DIR = path.dirname(DB_PATH);
 
 if (!fs.existsSync(DB_DIR)) {
@@ -17,6 +32,8 @@ if (!fs.existsSync(DB_DIR)) {
     console.warn(`[Database] Directory creation notice for ${DB_DIR}:`, err);
   }
 }
+
+import { SCHEMA_SQL } from './schema.js';
 
 export class Database {
   private static instance: DatabaseSync | null = null;
@@ -36,6 +53,18 @@ export class Database {
       Database.instance.exec('PRAGMA foreign_keys = ON;');
       Database.instance.exec('PRAGMA journal_mode = WAL;');
       Database.instance.exec('PRAGMA busy_timeout = 5000;');
+
+      // Auto-initialize schema if tables do not exist yet (e.g. isolated test database or clean environment)
+      try {
+        const tableCheck = Database.instance.prepare(
+          "SELECT count(*) as count FROM sqlite_master WHERE type='table' AND name='users';"
+        ).get() as { count: number } | undefined;
+        if (!tableCheck || tableCheck.count === 0) {
+          Database.instance.exec(SCHEMA_SQL);
+        }
+      } catch (err) {
+        console.warn('[Database] Auto-schema init warning:', err);
+      }
     }
     return Database.instance;
   }

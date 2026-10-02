@@ -1922,13 +1922,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <div>
               <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Sandbox</span>
               <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Free Explorer</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">Explore the recommendation engine with demo data.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">Explore the opportunity intelligence pipeline.</p>
               <div className="text-3xl font-mono font-bold text-slate-900 dark:text-white mb-6">$0</div>
 
               <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Full Mock Simulation Dataset</span>
+                  <span>Opportunity Fit Intelligence &amp; Discovery</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -2054,7 +2054,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             },
             {
               q: 'Can I test WorkMatch without connecting live accounts?',
-              a: 'Yes! WorkMatch includes full Mock Simulation Mode with a 1-click demo seed dataset that creates realistic marketplace jobs, verified client profiles, and test proposals instantly.'
+              a: 'Yes! WorkMatch includes an instant interactive sandbox preview with realistic opportunities, verified client profiles, and tailored proposal generation.'
             },
             {
               q: 'How does WorkMatch prevent hallucinated or exaggerated claims in proposals?',

@@ -254,16 +254,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <Briefcase className="w-7 h-7" />
               </div>
               <div className="max-w-md mx-auto space-y-1.5">
-                <p className="text-base font-display font-bold text-slate-900 dark:text-white">No high-match opportunities loaded</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">Populate the realistic demo dataset with 30 diverse jobs, match scores, risk flags, and proposal variants.</p>
+                <p className="text-base font-display font-bold text-slate-900 dark:text-white">No high-match opportunities found yet</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Connect your marketplace accounts (Upwork, Fiverr, Freelancer) or sync live feeds to discover matching projects.
+                </p>
               </div>
-              <button
-                onClick={onLoadDemo}
-                disabled={isLoadingDemo}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white dark:text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all active:scale-95 disabled:opacity-50"
-              >
-                {isLoadingDemo ? 'Populating...' : 'Load 1-Click Demo Dataset'}
-              </button>
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                <button
+                  onClick={() => onNavigate('platforms')}
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white dark:text-slate-950 font-display font-bold text-xs shadow-glow-emerald transition-all active:scale-95"
+                >
+                  Manage Platforms & Feeds
+                </button>
+                <button
+                  onClick={onLoadDemo}
+                  disabled={isLoadingDemo}
+                  className="px-5 py-3 rounded-xl bg-slate-100 dark:bg-surface-800 hover:bg-slate-200 dark:hover:bg-surface-750 text-slate-700 dark:text-slate-300 font-display font-semibold text-xs border border-slate-200 dark:border-white/[0.08] transition-all active:scale-95 disabled:opacity-50"
+                >
+                  {isLoadingDemo ? 'Loading...' : 'Preview with Sample Data'}
+                </button>
+              </div>
             </div>
           ) : (
             <div className="space-y-3.5">
