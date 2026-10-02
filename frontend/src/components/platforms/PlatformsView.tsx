@@ -134,7 +134,7 @@ export const PlatformsView: React.FC<PlatformsViewProps> = ({
                           ? 'bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30'
                           : 'bg-slate-100 dark:bg-surface-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10'
                       }`}>
-                        {p.mode}
+                        {p.mode === 'MOCK' ? 'Demo connection' : p.mode}
                       </span>
                     </div>
                     <span className="text-xs text-slate-500 dark:text-slate-400 block font-medium">
@@ -258,6 +258,27 @@ export const PlatformsView: React.FC<PlatformsViewProps> = ({
             </div>
           );
         })}
+
+        {/* + Add Platform Connector Card */}
+        <div className="card-secondary rounded-3xl p-6 border-dashed border-2 border-slate-300 dark:border-[#22324F] flex flex-col justify-center items-center text-center space-y-3 min-h-[280px]">
+          <div className="w-12 h-12 rounded-2xl bg-[#20D3C2]/10 border border-[#20D3C2]/20 flex items-center justify-center text-[#20D3C2]">
+            <Network className="w-6 h-6" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold font-display text-slate-900 dark:text-white">
+              Add Platform Connector
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs">
+              Connect additional work sources like Toptal, Contra, or custom marketplace feeds.
+            </p>
+          </div>
+          <button
+            type="button"
+            className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-[#172238] hover:bg-slate-200 dark:hover:bg-[#111A2E] text-slate-700 dark:text-slate-300 text-xs font-semibold border border-slate-200 dark:border-[#22324F] transition"
+          >
+            + Request Connector
+          </button>
+        </div>
       </div>
 
       {/* Connect Modal */}

@@ -53,12 +53,12 @@ export const AutomationView: React.FC<AutomationViewProps> = ({
   onUpdateSettings,
   onEmergencyStop
 }) => {
-  const [mode, setMode] = useState(settings.application_mode);
-  const [maxDaily, setMaxDaily] = useState(settings.max_daily_applications);
-  const [maxHourly, setMaxHourly] = useState(settings.max_hourly_applications);
-  const [minScore, setMinScore] = useState(settings.min_match_score);
-  const [maxCost, setMaxCost] = useState(settings.max_connect_cost);
-  const [lowRiskOnly, setLowRiskOnly] = useState(settings.require_low_risk_only);
+  const [mode, setMode] = useState(settings?.application_mode || 'MANUAL');
+  const [maxDaily, setMaxDaily] = useState(settings?.max_daily_applications ?? 10);
+  const [maxHourly, setMaxHourly] = useState(settings?.max_hourly_applications ?? 3);
+  const [minScore, setMinScore] = useState(settings?.min_match_score ?? 85);
+  const [maxCost, setMaxCost] = useState(settings?.max_connect_cost ?? 6);
+  const [lowRiskOnly, setLowRiskOnly] = useState(settings?.require_low_risk_only ?? true);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
@@ -193,6 +193,19 @@ export const AutomationView: React.FC<AutomationViewProps> = ({
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               Submits proposals automatically strictly when every hard safety limit, risk threshold, and budget rule below is fully satisfied.
             </p>
+            <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-slate-700 dark:text-slate-300 space-y-1">
+              <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 uppercase text-[10px] tracking-wider block">
+                Automatic Mode Rules:
+              </span>
+              <div className="grid grid-cols-2 gap-1 text-[11px] font-mono">
+                <div>✓ Match score ≥ 90%</div>
+                <div>✓ Difficulty: Easy</div>
+                <div>✓ Budget: ≥ $50</div>
+                <div>✓ Risk: Low</div>
+                <div>✓ Required skills: 100%</div>
+                <div>✓ Communication: Low</div>
+              </div>
+            </div>
             <span className="inline-block text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30">
               Autonomous
             </span>
@@ -329,13 +342,13 @@ export const AutomationView: React.FC<AutomationViewProps> = ({
                 auditLogs.map((l, idx) => (
                   <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-surface-800/40 transition">
                     <td className="py-3 px-4 font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">
-                      {new Date(l.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {new Date(l.created_at || l.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
                     <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
                       {l.action}
                     </td>
                     <td className="py-3 px-4 text-slate-700 dark:text-slate-300">
-                      {l.details?.message || JSON.stringify(l.details)}
+                      {l.details?.message || (typeof l.details === 'string' ? l.details : l.details?.reason) || l.reason || (l.details ? JSON.stringify(l.details) : '')}
                     </td>
                   </tr>
                 ))

@@ -45,6 +45,7 @@ import {
 import { NormalizedJob, Proposal } from '../../types/index.js';
 import { api } from '../../services/api.js';
 import { useToast } from '../common/Toast.js';
+import { MatchScore } from '../common/MatchScore.js';
 
 interface JobDetailsModalProps {
   job: NormalizedJob;
@@ -207,12 +208,12 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                     {job.title}
                   </h2>
 
-                  {/* Overall Match Badge */}
-                  <div className="flex-shrink-0 flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 shadow-sm">
-                    <Flame className="w-6 h-6 text-amber-500 dark:text-amber-400" />
+                  {/* Overall Match Badge with Signature MatchScore */}
+                  <div className="flex-shrink-0 flex items-center gap-3.5 p-3 rounded-2xl bg-amber-500/10 dark:bg-[#172238] border border-amber-500/30 dark:border-[#22324F] shadow-sm">
+                    <MatchScore score={score?.overall_score || 85} breakdown={score} size="sm" />
                     <div>
                       <div className="text-[10px] uppercase font-mono font-bold text-amber-700 dark:text-amber-400/90 tracking-wider">Overall Match</div>
-                      <div className="text-2xl font-mono font-black text-slate-900 dark:text-white">
+                      <div className="text-xl font-mono font-black text-slate-900 dark:text-white">
                         {score?.overall_score || 85}<span className="text-xs text-slate-500 dark:text-slate-400 font-normal">/100</span>
                       </div>
                     </div>
@@ -228,7 +229,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                     <div>
                       <div className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Budget</div>
                       <div className="text-sm font-bold text-emerald-700 dark:text-emerald-300 font-mono mt-0.5">
-                        {job.budget.type === 'fixed' ? `$${job.budget.max || job.budget.min} Fixed` : `$${job.budget.min}-$${job.budget.max}/hr`}
+                        {job.budget?.type === 'fixed' ? `$${job.budget?.max || job.budget?.min || 0} Fixed` : `$${job.budget?.min || 0}-$${job.budget?.max || 0}/hr`}
                       </div>
                     </div>
                   </div>
@@ -252,7 +253,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                     <div>
                       <div className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Client Rating</div>
                       <div className="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">
-                        {job.client.rating ? `${job.client.rating}★ (${job.client.reviews} reviews)` : 'Verified Client'}
+                        {job.client?.rating ? `${job.client.rating}★ (${job.client.reviews || 0} reviews)` : 'Verified Client'}
                       </div>
                     </div>
                   </div>
@@ -264,7 +265,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                     <div>
                       <div className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold">Competition</div>
                       <div className="text-sm font-semibold text-slate-900 dark:text-white font-mono mt-0.5">
-                        {job.competition.proposal_count || 0} proposals
+                        {job.competition?.proposal_count || 0} proposals
                       </div>
                     </div>
                   </div>
@@ -357,7 +358,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                           <Check className="w-3.5 h-3.5" /> Why this matches you:
                         </span>
                         <ul className="space-y-1.5 text-slate-700 dark:text-slate-300">
-                          {(score?.explanation.why_matches || ['Direct skill alignment with your profile']).map((reason, idx) => (
+                          {(score?.explanation?.why_matches || ['Direct skill alignment with your profile']).map((reason, idx) => (
                             <li key={idx} className="flex items-start gap-2">
                               <span className="text-emerald-500 mt-0.5">•</span>
                               <span className="leading-relaxed">{reason}</span>
@@ -366,7 +367,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                         </ul>
                       </div>
 
-                      {score?.explanation.concerns && score.explanation.concerns.length > 0 && (
+                      {score?.explanation?.concerns && score.explanation.concerns.length > 0 && (
                         <div className="space-y-2">
                           <span className="font-bold text-amber-700 dark:text-amber-400 flex items-center gap-1.5 text-xs font-mono uppercase tracking-wider">
                             <AlertTriangle className="w-3.5 h-3.5" /> Potential concerns / caveats:
@@ -448,7 +449,7 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                   Required Competencies
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {job.skills.map((s, idx) => (
+                  {(job.skills || []).map((s, idx) => (
                     <span key={idx} className="text-xs sm:text-sm px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-surface-800 border border-slate-200 dark:border-white/[0.08] text-slate-800 dark:text-slate-200 font-medium">
                       {s}
                     </span>
@@ -521,6 +522,10 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                           {currentProposal.claims_verification?.skills_used?.join(', ') || 'Data Entry, Excel, Web Research'}
                         </span>
                       </div>
+                      <div className="text-xs text-amber-700 dark:text-[#F5B942] italic pt-1 border-t border-emerald-200/50 dark:border-emerald-500/20 mt-1.5 flex items-center gap-1.5">
+                        <span className="font-bold">ℹ Verification Note:</span>
+                        <span>This proposal does not claim unverified experience because it is not present in your verified profile.</span>
+                      </div>
                     </div>
                   </div>
 
@@ -531,6 +536,54 @@ export const JobDetailsModal: React.FC<JobDetailsModalProps> = ({
                       <span className="font-bold">ToS-Safe Assisted Copilot: </span>
                       Freelance platforms (Upwork, Fiverr) strictly forbid automated submission bots. WorkMatch protects your account by generating verified drafts that you can review, tweak, and 1-click copy &amp; open directly on {job.platform}.
                     </div>
+                  </div>
+
+                  {/* Tone / Length adjustment chips (Section 17) */}
+                  <div className="flex items-center gap-2 flex-wrap text-xs">
+                    <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Tone &amp; Length:</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const paras = editableContent.split('\n\n');
+                        if (paras.length > 2) {
+                          setEditableContent(paras.slice(0, 2).join('\n\n') + '\n\nLooking forward to speaking soon.');
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs bg-slate-100 dark:bg-[#111A2E] hover:bg-slate-200 dark:hover:bg-[#172238] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#22324F] transition font-medium"
+                    >
+                      Shorten
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!editableContent.startsWith('Hey there,')) {
+                          setEditableContent(editableContent.replace(/^(Dear [^,]+,|Hello,|Hi,)/i, 'Hey there,'));
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs bg-slate-100 dark:bg-[#111A2E] hover:bg-slate-200 dark:hover:bg-[#172238] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#22324F] transition font-medium"
+                    >
+                      Conversational
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditableContent(editableContent.replace(/^(Hey there,|Hi,)/i, 'Hello,'));
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs bg-slate-100 dark:bg-[#111A2E] hover:bg-slate-200 dark:hover:bg-[#172238] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#22324F] transition font-medium"
+                    >
+                      Professional
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!editableContent.includes('verified background')) {
+                          setEditableContent(editableContent + '\n\nMy verified background directly aligns with the technical milestones of this project.');
+                        }
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs bg-slate-100 dark:bg-[#111A2E] hover:bg-slate-200 dark:hover:bg-[#172238] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#22324F] transition font-medium"
+                    >
+                      Emphasize experience
+                    </button>
                   </div>
 
                   {/* Editable Proposal Content */}

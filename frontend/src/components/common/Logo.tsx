@@ -5,9 +5,13 @@ interface LogoIconProps {
   size?: number | string;
 }
 
-export const LogoIcon: React.FC<LogoIconProps> = ({ className = 'w-7 h-7 sm:w-8 sm:h-8' }) => {
+export const LogoIcon: React.FC<LogoIconProps> = ({ className = 'w-7 h-7 sm:w-8 sm:h-8', size }) => {
+  const sizeStyle = size ? { width: typeof size === 'number' ? `${size}px` : size, height: typeof size === 'number' ? `${size}px` : size } : undefined;
   return (
-    <div className={`relative rounded-xl p-[1.5px] bg-gradient-to-tr from-emerald-500 via-cyan-500 to-blue-500 shadow-glow-emerald transition-transform duration-200 group-hover:scale-105 shrink-0 ${className}`}>
+    <div
+      style={sizeStyle}
+      className={`relative rounded-xl p-[1.5px] bg-gradient-to-tr from-emerald-500 via-cyan-500 to-blue-500 shadow-glow-emerald transition-transform duration-200 group-hover:scale-105 shrink-0 ${size ? '' : className}`}
+    >
       <div className="h-full w-full bg-white dark:bg-[#0d1117] rounded-[10px] flex items-center justify-center overflow-hidden p-1 shadow-inner">
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
           <defs>
@@ -70,8 +74,8 @@ interface LogoProps {
 export const Logo: React.FC<LogoProps> = ({
   size = 'md',
   showTagline = false,
-  taglineText = 'Multi-Platform Opportunity & Proposal Intelligence',
-  badgeText = 'PRO',
+  taglineText = 'Work Opportunity Intelligence',
+  badgeText = '',
   onClick,
   className = ''
 }) => {
@@ -95,17 +99,17 @@ export const Logo: React.FC<LogoProps> = ({
       <LogoIcon className={iconSizeClasses} />
       <div>
         <div className="flex items-center gap-1.5 sm:gap-2">
-          <span className={`font-display font-extrabold ${textClasses} text-slate-900 dark:text-white tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-300 transition-colors`}>
-            WorkMatch<span className="text-emerald-600 dark:text-emerald-400 font-semibold ml-0.5">AI</span>
+          <span className={`font-display font-extrabold ${textClasses} text-slate-900 dark:text-[#F4F7FB] tracking-tight group-hover:text-[#20D3C2] transition-colors`}>
+            WorkMatch<span className="text-[#20D3C2] font-semibold ml-0.5">AI</span>
           </span>
           {badgeText && (
-            <span className="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25">
+            <span className="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-wider px-1.5 sm:px-2 py-0.5 rounded-full bg-[#20D3C2]/15 text-[#20D3C2] border border-[#20D3C2]/30">
               {badgeText}
             </span>
           )}
         </div>
         {showTagline && (
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 hidden lg:block tracking-wide">
+          <p className="text-[11px] text-slate-500 dark:text-[#9AA8BC] hidden lg:block tracking-wide">
             {taglineText}
           </p>
         )}

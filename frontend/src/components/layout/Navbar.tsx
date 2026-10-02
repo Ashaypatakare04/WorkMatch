@@ -35,12 +35,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 glass-header px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 flex items-center justify-between transition-all">
-      {/* Brand & Tagline with New Concept 1 Logo */}
+      {/* Brand & Tagline */}
       <Logo
         onClick={() => onNavigate('dashboard')}
         showTagline={true}
-        taglineText="Multi-Platform Work Opportunity Discovery & Proposal Suite"
-        badgeText="PRO"
+        taglineText="Work Opportunity Intelligence"
+        badgeText=""
       />
 
       {/* Center: Emergency Kill Switch & Automation State (Desktop & Tablet) */}

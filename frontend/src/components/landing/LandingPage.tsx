@@ -212,7 +212,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const [humanReviewApproved, setHumanReviewApproved] = useState<boolean>(true);
 
   // FAQ State
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Smooth scroll helper
   const handleScrollTo = (id: string) => {
@@ -343,52 +343,40 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="cursor-pointer select-none group"
           >
-            <Logo size="md" badgeText="STUDIO" />
+            <Logo size="md" showTagline={true} taglineText="Work Opportunity Intelligence" badgeText="" />
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-medium text-slate-600 dark:text-slate-300">
+          <nav className="hidden lg:flex items-center gap-7 text-xs font-medium text-slate-600 dark:text-[#9AA8BC]">
             <button
               onClick={() => handleScrollTo('product-overview')}
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
             >
-              Product
+              Overview
             </button>
             <button
               onClick={() => handleScrollTo('how-it-works')}
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
             >
-              Workflow
+              How it works
             </button>
             <button
-              onClick={() => handleScrollTo('cockpit')}
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+              onClick={() => handleScrollTo('features')}
+              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
             >
-              Decision Cockpit
+              Features
             </button>
             <button
-              onClick={() => handleScrollTo('simulator')}
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+              onClick={() => handleScrollTo('platforms')}
+              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
             >
-              Formula Simulator
+              Platforms
             </button>
             <button
-              onClick={() => handleScrollTo('studio')}
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+              onClick={() => handleScrollTo('about')}
+              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
             >
-              Proposal Studio
-            </button>
-            <button
-              onClick={() => handleScrollTo('comparison')}
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              Comparison
-            </button>
-            <button
-              onClick={() => handleScrollTo('pricing')}
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              Pricing
+              About
             </button>
           </nav>
 
@@ -397,21 +385,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <ThemeToggle variant="icon" />
             <button
               onClick={onLaunchApp}
-              className="text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors"
+              className="text-xs font-medium text-slate-700 dark:text-[#9AA8BC] hover:text-slate-900 dark:hover:text-[#F4F7FB] px-3.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors"
             >
               Log in
             </button>
             <button
               onClick={onLoadDemoAndLaunch}
               disabled={isLoadingDemo}
-              className="text-xs font-medium bg-slate-900 text-white dark:bg-white dark:text-slate-950 hover:bg-slate-800 dark:hover:bg-slate-200 px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
+              className="text-xs font-semibold bg-[#20D3C2] text-[#0B1220] hover:bg-[#5EE7DF] px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
             >
               {isLoadingDemo ? (
-                <div className="w-3.5 h-3.5 border-2 border-white dark:border-slate-900 border-t-transparent rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
                   <span>Find Your Matches</span>
-                  <ArrowRight className="w-3 h-3 text-white dark:text-slate-950" />
+                  <ArrowRight className="w-3 h-3 text-[#0B1220]" />
                 </>
               )}
             </button>
@@ -441,45 +429,33 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           <div className="lg:hidden border-t border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0c0e14] px-5 py-4 space-y-3">
             <button
               onClick={() => handleScrollTo('product-overview')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
             >
-              Product
+              Overview
             </button>
             <button
               onClick={() => handleScrollTo('how-it-works')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
             >
-              Workflow
+              How it works
             </button>
             <button
-              onClick={() => handleScrollTo('cockpit')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
+              onClick={() => handleScrollTo('features')}
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
             >
-              Decision Cockpit
+              Features
             </button>
             <button
-              onClick={() => handleScrollTo('simulator')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
+              onClick={() => handleScrollTo('platforms')}
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
             >
-              Formula Simulator
+              Platforms
             </button>
             <button
-              onClick={() => handleScrollTo('studio')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
+              onClick={() => handleScrollTo('about')}
+              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
             >
-              Proposal Studio
-            </button>
-            <button
-              onClick={() => handleScrollTo('comparison')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
-            >
-              Comparison
-            </button>
-            <button
-              onClick={() => handleScrollTo('pricing')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-slate-300"
-            >
-              Pricing
+              About
             </button>
             <div className="pt-3 border-t border-slate-200 dark:border-white/[0.08] flex flex-col gap-2">
               <button
@@ -512,187 +488,121 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <span className="text-slate-600 dark:text-slate-400">DECISION INTELLIGENCE</span>
           </div>
 
-          {/* Enormous Editorial Headline */}
-          <h1 className="editorial-reveal text-5xl sm:text-6xl md:text-7xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-white leading-[1.06] mb-6">
+          {/* Primary Editorial Headline */}
+          <h1 className="editorial-reveal text-5xl sm:text-6xl md:text-7xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-[#F4F7FB] leading-[1.06] mb-6 font-display">
             Find work <br />
-            <span className="text-slate-500 dark:text-slate-200">that fits.</span>
+            <span className="text-[#20D3C2]">that fits you.</span>
           </h1>
 
           {/* Restrained, Confident Copy */}
-          <p className="editorial-reveal text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-normal max-w-2xl mx-auto mb-8">
-            WorkMatch helps freelancers discover opportunities that match their skills, experience, preferences, and availability. Less searching. Better opportunities. More focused applications.
+          <p className="editorial-reveal text-base sm:text-lg text-slate-600 dark:text-[#9AA8BC] leading-relaxed font-normal max-w-2xl mx-auto mb-4">
+            Connect your work platforms and let AI evaluate opportunities against your skills, experience, preferences, availability, and history.
+          </p>
+
+          <p className="editorial-reveal text-sm font-semibold text-[#20D3C2] mb-8 font-mono">
+            See which opportunities are actually worth your time.
           </p>
 
           {/* Hero CTAs */}
           <div className="editorial-reveal flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
-              onClick={onLoadDemoAndLaunch}
-              disabled={isLoadingDemo}
-              className="w-full sm:w-auto px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 text-sm font-semibold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm"
+              onClick={onLaunchApp}
+              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#20D3C2] hover:bg-[#5EE7DF] text-[#0B1220] text-sm font-bold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-glow-teal"
             >
-              {isLoadingDemo ? (
-                <div className="w-4 h-4 border-2 border-white dark:border-slate-900 border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <span>Find Your Matches</span>
-                  <ArrowRight className="w-4 h-4 text-white dark:text-slate-950" />
-                </>
-              )}
+              <span>Connect a platform</span>
+              <ArrowRight className="w-4 h-4 text-[#0B1220]" />
             </button>
 
             <button
-              onClick={() => handleScrollTo('how-it-works')}
-              className="w-full sm:w-auto px-6 py-3 rounded-lg bg-white hover:bg-slate-50 text-slate-800 dark:bg-[#0e111a] dark:hover:bg-[#131724] dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.14] text-sm font-medium transition-all shadow-sm"
+              onClick={onLoadDemoAndLaunch}
+              disabled={isLoadingDemo}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 dark:bg-[#172238] dark:hover:bg-[#1C2943] dark:text-[#F4F7FB] border border-slate-200 dark:border-[#22324F] hover:border-slate-300 dark:hover:border-[#20D3C2]/40 text-sm font-medium transition-all shadow-sm flex items-center justify-center gap-2"
+              title="Explore demo"
             >
-              See How It Works
+              {isLoadingDemo ? (
+                <div className="w-4 h-4 border-2 border-[#20D3C2] border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <span>Explore demo</span>
+                  <span className="text-xs text-slate-400 dark:text-[#9AA8BC] font-mono">(Find Your Matches)</span>
+                </>
+              )}
             </button>
           </div>
 
           {/* Understated Social Proof */}
-          <div className="editorial-reveal mt-10 pt-6 border-t border-slate-200 dark:border-white/[0.06] flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-500 dark:text-slate-400">
+          <div className="editorial-reveal mt-10 pt-6 border-t border-slate-200 dark:border-[#22324F]/60 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-500 dark:text-[#9AA8BC]">
             <div className="flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-              <span>Designed for independent professionals</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#35D07F]" />
+              <span>Multi-Platform Connector</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-              <span>Upwork, Fiverr & Direct Inbound</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#20D3C2]" />
+              <span>Upwork, Fiverr &amp; Freelancer</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-              <span>100% verified profile claims</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#35D07F]" />
+              <span>100% Verified Profile Claims</span>
             </div>
           </div>
         </div>
 
         {/* ─────────────────────────────────────────────────────────────
-            3. PRODUCT HERO VISUAL (Enhanced with Radial Gauge & Parameter Tuning)
+            3. PRODUCT HERO VISUAL (Miniature UI Representation - Section 8)
         ────────────────────────────────────────────────────────────── */}
-        <div className="editorial-reveal relative max-w-4xl mx-auto rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-xl dark:shadow-[0_16px_50px_rgba(0,0,0,0.5)] overflow-hidden">
-          {/* Subtle real-world atmospheric layer (monochrome desaturated modern workspace) */}
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-[0.04] dark:opacity-[0.06] grayscale pointer-events-none"
-            style={{ backgroundImage: `url(${siteImages.hero})` }}
-          />
-
+        <div className="editorial-reveal relative max-w-4xl mx-auto rounded-3xl bg-white dark:bg-[#172238] border border-slate-200 dark:border-[#22324F] shadow-xl dark:shadow-card overflow-hidden">
           {/* Interface Header Bar */}
-          <div className="relative px-5 py-3.5 border-b border-slate-200 dark:border-white/[0.08] bg-slate-50/90 dark:bg-[#0e111c]/90 flex flex-wrap items-center justify-between gap-3">
+          <div className="relative px-5 py-3.5 border-b border-slate-200 dark:border-[#22324F] bg-slate-50 dark:bg-[#111A2E] flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
               </div>
-              <span className="text-slate-300 dark:text-white/20 hidden sm:inline">|</span>
-              <span className="text-xs font-mono text-slate-600 dark:text-slate-400 uppercase tracking-wider">
-                Live Opportunity Recommendation
+              <span className="text-slate-300 dark:text-[#22324F] hidden sm:inline">|</span>
+              <span className="text-xs font-mono text-slate-600 dark:text-[#9AA8BC] uppercase tracking-wider">
+                Work Opportunity Intelligence — Live Match Preview
               </span>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-slate-600 dark:text-slate-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
-              <span>MATCHING ENGINE: ACTIVE</span>
+            <div className="flex items-center gap-2 text-xs font-mono text-[#20D3C2]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#20D3C2] animate-pulse" />
+              <span>CONNECTOR ENGINE ACTIVE</span>
             </div>
           </div>
 
-          {/* Interactive Parameters Bar (Subtle intelligence demonstration) */}
-          <div className="relative px-5 py-4 bg-slate-50 dark:bg-[#090b12] border-b border-slate-200 dark:border-white/[0.06] flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
-            <div className="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span className="font-semibold text-slate-800 dark:text-slate-300">Test Your Criteria:</span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4 text-slate-700 dark:text-slate-300">
-              {/* Budget Toggle */}
-              <div className="flex items-center gap-2">
-                <span className="text-slate-500 dark:text-slate-400">Target Rate:</span>
-                <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
-                  {[35, 50, 75].map(b => (
-                    <button
-                      key={b}
-                      onClick={() => setHeroBudget(b)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
-                        heroBudget === b ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                      }`}
-                    >
-                      ${b}/hr
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Complexity Toggle */}
-              <div className="flex items-center gap-2">
-                <span className="text-slate-500 dark:text-slate-400">Complexity:</span>
-                <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
-                  {(['Focused', 'Moderate', 'Architectural'] as const).map(c => (
-                    <button
-                      key={c}
-                      onClick={() => setHeroComplexity(c)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
-                        heroComplexity === c ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Hours Toggle */}
-              <div className="flex items-center gap-2">
-                <span className="text-slate-500 dark:text-slate-400">Availability:</span>
-                <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
-                  {[10, 20, 35].map(h => (
-                    <button
-                      key={h}
-                      onClick={() => setHeroAvailability(h)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition-colors ${
-                        heroAvailability === h ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                      }`}
-                    >
-                      {h}h/wk
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Product UI Discovery Card */}
+          {/* Product UI Discovery Card: Shopify Data Entry */}
           <div className="relative p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-slate-200 dark:border-white/[0.08]">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-slate-200 dark:border-[#22324F]">
               <div className="space-y-2">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 font-medium">
-                    Upwork Enterprise
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <span className="text-xs font-mono px-2.5 py-0.5 rounded-lg bg-[#20D3C2]/15 text-[#20D3C2] border border-[#20D3C2]/30 font-bold">
+                    Upwork
                   </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                    Remote · {heroAvailability} hrs/week
+                  <span className="text-xs text-slate-600 dark:text-[#9AA8BC] font-mono">
+                    $60–80 · Entry Level · 3–5 hrs
+                  </span>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#35D07F]/15 text-[#35D07F] border border-[#35D07F]/30">
+                    Risk Low
                   </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white tracking-tight">
-                  Frontend Developer
+                <h3 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-[#F4F7FB] tracking-tight font-display">
+                  Shopify Data Entry
                 </h3>
-                <p className="text-sm font-mono text-slate-600 dark:text-slate-400">
-                  React / TypeScript Architect · $45–$65/hr
+                <p className="text-sm text-slate-600 dark:text-[#9AA8BC]">
+                  Upwork · $60–80 · Entry Level · Verified Payment Client
                 </p>
-                <div className="flex items-center gap-2 text-xs font-mono text-slate-500 dark:text-slate-400 pt-1">
-                  <span>★ 4.98 Client ($120k+ spent)</span>
-                  <span>•</span>
-                  <span>Low Risk Verified</span>
-                </div>
               </div>
 
-              {/* SVG Radial Score Gauge (Integrated from GitHub version) */}
-              <div className="flex items-center gap-4 bg-slate-50 sm:bg-slate-100 dark:bg-[#111420] sm:dark:bg-[#090b12] p-4 rounded-xl border border-slate-200 dark:border-white/[0.08] flex-shrink-0">
+              {/* Signature 94 MATCH Circular Indicator */}
+              <div className="flex items-center gap-4 bg-slate-50 dark:bg-[#111A2E] p-4 rounded-2xl border border-slate-200 dark:border-[#22324F] flex-shrink-0">
                 <div className="relative w-20 h-20 flex items-center justify-center">
                   <svg className="w-20 h-20 -rotate-90" viewBox="0 0 100 100">
                     <circle
                       cx="50"
                       cy="50"
                       r="40"
-                      className="stroke-slate-200 dark:stroke-white/[0.08]"
+                      className="stroke-slate-200 dark:stroke-[#22324F]"
                       strokeWidth="7"
                       fill="transparent"
                     />
@@ -700,91 +610,71 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       cx="50"
                       cy="50"
                       r="40"
-                      className="stroke-emerald-600 dark:stroke-emerald-400 transition-all duration-700 ease-out"
+                      className="stroke-[#20D3C2] transition-all duration-700 ease-out"
                       strokeWidth="7"
                       strokeDasharray={2 * Math.PI * 40}
-                      strokeDashoffset={2 * Math.PI * 40 - (heroLiveMatch / 100) * (2 * Math.PI * 40)}
+                      strokeDashoffset={2 * Math.PI * 40 - (94 / 100) * (2 * Math.PI * 40)}
                       strokeLinecap="round"
                       fill="transparent"
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 leading-none">
-                      {heroLiveMatch}
+                    <span className="text-2xl font-extrabold font-mono text-[#20D3C2] leading-none">
+                      94
                     </span>
-                    <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400">SCORE</span>
+                    <span className="text-[9px] font-mono font-bold tracking-wider text-slate-500 dark:text-[#9AA8BC]">MATCH</span>
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-                    Fit Recommendation
-                  </span>
-                  <span className="text-xs font-mono font-semibold text-emerald-700 dark:text-emerald-300 block">
-                    {heroLiveMatch >= 90 ? 'High Fit Recommendation' : 'Moderate Match'}
-                  </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
-                    Top 5% of candidate pool
-                  </span>
+                <div className="space-y-1 text-xs font-mono">
+                  <div className="flex justify-between gap-3 text-slate-600 dark:text-[#9AA8BC]">
+                    <span>Skills</span>
+                    <span className="text-[#20D3C2] font-bold">96%</span>
+                  </div>
+                  <div className="flex justify-between gap-3 text-slate-600 dark:text-[#9AA8BC]">
+                    <span>Experience</span>
+                    <span className="text-[#20D3C2] font-bold">91%</span>
+                  </div>
+                  <div className="flex justify-between gap-3 text-slate-600 dark:text-[#9AA8BC]">
+                    <span>Time fit</span>
+                    <span className="text-[#35D07F] font-bold">94%</span>
+                  </div>
+                  <div className="flex justify-between gap-3 text-slate-600 dark:text-[#9AA8BC]">
+                    <span>Budget</span>
+                    <span className="text-[#F5B942] font-bold">87%</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* "Why this fits you" Evaluation Breakdown */}
+            {/* "Why this matches you" Section (Section 8 Specification) */}
             <div className="space-y-3">
-              <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-                Why this fits you
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06] flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200 block">Skills Overlap</span>
-                    <span className="text-slate-600 dark:text-slate-400">React · TypeScript · Tailwind (100% verified profile match)</span>
-                  </div>
+              <div className="text-xs font-mono uppercase tracking-wider text-[#20D3C2] font-bold flex items-center gap-1.5">
+                <span>✦</span>
+                <span>Why this matches you</span>
+              </div>
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] space-y-2 text-xs sm:text-sm">
+                <div className="flex items-start gap-2.5 text-slate-800 dark:text-[#F4F7FB]">
+                  <Check className="w-4 h-4 text-[#35D07F] mt-0.5 flex-shrink-0" />
+                  <span>Strong Excel and data-entry fit. Estimated 3–5 hours and within your preferred difficulty.</span>
                 </div>
-
-                <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06] flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200 block">Experience Requirement</span>
-                    <span className="text-slate-600 dark:text-slate-400">4+ years background matches client seniority expectations</span>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06] flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200 block">Budget Target</span>
-                    <span className="text-slate-600 dark:text-slate-400">
-                      Within your ${heroBudget}/hr criteria (${heroBudget <= 50 ? 'Strong alignment' : 'Acceptable range'})
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-lg bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06] flex items-start gap-2.5">
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200 block">Time & Availability</span>
-                    <span className="text-slate-600 dark:text-slate-400">
-                      Fits your {heroAvailability} hrs/week calendar without conflicting commitments
-                    </span>
-                  </div>
+                <div className="flex items-start gap-2.5 text-slate-800 dark:text-[#F4F7FB]">
+                  <Check className="w-4 h-4 text-[#35D07F] mt-0.5 flex-shrink-0" />
+                  <span>Fixed budget ($60–80) exceeds your minimum threshold and client payment method is verified.</span>
                 </div>
               </div>
             </div>
 
             {/* Bottom Action Footer */}
-            <div className="pt-4 border-t border-slate-200 dark:border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-3">
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
-                Evaluated against 8 personal criteria · Instant client trust verification
+            <div className="pt-4 border-t border-slate-200 dark:border-[#22324F] flex flex-col sm:flex-row items-center justify-between gap-3">
+              <span className="text-xs text-slate-500 dark:text-[#9AA8BC] font-mono">
+                Evaluated against skills, experience, preferences, availability, and risk.
               </span>
               <button
                 onClick={onLoadDemoAndLaunch}
-                className="w-full sm:w-auto px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#20D3C2] hover:bg-[#5EE7DF] text-[#0B1220] font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
               >
-                <span>View Opportunity in Workspace</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Review opportunity →</span>
               </button>
             </div>
           </div>
@@ -792,146 +682,187 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          4. PROBLEM SECTION: Editorial Visual Story
+          4. PRODUCT STORY: Searching Isn't Matching (Section 9)
       ────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
+      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-[#22324F]">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
-            The Traditional Search Friction
+          <span className="text-xs font-mono uppercase tracking-wider text-[#20D3C2] block mb-3 font-semibold">
+            Product Philosophy
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Freelance search shouldn't feel like this.
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-[#F4F7FB] mb-4 font-display">
+            Searching isn&apos;t matching.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Sorting through unfiltered job boards drains hours of creative energy before you even begin writing a proposal.
+          <p className="text-sm sm:text-base text-slate-600 dark:text-[#9AA8BC] leading-relaxed">
+            Traditional work platforms show users what is available. WorkMatch determines what may actually fit a specific person.
           </p>
         </div>
 
-        {/* Visual Progression: The Friction Pipeline */}
-        <div className="relative mb-12">
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-2.5 text-center">
-            {[
-              { step: '100+ Listings', sub: 'Raw uncurated feeds' },
-              { step: 'Irrelevant Stacks', sub: 'Mismatched skills' },
-              { step: 'Random Budgets', sub: 'Below your rate' },
-              { step: 'Vague Deadlines', sub: 'Unstated expectations' },
-              { step: 'Hours of Comparison', sub: 'Endless open tabs' },
-              { step: '"Is this worth it?"', sub: 'Persistent fatigue', highlight: true }
-            ].map((node, i) => (
-              <div
-                key={i}
-                className={`p-3.5 rounded-xl border transition-colors ${
-                  node.highlight
-                    ? 'bg-rose-50 dark:bg-rose-500/[0.08] border-rose-200 dark:border-rose-500/25 text-rose-700 dark:text-rose-300'
-                    : 'bg-white dark:bg-[#0d1018] border-slate-200 dark:border-white/[0.06] text-slate-800 dark:text-slate-300 shadow-sm'
-                }`}
-              >
-                <span className="text-xs font-semibold block mb-1">{node.step}</span>
-                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">{node.sub}</span>
+        {/* Visual Flow Diagram: WORK OPPORTUNITIES -> USER PROFILE -> AI ANALYSIS -> PERSONALIZED MATCH -> DECISION */}
+        <div className="rounded-3xl bg-white dark:bg-[#172238] border border-slate-200 dark:border-[#22324F] p-6 sm:p-10 shadow-sm dark:shadow-card">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 relative items-stretch">
+            {/* Step 1 */}
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
+              <div>
+                <span className="text-[10px] font-mono text-[#20D3C2] uppercase font-bold tracking-wider block">
+                  STEP 01
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
+                  Work Opportunities
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
+                  Raw uncurated opportunities aggregated across connected platforms.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Transition: Transformation into WorkMatch Clarity */}
-        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-10 text-center shadow-md dark:shadow-none">
-          <span className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-2">
-            The WorkMatch Difference
-          </span>
-          <h3 className="text-2xl sm:text-3xl font-semibold text-slate-900 dark:text-white mb-4">
-            WorkMatch makes the decision simpler.
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed mb-8">
-            Instead of manually cross-referencing dozens of job descriptions, WorkMatch scores every listing against your verified stack, hourly rate, and capacity before you even open it.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06]">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block mb-1">01 · FILTERED INTAKE</span>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Connect your platforms once. Listings with low budgets or irrelevant skills are quietly discarded.
-              </p>
+              <div className="text-[11px] font-mono text-slate-400 dark:text-slate-500 pt-2 border-t border-slate-200 dark:border-[#22324F]">
+                Upwork · Fiverr · Direct
+              </div>
             </div>
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06]">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block mb-1">02 · OBJECTIVE SCORING</span>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                See a transparent 0–100 recommendation metric calculated from 5 mathematical dimensions.
-              </p>
+
+            {/* Step 2 */}
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
+              <div>
+                <span className="text-[10px] font-mono text-[#20D3C2] uppercase font-bold tracking-wider block">
+                  STEP 02
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
+                  User Profile
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
+                  Your verified skills, rate boundaries, and availability window.
+                </p>
+              </div>
+              <div className="text-[11px] font-mono text-[#35D07F] pt-2 border-t border-slate-200 dark:border-[#22324F]">
+                100% Truthful Facts
+              </div>
             </div>
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#0e111a] border border-slate-200 dark:border-white/[0.06]">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block mb-1">03 · TRUTHFUL PROPOSALS</span>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Draft compelling proposals constrained strictly by verified work history—never fabricating skills.
-              </p>
+
+            {/* Step 3 */}
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
+              <div>
+                <span className="text-[10px] font-mono text-[#20D3C2] uppercase font-bold tracking-wider block">
+                  STEP 03
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
+                  AI Analysis
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
+                  Evaluates effort, complexity, budget, deadline, and communication.
+                </p>
+              </div>
+              <div className="text-[11px] font-mono text-[#20D3C2] pt-2 border-t border-slate-200 dark:border-[#22324F]">
+                Deep Dimension Scan
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
+              <div>
+                <span className="text-[10px] font-mono text-[#20D3C2] uppercase font-bold tracking-wider block">
+                  STEP 04
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
+                  Personalized Match
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
+                  Calculates exact fit score (0–100) and transparent reasoning.
+                </p>
+              </div>
+              <div className="text-[11px] font-mono text-[#20D3C2] font-bold pt-2 border-t border-slate-200 dark:border-[#22324F]">
+                Explainable Score
+              </div>
+            </div>
+
+            {/* Step 5 */}
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
+              <div>
+                <span className="text-[10px] font-mono text-[#35D07F] uppercase font-bold tracking-wider block">
+                  STEP 05
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
+                  Decision
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
+                  Apply with truthful tailored evidence or dismiss with feedback.
+                </p>
+              </div>
+              <div className="text-[11px] font-mono text-[#35D07F] pt-2 border-t border-slate-200 dark:border-[#22324F]">
+                Informed Action
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          5. COMPLETE PRODUCT WORKFLOW: 5-Stage Storytelling
+          5. COMPLETE PRODUCT WORKFLOW: 6 Stages (Section 10)
       ────────────────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-[#22324F]">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
+          <span className="text-xs font-mono uppercase tracking-wider text-[#20D3C2] block mb-3 font-semibold">
             End-to-End Workflow
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            The Complete Freelance Workflow
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-[#F4F7FB] mb-4 font-display">
+            How WorkMatch Works
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            From initial multi-channel intake through to application delivery and milestone tracking.
+          <p className="text-sm sm:text-base text-slate-600 dark:text-[#9AA8BC] leading-relaxed">
+            From initial multi-channel connection through to application dispatch and continuous learning.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[
             {
               step: '01',
-              title: 'Discover',
-              subtitle: 'Multi-Marketplace Intake',
-              desc: 'Normalizes active listings from Upwork, Fiverr, and direct leads into a unified, deduplicated feed.'
+              title: 'Connect',
+              subtitle: 'Connect work platforms',
+              desc: 'Securely link Upwork, Fiverr, Freelancer, and direct feeds through connectors that respect privacy and terms of service.'
             },
             {
               step: '02',
-              title: 'Evaluate',
-              subtitle: 'Mathematical Fit Score',
-              desc: 'Scores opportunities across skills, budget floor, client reputation, and availability.'
+              title: 'Discover',
+              subtitle: 'Collect relevant opportunities',
+              desc: 'Collects and normalizes live opportunities into a single unified stream, deduplicating listings across platforms.'
             },
             {
               step: '03',
               title: 'Understand',
-              subtitle: 'Transparent Reasoning',
-              desc: 'Detailed checklists show exactly why a contract fits your declared profile without guesswork.'
+              subtitle: 'Analyze job requirements',
+              desc: 'Analyzes client expectations, technical effort, deadline pressure, budget quality, communication demands, and complexity.'
             },
             {
               step: '04',
-              title: 'Prepare',
-              subtitle: 'Truth-Checked Drafts',
-              desc: 'Synthesizes structured proposals strictly constrained by verified experience under complete human review.'
+              title: 'Match',
+              subtitle: 'Compare against user profile',
+              desc: 'Compares each opportunity against your verified skills, experience, target rates, availability, and past preferences.'
             },
             {
               step: '05',
-              title: 'Track',
-              subtitle: 'Unified Pipeline',
-              desc: 'Keeps your opportunities, sent applications, and active contracts organized in a single quiet board.'
+              title: 'Apply',
+              subtitle: 'Create truthful applications',
+              desc: 'Assists in generating truthful, personalized proposals based solely on verified experience—never hallucinating false claims.'
+            },
+            {
+              step: '06',
+              title: 'Learn',
+              subtitle: 'Continuous recommendation tuning',
+              desc: 'Learns from your acceptance, rejection reasons, and application outcomes to sharpen future recommendation accuracy.'
             }
           ].map((item, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] transition-colors flex flex-col justify-between shadow-sm hover:shadow-md"
+              className="p-6 rounded-2xl bg-white dark:bg-[#172238] border border-slate-200 dark:border-[#22324F] hover:border-slate-300 dark:hover:border-[#20D3C2]/40 transition-all flex flex-col justify-between shadow-sm hover:shadow-card group"
             >
               <div>
-                <span className="text-xl font-mono font-semibold text-slate-400 dark:text-slate-500 mb-2 block">
+                <span className="text-2xl font-mono font-bold text-[#20D3C2] mb-3 block">
                   {item.step}
                 </span>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-0.5">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-[#F4F7FB] mb-1 font-display">
                   {item.title}
                 </h3>
-                <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 block mb-2">
+                <span className="text-xs font-mono text-[#20D3C2] block mb-2 font-medium">
                   {item.subtitle}
                 </span>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -2045,6 +1976,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="space-y-3">
           {[
             {
+              q: 'How does WorkMatch prevent ToS account bans?',
+              a: 'WorkMatch strictly forbids automated submission bots. It operates as an intelligence and decision-support assistant: every proposal draft is audited against your verified profile, and submission is always controlled by you.'
+            },
+            {
               q: 'Does WorkMatch apply to jobs automatically without my approval?',
               a: 'No. WorkMatch is an intelligence and decision-support tool, not an autonomous spam bot. Every proposal draft must be reviewed, confirmed, and dispatched by you.'
             },
@@ -2107,10 +2042,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               Begin Decision Discovery
             </span>
             <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
-              Your next opportunity should fit.
+              Your next opportunity is already out there. Find the ones worth pursuing.
             </h2>
             <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
-              Stop sorting through jobs that aren't right for you. Explore the live sandbox demo right now.
+              Connect your work platforms and let AI evaluate opportunities based on your skills, experience, preferences, availability, effort, budget, and history.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">

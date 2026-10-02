@@ -14,6 +14,8 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { NormalizedJob } from '../../types/index.js';
+import { MatchScore } from '../common/MatchScore.js';
+import { WhyThisMatches } from '../common/WhyThisMatches.js';
 
 interface JobsViewProps {
   jobs: NormalizedJob[];
@@ -70,9 +72,9 @@ export const JobsView: React.FC<JobsViewProps> = ({
 
     if (searchQuery.trim().length > 0) {
       const q = searchQuery.toLowerCase();
-      const matchTitle = j.title.toLowerCase().includes(q);
-      const matchDesc = j.description.toLowerCase().includes(q);
-      const matchClient = j.client.name.toLowerCase().includes(q);
+      const matchTitle = (j.title || '').toLowerCase().includes(q);
+      const matchDesc = (j.description || '').toLowerCase().includes(q);
+      const matchClient = (j.client?.name || '').toLowerCase().includes(q);
       if (!matchTitle && !matchDesc && !matchClient) return false;
     }
 
@@ -85,18 +87,18 @@ export const JobsView: React.FC<JobsViewProps> = ({
       return (b.score?.overall_score || 0) - (a.score?.overall_score || 0);
     }
     if (sortBy === 'highest_budget') {
-      const aBudget = a.budget.max || a.budget.min || 0;
-      const bBudget = b.budget.max || b.budget.min || 0;
+      const aBudget = a.budget?.max || a.budget?.min || 0;
+      const bBudget = b.budget?.max || b.budget?.min || 0;
       return bBudget - aBudget;
     }
     if (sortBy === 'lowest_competition') {
-      return (a.competition.proposal_count || 0) - (b.competition.proposal_count || 0);
+      return (a.competition?.proposal_count || 0) - (b.competition?.proposal_count || 0);
     }
     if (sortBy === 'lowest_difficulty') {
       return (b.score?.difficulty_score || 0) - (a.score?.difficulty_score || 0);
     }
     // newest
-    return new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime();
+    return new Date(b.posted_at || 0).getTime() - new Date(a.posted_at || 0).getTime();
   });
 
   const handleConfirmIgnore = () => {
@@ -396,7 +398,7 @@ export const JobsView: React.FC<JobsViewProps> = ({
                 </div>
 
                 {/* Why It Matches Highlight */}
-                {job.score?.explanation.why_matches && job.score.explanation.why_matches.length > 0 && (
+                {job.score?.explanation?.why_matches && job.score.explanation.why_matches.length > 0 && (
                   <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/90 dark:bg-surface-900/80 border border-slate-200/80 dark:border-white/[0.06] text-xs text-slate-700 dark:text-slate-300 space-y-2">
                     <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Why It Matches You:
@@ -416,14 +418,14 @@ export const JobsView: React.FC<JobsViewProps> = ({
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3.5 border-t border-slate-200 dark:border-white/[0.06] text-xs">
                   <div className="flex items-center gap-4 text-slate-600 dark:text-slate-400 text-xs flex-wrap font-medium">
                     <span className="font-bold text-emerald-700 dark:text-emerald-300 font-mono text-sm">
-                      {job.budget.type === 'fixed'
-                        ? `$${job.budget.max || job.budget.min || 0} Fixed`
-                        : `$${job.budget.min}-$${job.budget.max}/hr`}
+                      {job.budget?.type === 'fixed'
+                        ? `$${job.budget?.max || job.budget?.min || 0} Fixed`
+                        : `$${job.budget?.min || 0}-$${job.budget?.max || 0}/hr`}
                     </span>
                     <span className="text-slate-300 dark:text-slate-600">•</span>
-                    <span>Client: <strong className="text-slate-800 dark:text-slate-200">{job.client.rating ? `${job.client.rating}★` : 'Verified'}</strong> ({job.client.country || 'Global'})</span>
+                    <span>Client: <strong className="text-slate-800 dark:text-slate-200">{job.client?.rating ? `${job.client.rating}★` : 'Verified'}</strong> ({job.client?.country || 'Global'})</span>
                     <span className="text-slate-300 dark:text-slate-600">•</span>
-                    <span>Proposals: <strong className="text-slate-800 dark:text-slate-200">{job.competition.proposal_count || 0}</strong></span>
+                    <span>Proposals: <strong className="text-slate-800 dark:text-slate-200">{job.competition?.proposal_count || 0}</strong></span>
                     <span className="text-slate-300 dark:text-slate-600">•</span>
                     <span>Skill Match: <strong className="text-emerald-700 dark:text-emerald-400 font-mono font-bold">{job.score?.skill_score || 80}%</strong></span>
                   </div>

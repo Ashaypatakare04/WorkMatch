@@ -376,7 +376,7 @@ function AppContent() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-slate-50 dark:bg-transparent text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
+      <div className="min-h-screen bg-[#F7F9FC] dark:bg-[#0B1220] text-slate-900 dark:text-[#F4F7FB] flex flex-col font-sans transition-colors duration-200">
         {/* Top Navigation */}
         <Navbar
           automationSettings={automationSettings}
@@ -477,43 +477,51 @@ function AppContent() {
                 />
               )}
 
-              {currentTab === 'profile' && profile && (
-                <ProfileView
-                  profile={profile}
-                  learnedInsights={learnedInsights}
-                  onUpdateProfile={async updated => {
-                    const res = await api.updateProfile(updated);
-                    setProfile(res);
-                    success('Profile Saved', 'Capability profile updated.');
-                  }}
-                  onUpdateSkills={async skills => {
-                    const res = await api.updateSkills(skills);
-                    setProfile(prev => (prev ? { ...prev, skills: res } : null));
-                    success('Skills Saved', 'Verified skills inventory updated.');
-                  }}
-                  onUpdatePreferences={async prefs => {
-                    const res = await api.updatePreferences(prefs);
-                    setProfile(prev => (prev ? { ...prev, preferences: res } : null));
-                    success('Preferences Saved', 'Matching criteria weights saved.');
-                  }}
-                  onRefreshLearned={async () => {
-                    const res = await api.refreshLearnedInsights();
-                    setLearnedInsights(res);
-                    success('Insights Refreshed', 'Preference patterns updated.');
-                  }}
-                />
+              {currentTab === 'profile' && (
+                profile ? (
+                  <ProfileView
+                    profile={profile}
+                    learnedInsights={learnedInsights}
+                    onUpdateProfile={async updated => {
+                      const res = await api.updateProfile(updated);
+                      setProfile(res);
+                      success('Profile Saved', 'Capability profile updated.');
+                    }}
+                    onUpdateSkills={async skills => {
+                      const res = await api.updateSkills(skills);
+                      setProfile(prev => (prev ? { ...prev, skills: res } : null));
+                      success('Skills Saved', 'Verified skills inventory updated.');
+                    }}
+                    onUpdatePreferences={async prefs => {
+                      const res = await api.updatePreferences(prefs);
+                      setProfile(prev => (prev ? { ...prev, preferences: res } : null));
+                      success('Preferences Saved', 'Matching criteria weights saved.');
+                    }}
+                    onRefreshLearned={async () => {
+                      const res = await api.refreshLearnedInsights();
+                      setLearnedInsights(res);
+                      success('Insights Refreshed', 'Preference patterns updated.');
+                    }}
+                  />
+                ) : (
+                  <ViewLoading />
+                )
               )}
 
-              {currentTab === 'automation' && automationSettings && (
-                <AutomationView
-                  settings={automationSettings}
-                  onUpdateSettings={async updated => {
-                    const res = await api.updateAutomationSettings(updated);
-                    setAutomationSettings(res);
-                    success('Safety Settings Saved', 'Automation rate limits updated.');
-                  }}
-                  onEmergencyStop={handleEmergencyStop}
-                />
+              {currentTab === 'automation' && (
+                automationSettings ? (
+                  <AutomationView
+                    settings={automationSettings}
+                    onUpdateSettings={async updated => {
+                      const res = await api.updateAutomationSettings(updated);
+                      setAutomationSettings(res);
+                      success('Safety Settings Saved', 'Automation rate limits updated.');
+                    }}
+                    onEmergencyStop={handleEmergencyStop}
+                  />
+                ) : (
+                  <ViewLoading />
+                )
               )}
 
               {currentTab === 'settings' && (

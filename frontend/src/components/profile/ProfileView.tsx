@@ -26,6 +26,18 @@ interface ProfileViewProps {
   onRefreshLearned: () => void;
 }
 
+const defaultWeights: DifficultyWeights = {
+  skill_match: 0.25,
+  technical_complexity: 0.15,
+  experience_requirement: 0.15,
+  time_requirement: 0.10,
+  client_expectations: 0.10,
+  deadline: 0.05,
+  communication: 0.05,
+  budget: 0.10,
+  personal_skill: 0.05
+};
+
 export const ProfileView: React.FC<ProfileViewProps> = ({
   profile,
   learnedInsights,
@@ -34,16 +46,16 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onUpdatePreferences,
   onRefreshLearned
 }) => {
-  const [headline, setHeadline] = useState(profile.headline);
-  const [bio, setBio] = useState(profile.bio);
-  const [hourlyRate, setHourlyRate] = useState(profile.hourly_rate);
-  const [hoursPerDay, setHoursPerDay] = useState(profile.availability_hours_per_day);
-  const [skills, setSkills] = useState<UserSkill[]>(profile.skills || []);
-  const [weights, setWeights] = useState<DifficultyWeights>(profile.preferences.difficulty_weights);
+  const [headline, setHeadline] = useState(profile?.headline || '');
+  const [bio, setBio] = useState(profile?.bio || '');
+  const [hourlyRate, setHourlyRate] = useState(profile?.hourly_rate || 35);
+  const [hoursPerDay, setHoursPerDay] = useState(profile?.availability_hours_per_day || 6);
+  const [skills, setSkills] = useState<UserSkill[]>(profile?.skills || []);
+  const [weights, setWeights] = useState<DifficultyWeights>(profile?.preferences?.difficulty_weights || defaultWeights);
   const [newSkillName, setNewSkillName] = useState('');
   const [newSkillLevel, setNewSkillLevel] = useState<UserSkill['proficiency_level']>('Intermediate');
   const [newExclusion, setNewExclusion] = useState('');
-  const [exclusions, setExclusions] = useState<string[]>(profile.preferences.excluded_keywords || []);
+  const [exclusions, setExclusions] = useState<string[]>(profile?.preferences?.excluded_keywords || []);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -75,7 +87,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     if (newExclusion.trim() && !exclusions.includes(newExclusion.trim())) {
       const updated = [...exclusions, newExclusion.trim()];
       setExclusions(updated);
-      onUpdatePreferences({ ...profile.preferences, excluded_keywords: updated });
+      onUpdatePreferences({ ...(profile?.preferences || {}), excluded_keywords: updated });
       setNewExclusion('');
     }
   };
@@ -83,13 +95,13 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   const handleRemoveExclusion = (item: string) => {
     const updated = exclusions.filter(e => e !== item);
     setExclusions(updated);
-    onUpdatePreferences({ ...profile.preferences, excluded_keywords: updated });
+    onUpdatePreferences({ ...(profile?.preferences || {}), excluded_keywords: updated });
   };
 
   const handleWeightChange = (key: keyof DifficultyWeights, value: number) => {
     const updated = { ...weights, [key]: value };
     setWeights(updated);
-    onUpdatePreferences({ ...profile.preferences, difficulty_weights: updated });
+    onUpdatePreferences({ ...(profile?.preferences || {}), difficulty_weights: updated });
   };
 
   const handleSaveProfileCore = () => {

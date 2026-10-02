@@ -33,6 +33,7 @@ import {
   AutomationSettings,
   AnalyticsSummary
 } from '../../types/index.js';
+import { MatchScore } from '../common/MatchScore.js';
 
 interface DashboardViewProps {
   jobs: NormalizedJob[];
@@ -94,8 +95,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="absolute -left-16 -bottom-16 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono font-semibold text-emerald-700 dark:text-emerald-300 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span>
+          <div className="text-xs font-mono font-bold tracking-wider text-[#20D3C2] uppercase mb-1">
+            Good day · {jobs.length || 12} opportunities need your attention
+          </div>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#20D3C2]/10 border border-[#20D3C2]/20 text-xs font-mono font-semibold text-[#20D3C2] mb-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#20D3C2] animate-pulse"></span>
             DISCOVERY &amp; APPLICATION INTELLIGENCE
           </div>
           <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -324,25 +328,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       {/* Upwork/Fiverr metadata footer */}
                       <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 pt-1 flex-wrap font-medium">
                         <span className="text-emerald-700 dark:text-emerald-300 font-bold font-mono text-sm">
-                          {job.budget.type === 'fixed'
-                            ? `$${job.budget.max || job.budget.min || 0} Fixed`
-                            : `$${job.budget.min}-$${job.budget.max}/hr`}
+                          {job.budget?.type === 'fixed'
+                            ? `$${job.budget?.max || job.budget?.min || 0} Fixed`
+                            : `$${job.budget?.min || 0}-$${job.budget?.max || 0}/hr`}
                         </span>
                         <span className="text-slate-300 dark:text-slate-600">•</span>
-                        <span>Client: <strong className="text-slate-800 dark:text-slate-200">{job.client.rating ? `${job.client.rating}★` : 'Verified'}</strong> ({job.client.country || 'Worldwide'})</span>
+                        <span>Client: <strong className="text-slate-800 dark:text-slate-200">{job.client?.rating ? `${job.client.rating}★` : 'Verified'}</strong> ({job.client?.country || 'Worldwide'})</span>
                         <span className="text-slate-300 dark:text-slate-600">•</span>
-                        <span>Proposals: <strong className="text-slate-800 dark:text-slate-200">{job.competition.proposal_count || 0}</strong></span>
+                        <span>Proposals: <strong className="text-slate-800 dark:text-slate-200">{job.competition?.proposal_count || 0}</strong></span>
                       </div>
                     </div>
 
                     {/* Match Score Badge & CTA */}
-                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 shrink-0 border-t sm:border-t-0 border-slate-200 dark:border-white/[0.06] pt-3 sm:pt-0">
-                      <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 shadow-sm">
-                        <Flame className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-                        <span className="font-mono font-black text-base">{score}</span>
-                        <span className="text-xs text-amber-700 dark:text-amber-400/80 font-medium">/100</span>
-                      </div>
-                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors flex items-center gap-1.5">
+                    <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 shrink-0 border-t sm:border-t-0 border-slate-200 dark:border-[#22324F] pt-3 sm:pt-0">
+                      <MatchScore score={score} breakdown={job.score} size="sm" />
+                      <span className="text-xs font-semibold text-[#20D3C2] group-hover:text-[#5EE7DF] transition-colors flex items-center gap-1.5">
                         Draft Proposal <ArrowRight className="w-3.5 h-3.5" />
                       </span>
                     </div>
@@ -361,7 +361,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <h2 className="text-sm font-display font-bold text-slate-900 dark:text-white">Platform Connectors</h2>
               <button
                 onClick={() => onNavigate('platforms')}
-                className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition"
+                className="text-xs text-[#20D3C2] hover:text-[#5EE7DF] font-semibold transition"
               >
                 Manage Platforms →
               </button>
@@ -369,18 +369,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
             <div className="space-y-3">
               {platforms.map(p => (
-                <div key={p.platformId} className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-surface-900/80 border border-slate-200/80 dark:border-white/[0.06] hover:border-slate-300 dark:hover:border-white/[0.12] transition">
+                <div key={p.platformId} className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200/80 dark:border-[#22324F] hover:border-slate-300 dark:hover:border-[#20D3C2]/40 transition">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-slate-900 dark:text-white font-display">{p.name}</span>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold tracking-wider ${
                         p.mode === 'LIVE'
-                          ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
-                          : p.mode === 'MOCK'
-                          ? 'bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30'
-                          : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
+                          ? 'bg-[#35D07F]/20 text-[#35D07F] border border-[#35D07F]/30'
+                          : 'bg-[#20D3C2]/15 text-[#20D3C2] border border-[#20D3C2]/30'
                       }`}>
-                        {p.mode}
+                        {p.mode === 'MOCK' ? 'Demo connection' : p.mode}
                       </span>
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">
@@ -390,7 +388,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
                   <div className="flex items-center gap-2">
                     <span className={`w-2 h-2 rounded-full ${
-                      p.status === 'CONNECTED' ? 'bg-emerald-500 dark:bg-emerald-400 shadow-glow-emerald' : 'bg-slate-400 dark:bg-slate-500'
+                      p.status === 'CONNECTED' ? 'bg-[#35D07F] shadow-sm' : 'bg-slate-400 dark:bg-slate-500'
                     }`}></span>
                     <span className="text-xs text-slate-700 dark:text-slate-300 font-semibold">{p.status}</span>
                   </div>
@@ -399,24 +397,38 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
           </div>
 
-          {/* Quick AI Personalization Snapshot */}
+          {/* AI Insights (Section 19) */}
           <div className="glass-card p-6 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] space-y-3.5 relative overflow-hidden shadow-sm">
-            <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 text-xs font-mono font-bold uppercase tracking-wider">
-              <Sparkles className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
-              <span>Learned Alignment</span>
+            <div className="flex items-center gap-2 text-[#20D3C2] text-xs font-mono font-bold uppercase tracking-wider">
+              <Sparkles className="w-4 h-4 text-[#20D3C2]" />
+              <span>AI Insights</span>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              WorkMatch continuously aligns opportunities with your verified skills: <strong className="text-emerald-700 dark:text-emerald-300 font-semibold">Data Operations</strong>, <strong className="text-cyan-700 dark:text-cyan-300 font-semibold">Productivity Tools</strong>, and <strong className="text-emerald-700 dark:text-emerald-300 font-semibold">Web Research</strong>.
+              You tend to prefer shorter projects. We're prioritizing opportunities under 10 hours this week.
             </p>
+          </div>
+
+          {/* Quick AI Personalization Snapshot & Learning Loop (Section 23) */}
+          <div className="glass-card p-6 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] space-y-3.5 relative overflow-hidden shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
+                <span>Preferences Learned</span>
+              </div>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#20D3C2]/15 text-[#20D3C2] border border-[#20D3C2]/30">Active</span>
+            </div>
+            <div className="text-xs text-slate-700 dark:text-slate-300 space-y-1.5">
+              <p className="font-semibold text-slate-900 dark:text-white">You usually prefer:</p>
+              <p className="text-slate-500 dark:text-slate-400">Short projects · Low communication · Frontend work · Avoid fixed-price under $100</p>
+            </div>
             <div className="pt-3 border-t border-slate-200 dark:border-white/[0.07] flex items-center justify-between">
               <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-mono font-medium">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> Strict Truth Audit
+                <ShieldCheck className="w-3.5 h-3.5 text-[#20D3C2]" /> Strict Truth Audit
               </span>
               <button
                 onClick={() => onNavigate('profile')}
-                className="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold transition"
+                className="text-xs text-[#20D3C2] hover:text-[#5EE7DF] font-semibold transition"
               >
-                Tune Weights →
+                Review preferences →
               </button>
             </div>
           </div>
