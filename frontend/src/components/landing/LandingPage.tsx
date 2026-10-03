@@ -1,173 +1,38 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import {
   ArrowRight,
-  ArrowUpRight,
   Check,
-  CheckCircle2,
-  Sliders,
-  SlidersHorizontal,
-  Search,
-  Briefcase,
-  Clock,
-  DollarSign,
-  Layers,
-  ShieldCheck,
-  ShieldAlert,
   ChevronDown,
   ChevronUp,
-  ExternalLink,
-  Copy,
   Menu,
   X,
-  Zap,
-  Filter,
-  Eye,
-  Send,
-  Inbox,
-  FileCheck,
-  Building,
-  Target,
   Sparkles,
-  RefreshCw
+  ShieldCheck,
+  Compass,
+  Zap,
+  Target
 } from 'lucide-react';
-import { Logo, LogoIcon } from '../common/Logo.js';
 import { ThemeToggle } from '../common/ThemeToggle.js';
+import { CustomCursor } from './CustomCursor.js';
+import { Hero3DSection } from './Hero3DSection.js';
+import { HeroProductWindow } from './showcase/HeroProductWindow.js';
+import { InteractiveProfileScreen } from './showcase/InteractiveProfileScreen.js';
+import { IntelligentAnalysisMockup } from './showcase/IntelligentAnalysisMockup.js';
+import { MatchScoreEngine } from './MatchScoreEngine.js';
+import { WhyThisJobInteractiveCard } from './showcase/WhyThisJobInteractiveCard.js';
+import { OpportunityComparisonCards } from './showcase/OpportunityComparisonCards.js';
+import { DecisionSimulatorScreen } from './showcase/DecisionSimulatorScreen.js';
+import { AutomationRadarDashboard } from './showcase/AutomationRadarDashboard.js';
+import { WorkflowJourneyTraveler } from './showcase/WorkflowJourneyTraveler.js';
+import { UniverseFilterVisualizer } from './UniverseFilterVisualizer.js';
+import { JobMatchCard3D } from './JobMatchCard3D.js';
 
 interface LandingPageProps {
   onLaunchApp: () => void;
   onLoadDemoAndLaunch: () => void;
   isLoadingDemo?: boolean;
 }
-
-// Editorial Real Photography Assets (Unsplash verified)
-const siteImages = {
-  hero: '/images/workspace-hero.jpg',
-  workspace: '/images/freelancer-desk.jpg',
-  editorial: '/images/talent-collaboration.jpg',
-  craft: '/images/developer-code.jpg',
-  analytics: '/images/analytics-dashboard.jpg',
-  finance: '/images/financial-chart.jpg'
-};
-
-interface OpportunityData {
-  id: string;
-  title: string;
-  role: string;
-  platform: 'Upwork' | 'Fiverr' | 'Direct Inbound';
-  budget: string;
-  rateRange: string;
-  hourlyRate: number;
-  timeEstimate: string;
-  hoursPerWeek: number;
-  complexity: 'Low' | 'Medium' | 'High';
-  clientRep: string;
-  clientSpent: string;
-  skills: string[];
-  matchScore: number;
-  factors: {
-    skills: number;
-    budget: number;
-    experience: number;
-    time: number;
-    reputation: number;
-  };
-  whyItFits: string[];
-  summary: string;
-}
-
-const sampleOpportunities: OpportunityData[] = [
-  {
-    id: 'frontend-lead',
-    title: 'Senior Frontend Architect — React & TypeScript',
-    role: 'Frontend Developer',
-    platform: 'Upwork',
-    budget: '$45–$65/hr',
-    rateRange: '$45–$65/hr',
-    hourlyRate: 55,
-    timeEstimate: '20 hrs/week · 3 months',
-    hoursPerWeek: 20,
-    complexity: 'Medium',
-    clientRep: '★ 4.98 Rating',
-    clientSpent: '$120k+ spent',
-    skills: ['React 18', 'TypeScript', 'Tailwind CSS', 'Vite'],
-    matchScore: 94,
-    factors: {
-      skills: 98,
-      budget: 94,
-      experience: 96,
-      time: 92,
-      reputation: 98
-    },
-    whyItFits: [
-      'Uses core technologies verified in your declared stack (React 18, TypeScript)',
-      'Budget ($45–$65/hr) comfortably exceeds your $40/hr target floor',
-      '20 hrs/week workload aligns with your active availability window',
-      'Client holds 4.98 rating across $120k+ in verified completed contracts'
-    ],
-    summary: 'Design and implement high-performance modular frontend interfaces for a real-time analytics dashboard.'
-  },
-  {
-    id: 'fullstack-analytics',
-    title: 'Full-Stack Dashboard Engineer — Node.js & Next.js',
-    role: 'Full Stack Engineer',
-    platform: 'Direct Inbound',
-    budget: '$50–$75/hr',
-    rateRange: '$50–$75/hr',
-    hourlyRate: 65,
-    timeEstimate: '15 hrs/week · Ongoing',
-    hoursPerWeek: 15,
-    complexity: 'Medium',
-    clientRep: '★ 5.0 Enterprise',
-    clientSpent: '$240k+ spent',
-    skills: ['Next.js 15', 'TypeScript', 'PostgreSQL', 'Tailwind'],
-    matchScore: 91,
-    factors: {
-      skills: 92,
-      budget: 96,
-      experience: 94,
-      time: 88,
-      reputation: 95
-    },
-    whyItFits: [
-      'Matches your full-stack capability with zero unverified requirements',
-      'High-tier hourly compensation with predictable bi-weekly escrow payouts',
-      'Flexible async workflow with under 2 hours of synchronous meetings per week',
-      'Clear technical milestone definitions with verified stakeholder sign-off'
-    ],
-    summary: 'Develop sub-100ms analytics queries, server actions, and chart visualizations for an executive operations portal.'
-  },
-  {
-    id: 'mobile-systems',
-    title: 'Mobile Systems Engineer — React Native & Expo',
-    role: 'Mobile Engineer',
-    platform: 'Fiverr',
-    budget: '$4,200 Fixed',
-    rateRange: '$60/hr equivalent',
-    hourlyRate: 60,
-    timeEstimate: '25 hrs/week · 4 weeks',
-    hoursPerWeek: 25,
-    complexity: 'High',
-    clientRep: '★ 4.95 Pro Client',
-    clientSpent: '$45k+ spent',
-    skills: ['React Native', 'Expo', 'TypeScript', 'REST APIs'],
-    matchScore: 88,
-    factors: {
-      skills: 90,
-      budget: 91,
-      experience: 88,
-      time: 84,
-      reputation: 92
-    },
-    whyItFits: [
-      'Strong architectural overlap with cross-platform mobile specifications',
-      'Fixed-milestone escrow backed by verified upfront deposit',
-      'Clean handoff documentation with established design tokens in Figma',
-      'Well-scoped 4-week delivery with pre-approved technical specifications'
-    ],
-    summary: 'Build an offline-first inventory management application for field technicians with camera scanning.'
-  }
-];
 
 export const LandingPage: React.FC<LandingPageProps> = ({
   onLaunchApp,
@@ -176,43 +41,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Navigation State
+  // Navigation & Scroll State
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeStoryStage, setActiveStoryStage] = useState('01 PROFILE');
 
-  // Hero Interactive Preview State (Subtle technology demonstration without AI clichés)
-  const [heroBudget, setHeroBudget] = useState<number>(50);
-  const [heroComplexity, setHeroComplexity] = useState<'Focused' | 'Moderate' | 'Architectural'>('Moderate');
-  const [heroAvailability, setHeroAvailability] = useState<number>(20);
-
-  // Match Analysis Selected Opportunity
-  const [selectedOppId, setSelectedOppId] = useState<string>('frontend-lead');
-
-  // Job Discovery Category Filter
-  const [activeCategory, setActiveCategory] = useState<'all' | 'frontend' | 'fullstack' | 'mobile'>('all');
-
-  // Interactive Formula Simulator State (Ported from GitHub version with refined design)
-  const [simSkillFit, setSimSkillFit] = useState<number>(88);
-  const [simExperience, setSimExperience] = useState<number>(94);
-  const [simHourlyRate, setSimHourlyRate] = useState<number>(85);
-  const [simComplexity, setSimComplexity] = useState<'Focused' | 'Moderate' | 'Architectural'>('Moderate');
-  const [simDeadline, setSimDeadline] = useState<'Flexible' | 'Standard' | 'Urgent'>('Standard');
-
-  // Interactive ROI Calculator State (Ported from GitHub version)
-  const [monthlyProposals, setMonthlyProposals] = useState<number>(30);
-
-  // Interactive Personalization Controls
-  const [prefRateFloor, setPrefRateFloor] = useState<number>(40);
-  const [prefExperience, setPrefExperience] = useState<'Mid' | 'Senior' | 'Lead'>('Senior');
-  const [prefHours, setPrefHours] = useState<number>(20);
-  const [prefComplexity, setPrefComplexity] = useState<'Focused' | 'Moderate' | 'Architectural'>('Moderate');
-
-  // Proposal Studio Persona, Copy & Human Review Checkbox
-  const [proposalAngle, setProposalAngle] = useState<'direct' | 'technical' | 'consultative'>('direct');
-  const [isCopied, setIsCopied] = useState<boolean>(false);
-  const [humanReviewApproved, setHumanReviewApproved] = useState<boolean>(true);
-
-  // FAQ State
+  // FAQ Accordion State (preserving tests)
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Track scroll position for navbar compaction and story progress
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      setIsScrolled(scrollY > 40);
+
+      // Simple viewport progress tracker
+      if (scrollY < 800) {
+        setActiveStoryStage('01 PROFILE');
+      } else if (scrollY < 2200) {
+        setActiveStoryStage('02 DISCOVER');
+      } else if (scrollY < 4200) {
+        setActiveStoryStage('03 MATCH');
+      } else {
+        setActiveStoryStage('04 DECIDE');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Smooth scroll helper
   const handleScrollTo = (id: string) => {
@@ -223,12 +80,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     }
   };
 
-  // GSAP subtle entrance animation
+  // GSAP entrance animation
   useEffect(() => {
     if (!containerRef.current) return;
+    const targets = containerRef.current.querySelectorAll('.landing-reveal');
+    if (!targets || targets.length === 0) return;
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        '.editorial-reveal',
+        targets,
         { opacity: 0, y: 16 },
         { opacity: 1, y: 0, duration: 0.6, stagger: 0.08, ease: 'power2.out' }
       );
@@ -236,170 +95,106 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     return () => ctx.revert();
   }, []);
 
-  // Compute live match score in hero preview based on user parameters
-  const heroLiveMatch = useMemo(() => {
-    let score = 94;
-    if (heroBudget >= 60) score -= 3;
-    if (heroBudget <= 35) score += 2;
-    if (heroComplexity === 'Moderate') score += 2;
-    if (heroComplexity === 'Architectural') score -= 4;
-    if (heroAvailability === 20) score += 1;
-    if (heroAvailability > 25) score -= 4;
-    return Math.min(99, Math.max(76, score));
-  }, [heroBudget, heroComplexity, heroAvailability]);
-
-  // Selected opportunity for Match Analysis
-  const currentAnalysisOpp = useMemo(() => {
-    return sampleOpportunities.find(o => o.id === selectedOppId) || sampleOpportunities[0];
-  }, [selectedOppId]);
-
-  // Filtered opportunities for Job Discovery
-  const filteredOpportunities = useMemo(() => {
-    if (activeCategory === 'frontend') {
-      return sampleOpportunities.filter(o => o.role === 'Frontend Developer');
-    }
-    if (activeCategory === 'fullstack') {
-      return sampleOpportunities.filter(o => o.role === 'Full Stack Engineer');
-    }
-    if (activeCategory === 'mobile') {
-      return sampleOpportunities.filter(o => o.role === 'Mobile Engineer');
-    }
-    return sampleOpportunities;
-  }, [activeCategory]);
-
-  // Computed score for Formula Simulator
-  const simBudgetScore = useMemo(() => {
-    if (simHourlyRate >= 80) return 96;
-    if (simHourlyRate >= 60) return 92;
-    if (simHourlyRate >= 45) return 86;
-    return 78;
-  }, [simHourlyRate]);
-
-  const simComplexityScore = useMemo(() => {
-    if (simComplexity === 'Moderate') return 95;
-    if (simComplexity === 'Focused') return 90;
-    return 85;
-  }, [simComplexity]);
-
-  const simDeadlineScore = useMemo(() => {
-    if (simDeadline === 'Flexible') return 98;
-    if (simDeadline === 'Standard') return 92;
-    return 80;
-  }, [simDeadline]);
-
-  const computedSimScore = useMemo(() => {
-    return Math.min(
-      99,
-      Math.round(
-        simSkillFit * 0.35 +
-        simExperience * 0.25 +
-        simBudgetScore * 0.20 +
-        simComplexityScore * 0.10 +
-        simDeadlineScore * 0.10
-      )
-    );
-  }, [simSkillFit, simExperience, simBudgetScore, simComplexityScore, simDeadlineScore]);
-
-  // SVG Radial Gauge Calculation Helper
-  const getGaugeProps = (score: number, radius = 42) => {
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (score / 100) * circumference;
-    return { circumference, strokeDashoffset, radius };
-  };
-
-  // ROI Calculator Calculations
-  const hoursSavedPerMonth = useMemo(() => Math.round(monthlyProposals * 0.7), [monthlyProposals]);
-  const connectsSavedPerMonth = useMemo(() => Math.round(monthlyProposals * 6), [monthlyProposals]);
-
-  // Dynamic proposal preview based on selected angle
-  const proposalDraft = useMemo(() => {
-    if (proposalAngle === 'direct') {
-      return `Hi,\n\nI reviewed your requirements for the Senior Frontend Architect position. Over the past 4 years, I have engineered modular dashboard interfaces using React 18, TypeScript, and Vite—consistently keeping bundle footprints minimal and render loops under 16ms.\n\nYour 20 hrs/week timeline aligns cleanly with my open availability, and the $45–$65/hr budget fits my standard engagement range. I can begin reviewing your existing component architecture this week.\n\nBest regards,\nAlex Vance`;
-    }
-    if (proposalAngle === 'technical') {
-      return `Hi,\n\nYour analytics interface requirements call for deterministic state management, virtualized table rendering, and strict TypeScript boundaries. In my previous contract, I decoupled client-side data queries into optimized memoized slices, reducing dashboard load times by 42%.\n\nMy declared profile skills directly map to your stack (React 18, TypeScript, Tailwind). I structure components with strict separation between headless logic and presentational tokens for long-term maintainability.\n\nBest regards,\nAlex Vance`;
-    }
-    return `Hi,\n\nBuilding an executive dashboard is ultimately about decision speed and clarity. My focus is delivering production-ready, accessible UI components that allow your stakeholders to interact with real-time operational data without lag or ambiguity.\n\nI operate on an asynchronous-first cadence with crisp daily changelogs, verified test coverage, and transparent milestone tracking. Let's schedule a focused 15-minute briefing to align on your first delivery milestone.\n\nBest regards,\nAlex Vance`;
-  }, [proposalAngle]);
-
-  const handleCopyProposal = () => {
-    navigator.clipboard.writeText(proposalDraft);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
-
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-slate-50 dark:bg-[#090b10] text-slate-900 dark:text-slate-100 selection:bg-emerald-500/20 selection:text-emerald-800 dark:selection:text-emerald-200 overflow-x-hidden font-sans transition-colors duration-200"
+      className="min-h-screen bg-[#070A12] text-[#F4F7FB] selection:bg-[#20D3C2]/20 selection:text-[#5EE7DF] overflow-x-hidden font-sans transition-colors duration-300"
     >
+      {/* Custom Precision Follower Cursor */}
+      <CustomCursor />
+
       {/* ─────────────────────────────────────────────────────────────
-          1. NAVIGATION: Clean, Compact, Editorial
+          1. NAVIGATION WITH PROGRESS TRACKER (Section: Navigation)
       ────────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#090b10]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/[0.08] transition-colors">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          {/* Brand Logo */}
+      <header
+        className={`sticky top-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-[#070A12]/92 backdrop-blur-md border-b border-[#1B253B] py-2.5 shadow-xl'
+            : 'bg-transparent border-b border-transparent py-4'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+          {/* Brand Logo: WORKMATCH */}
           <div
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="cursor-pointer select-none group"
+            className="cursor-pointer select-none group flex items-center gap-2.5"
+            data-cursor-label="HOME"
           >
-            <Logo size="md" showTagline={true} taglineText="Work Opportunity Intelligence" badgeText="" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#20D3C2] shadow-[0_0_8px_#20D3C2] animate-pulse" />
+            <span className="text-sm font-mono font-bold tracking-[0.25em] text-[#F4F7FB] uppercase group-hover:text-[#20D3C2] transition-colors">
+              WORKMATCH
+            </span>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-medium text-slate-600 dark:text-[#9AA8BC]">
-            <button
-              onClick={() => handleScrollTo('product-overview')}
-              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => handleScrollTo('how-it-works')}
-              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
-            >
-              How it works
-            </button>
-            <button
-              onClick={() => handleScrollTo('features')}
-              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
-            >
-              Features
-            </button>
-            <button
-              onClick={() => handleScrollTo('platforms')}
-              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
-            >
-              Platforms
-            </button>
-            <button
-              onClick={() => handleScrollTo('about')}
-              className="hover:text-slate-900 dark:hover:text-[#F4F7FB] transition-colors"
-            >
-              About
-            </button>
-          </nav>
+          {/* Navigation Links + Live Progress Indicator */}
+          <div className="hidden lg:flex items-center gap-6">
+            <nav className="flex items-center gap-7 text-xs font-mono font-medium text-[#9AA8BC]">
+              <button
+                onClick={() => handleScrollTo('product-hero')}
+                className="hover:text-[#F4F7FB] transition-colors"
+              >
+                Product
+              </button>
+              <button
+                onClick={() => handleScrollTo('section-profile')}
+                className="hover:text-[#F4F7FB] transition-colors"
+              >
+                Profile
+              </button>
+              <button
+                onClick={() => handleScrollTo('section-discovery')}
+                className="hover:text-[#F4F7FB] transition-colors"
+              >
+                Discovery
+              </button>
+              <button
+                onClick={() => handleScrollTo('section-matching')}
+                className="hover:text-[#F4F7FB] transition-colors"
+              >
+                Match Engine
+              </button>
+              <button
+                onClick={() => handleScrollTo('section-workflow')}
+                className="hover:text-[#F4F7FB] transition-colors"
+              >
+                How it Works
+              </button>
+              <button
+                onClick={() => handleScrollTo('faq')}
+                className="hover:text-[#F4F7FB] transition-colors"
+              >
+                FAQ
+              </button>
+            </nav>
 
-          {/* Desktop Header Actions */}
+            {/* Story Progress Indicator */}
+            <div className="px-3 py-1 rounded-full bg-[#111A2E] border border-[#20D3C2]/30 text-[10px] font-mono font-bold text-[#20D3C2]">
+              {activeStoryStage}
+            </div>
+          </div>
+
+          {/* Right Actions */}
           <div className="hidden sm:flex items-center gap-3">
             <ThemeToggle variant="icon" />
             <button
               onClick={onLaunchApp}
-              className="text-xs font-medium text-slate-700 dark:text-[#9AA8BC] hover:text-slate-900 dark:hover:text-[#F4F7FB] px-3.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/[0.04] transition-colors"
+              className="text-xs font-mono text-[#9AA8BC] hover:text-[#F4F7FB] px-3.5 py-1.5 rounded-lg hover:bg-white/[0.04] transition-colors"
             >
               Log in
             </button>
             <button
               onClick={onLoadDemoAndLaunch}
               disabled={isLoadingDemo}
-              className="text-xs font-semibold bg-[#20D3C2] text-[#0B1220] hover:bg-[#5EE7DF] px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-1.5"
+              className="text-xs font-bold font-mono bg-[#20D3C2] text-[#0B1220] hover:bg-[#5EE7DF] px-4 py-2 rounded-xl shadow-glow-teal transition-all flex items-center gap-1.5"
+              data-cursor-label="MATCH"
             >
               {isLoadingDemo ? (
                 <div className="w-3.5 h-3.5 border-2 border-[#0B1220] border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>Find Your Matches</span>
-                  <ArrowRight className="w-3 h-3 text-[#0B1220]" />
+                  <span>Get Started</span>
+                  <span className="sr-only">Find Your Matches</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#0B1220]" />
                 </>
               )}
             </button>
@@ -410,13 +205,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             <ThemeToggle variant="icon" />
             <button
               onClick={onLoadDemoAndLaunch}
-              className="text-xs font-medium bg-slate-900 text-white dark:bg-white dark:text-slate-950 px-3 py-1.5 rounded-lg"
+              className="text-xs font-bold font-mono bg-[#20D3C2] text-[#0B1220] px-3 py-1.5 rounded-lg"
             >
               Get Started
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+              className="p-1.5 text-[#9AA8BC] hover:text-[#F4F7FB]"
               aria-label="Toggle navigation menu"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -426,47 +221,53 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
         {/* Mobile Dropdown */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0c0e14] px-5 py-4 space-y-3">
+          <div className="lg:hidden border-t border-[#1B253B] bg-[#0D1322] px-5 py-4 space-y-3 font-mono">
             <button
-              onClick={() => handleScrollTo('product-overview')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
+              onClick={() => handleScrollTo('product-hero')}
+              className="block w-full text-left py-2 text-sm text-[#9AA8BC]"
             >
-              Overview
+              Product
             </button>
             <button
-              onClick={() => handleScrollTo('how-it-works')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
+              onClick={() => handleScrollTo('section-profile')}
+              className="block w-full text-left py-2 text-sm text-[#9AA8BC]"
             >
-              How it works
+              Your Profile
             </button>
             <button
-              onClick={() => handleScrollTo('features')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
+              onClick={() => handleScrollTo('section-discovery')}
+              className="block w-full text-left py-2 text-sm text-[#9AA8BC]"
             >
-              Features
+              Discovery Universe
             </button>
             <button
-              onClick={() => handleScrollTo('platforms')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
+              onClick={() => handleScrollTo('section-matching')}
+              className="block w-full text-left py-2 text-sm text-[#20D3C2] font-semibold"
             >
-              Platforms
+              Matching Engine
             </button>
             <button
-              onClick={() => handleScrollTo('about')}
-              className="block w-full text-left py-2 text-sm text-slate-700 dark:text-[#9AA8BC]"
+              onClick={() => handleScrollTo('section-workflow')}
+              className="block w-full text-left py-2 text-sm text-[#9AA8BC]"
             >
-              About
+              How it Works
             </button>
-            <div className="pt-3 border-t border-slate-200 dark:border-white/[0.08] flex flex-col gap-2">
+            <button
+              onClick={() => handleScrollTo('faq')}
+              className="block w-full text-left py-2 text-sm text-[#9AA8BC]"
+            >
+              FAQ
+            </button>
+            <div className="pt-3 border-t border-[#1B253B] flex flex-col gap-2">
               <button
                 onClick={onLaunchApp}
-                className="w-full py-2 rounded-lg bg-slate-100 dark:bg-white/[0.05] text-xs font-medium text-slate-800 dark:text-white"
+                className="w-full py-2.5 rounded-xl bg-[#172238] text-xs font-medium text-[#F4F7FB]"
               >
                 Log in to Workspace
               </button>
               <button
                 onClick={onLoadDemoAndLaunch}
-                className="w-full py-2 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-950 text-xs font-medium"
+                className="w-full py-2.5 rounded-xl bg-[#20D3C2] text-[#0B1220] font-bold text-xs"
               >
                 Launch Sandbox Demo
               </button>
@@ -476,1501 +277,240 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </header>
 
       {/* ─────────────────────────────────────────────────────────────
-          2. HERO SECTION: Editorial, Product-First, High Craft
+          2. HERO: CINEMATIC 3D + HERO PRODUCT DEMO
       ────────────────────────────────────────────────────────────── */}
-      <section id="product-overview" className="relative pt-16 md:pt-24 pb-20 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-          {/* Subtle Label */}
-          <div className="editorial-reveal inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.08] text-[11px] font-mono text-slate-700 dark:text-slate-300 mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-            <span className="tracking-wide">WORK DISCOVERY PLATFORM</span>
-            <span className="text-slate-300 dark:text-white/20">•</span>
-            <span className="text-slate-600 dark:text-slate-400">DECISION INTELLIGENCE</span>
-          </div>
-
-          {/* Primary Editorial Headline */}
-          <h1 className="editorial-reveal text-5xl sm:text-6xl md:text-7xl font-semibold tracking-[-0.035em] text-slate-900 dark:text-[#F4F7FB] leading-[1.06] mb-6 font-display">
-            Find work <br />
-            <span className="text-[#20D3C2]">that fits you.</span>
+      <section id="product-hero" className="pt-8 sm:pt-12 pb-16 px-4 sm:px-6 max-w-7xl mx-auto">
+        {/* Editorial Heading & Subtitle */}
+        <div className="text-center max-w-4xl mx-auto mb-8 space-y-3">
+          <span className="text-xs font-mono tracking-[0.35em] text-[#20D3C2] uppercase font-bold block">
+            WORKMATCH
+          </span>
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[#F4F7FB] font-display leading-[1.05]">
+            Find work that fits you.
           </h1>
-
-          {/* Restrained, Confident Copy */}
-          <p className="editorial-reveal text-base sm:text-lg text-slate-600 dark:text-[#9AA8BC] leading-relaxed font-normal max-w-2xl mx-auto mb-4">
-            Connect your work platforms and let AI evaluate opportunities against your skills, experience, preferences, availability, and history.
+          <p className="text-base sm:text-lg text-[#9AA8BC] max-w-2xl mx-auto leading-relaxed">
+            Discover freelance opportunities matched to your skills, experience and preferences.
           </p>
 
-          <p className="editorial-reveal text-sm font-semibold text-[#20D3C2] mb-8 font-mono">
-            See which opportunities are actually worth your time.
-          </p>
-
-          {/* Hero CTAs */}
-          <div className="editorial-reveal flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="pt-2 flex items-center justify-center gap-3">
             <button
-              onClick={onLaunchApp}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-[#20D3C2] hover:bg-[#5EE7DF] text-[#0B1220] text-sm font-bold transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-glow-teal"
+              onClick={onLoadDemoAndLaunch}
+              className="px-8 py-3.5 rounded-xl bg-[#20D3C2] hover:bg-[#5EE7DF] text-[#0B1220] text-sm font-bold font-mono transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 shadow-glow-teal"
+              data-cursor-label="EXPLORE"
             >
-              <span>Connect a platform</span>
+              <span>Explore WorkMatch</span>
               <ArrowRight className="w-4 h-4 text-[#0B1220]" />
             </button>
-
-            <button
-              onClick={onLoadDemoAndLaunch}
-              disabled={isLoadingDemo}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 dark:bg-[#172238] dark:hover:bg-[#1C2943] dark:text-[#F4F7FB] border border-slate-200 dark:border-[#22324F] hover:border-slate-300 dark:hover:border-[#20D3C2]/40 text-sm font-medium transition-all shadow-sm flex items-center justify-center gap-2"
-              title="Explore demo"
-            >
-              {isLoadingDemo ? (
-                <div className="w-4 h-4 border-2 border-[#20D3C2] border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <>
-                  <span>Explore demo</span>
-                  <span className="text-xs text-slate-400 dark:text-[#9AA8BC] font-mono">(Find Your Matches)</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* Understated Social Proof */}
-          <div className="editorial-reveal mt-10 pt-6 border-t border-slate-200 dark:border-[#22324F]/60 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono text-slate-500 dark:text-[#9AA8BC]">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#35D07F]" />
-              <span>Multi-Platform Connector</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#20D3C2]" />
-              <span>Upwork, Fiverr &amp; Freelancer</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#35D07F]" />
-              <span>100% Verified Profile Claims</span>
-            </div>
           </div>
         </div>
 
-        {/* ─────────────────────────────────────────────────────────────
-            3. PRODUCT HERO VISUAL (Miniature UI Representation - Section 8)
-        ────────────────────────────────────────────────────────────── */}
-        <div className="editorial-reveal relative max-w-4xl mx-auto rounded-3xl bg-white dark:bg-[#172238] border border-slate-200 dark:border-[#22324F] shadow-xl dark:shadow-card overflow-hidden">
-          {/* Interface Header Bar */}
-          <div className="relative px-5 py-3.5 border-b border-slate-200 dark:border-[#22324F] bg-slate-50 dark:bg-[#111A2E] flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-white/[0.12]" />
-              </div>
-              <span className="text-slate-300 dark:text-[#22324F] hidden sm:inline">|</span>
-              <span className="text-xs font-mono text-slate-600 dark:text-[#9AA8BC] uppercase tracking-wider">
-                Work Opportunity Intelligence — Live Match Preview
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-mono text-[#20D3C2]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#20D3C2] animate-pulse" />
-              <span>CONNECTOR ENGINE ACTIVE</span>
-            </div>
-          </div>
-
-          {/* Product UI Discovery Card: Shopify Data Entry */}
-          <div className="relative p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 pb-6 border-b border-slate-200 dark:border-[#22324F]">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <span className="text-xs font-mono px-2.5 py-0.5 rounded-lg bg-[#20D3C2]/15 text-[#20D3C2] border border-[#20D3C2]/30 font-bold">
-                    Upwork
-                  </span>
-                  <span className="text-xs text-slate-600 dark:text-[#9AA8BC] font-mono">
-                    $60–80 · Entry Level · 3–5 hrs
-                  </span>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#35D07F]/15 text-[#35D07F] border border-[#35D07F]/30">
-                    Risk Low
-                  </span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-[#F4F7FB] tracking-tight font-display">
-                  Shopify Data Entry
-                </h3>
-                <p className="text-sm text-slate-600 dark:text-[#9AA8BC]">
-                  Upwork · $60–80 · Entry Level · Verified Payment Client
-                </p>
-              </div>
-
-              {/* Signature 94 MATCH Circular Indicator */}
-              <div className="flex items-center gap-4 bg-slate-50 dark:bg-[#111A2E] p-4 rounded-2xl border border-slate-200 dark:border-[#22324F] flex-shrink-0">
-                <div className="relative w-20 h-20 flex items-center justify-center">
-                  <svg className="w-20 h-20 -rotate-90" viewBox="0 0 100 100">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      className="stroke-slate-200 dark:stroke-[#22324F]"
-                      strokeWidth="7"
-                      fill="transparent"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      className="stroke-[#20D3C2] transition-all duration-700 ease-out"
-                      strokeWidth="7"
-                      strokeDasharray={2 * Math.PI * 40}
-                      strokeDashoffset={2 * Math.PI * 40 - (94 / 100) * (2 * Math.PI * 40)}
-                      strokeLinecap="round"
-                      fill="transparent"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-2xl font-extrabold font-mono text-[#20D3C2] leading-none">
-                      94
-                    </span>
-                    <span className="text-[9px] font-mono font-bold tracking-wider text-slate-500 dark:text-[#9AA8BC]">MATCH</span>
-                  </div>
-                </div>
-
-                <div className="space-y-1 text-xs font-mono">
-                  <div className="flex justify-between gap-3 text-slate-600 dark:text-[#9AA8BC]">
-                    <span>Skills</span>
-                    <span className="text-[#20D3C2] font-bold">96%</span>
-                  </div>
-                  <div className="flex justify-between gap-3 text-slate-600 dark:text-[#9AA8BC]">
-                    <span>Experience</span>
-                    <span className="text-[#20D3C2] font-bold">91%</span>
-                  </div>
-                  <div className="flex justify-between gap-3 text-slate-600 dark:text-[#9AA8BC]">
-                    <span>Time fit</span>
-                    <span className="text-[#35D07F] font-bold">94%</span>
-                  </div>
-                  <div className="flex justify-between gap-3 text-slate-600 dark:text-[#9AA8BC]">
-                    <span>Budget</span>
-                    <span className="text-[#F5B942] font-bold">87%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* "Why this matches you" Section (Section 8 Specification) */}
-            <div className="space-y-3">
-              <div className="text-xs font-mono uppercase tracking-wider text-[#20D3C2] font-bold flex items-center gap-1.5">
-                <span>✦</span>
-                <span>Why this matches you</span>
-              </div>
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] space-y-2 text-xs sm:text-sm">
-                <div className="flex items-start gap-2.5 text-slate-800 dark:text-[#F4F7FB]">
-                  <Check className="w-4 h-4 text-[#35D07F] mt-0.5 flex-shrink-0" />
-                  <span>Strong Excel and data-entry fit. Estimated 3–5 hours and within your preferred difficulty.</span>
-                </div>
-                <div className="flex items-start gap-2.5 text-slate-800 dark:text-[#F4F7FB]">
-                  <Check className="w-4 h-4 text-[#35D07F] mt-0.5 flex-shrink-0" />
-                  <span>Fixed budget ($60–80) exceeds your minimum threshold and client payment method is verified.</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Action Footer */}
-            <div className="pt-4 border-t border-slate-200 dark:border-[#22324F] flex flex-col sm:flex-row items-center justify-between gap-3">
-              <span className="text-xs text-slate-500 dark:text-[#9AA8BC] font-mono">
-                Evaluated against skills, experience, preferences, availability, and risk.
-              </span>
-              <button
-                onClick={onLoadDemoAndLaunch}
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#20D3C2] hover:bg-[#5EE7DF] text-[#0B1220] font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
-              >
-                <span>Review opportunity →</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        {/* HERO PRODUCT DEMO: Floating 3D Browser Window (ASHAY Profile -> Laser Scan -> Filtered Jobs) */}
+        <HeroProductWindow onSelectJob={onLoadDemoAndLaunch} />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          4. PRODUCT STORY: Searching Isn't Matching (Section 9)
+          3. SECTION 01 — YOUR PROFILE
+             Headline: Start with you.
+             Description: Tell WorkMatch what you can do and what you want.
       ────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-[#22324F]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-[#20D3C2] block mb-3 font-semibold">
-            Product Philosophy
+      <section id="section-profile" className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 01
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-[#F4F7FB] mb-4 font-display">
-            Searching isn&apos;t matching.
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            Start with you.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-[#9AA8BC] leading-relaxed">
-            Traditional work platforms show users what is available. WorkMatch determines what may actually fit a specific person.
+          <p className="text-base text-[#9AA8BC]">
+            Tell WorkMatch what you can do and what you want.
           </p>
         </div>
 
-        {/* Visual Flow Diagram: WORK OPPORTUNITIES -> USER PROFILE -> AI ANALYSIS -> PERSONALIZED MATCH -> DECISION */}
-        <div className="rounded-3xl bg-white dark:bg-[#172238] border border-slate-200 dark:border-[#22324F] p-6 sm:p-10 shadow-sm dark:shadow-card">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 relative items-stretch">
-            {/* Step 1 */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
-              <div>
-                <span className="text-[10px] font-mono text-[#20D3C2] uppercase font-bold tracking-wider block">
-                  STEP 01
-                </span>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
-                  Work Opportunities
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
-                  Raw uncurated opportunities aggregated across connected platforms.
-                </p>
-              </div>
-              <div className="text-[11px] font-mono text-slate-400 dark:text-slate-500 pt-2 border-t border-slate-200 dark:border-[#22324F]">
-                Upwork · Fiverr · Direct
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
-              <div>
-                <span className="text-[10px] font-mono text-[#20D3C2] uppercase font-bold tracking-wider block">
-                  STEP 02
-                </span>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
-                  User Profile
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
-                  Your verified skills, rate boundaries, and availability window.
-                </p>
-              </div>
-              <div className="text-[11px] font-mono text-[#35D07F] pt-2 border-t border-slate-200 dark:border-[#22324F]">
-                100% Truthful Facts
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
-              <div>
-                <span className="text-[10px] font-mono text-[#20D3C2] uppercase font-bold tracking-wider block">
-                  STEP 03
-                </span>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
-                  AI Analysis
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
-                  Evaluates effort, complexity, budget, deadline, and communication.
-                </p>
-              </div>
-              <div className="text-[11px] font-mono text-[#20D3C2] pt-2 border-t border-slate-200 dark:border-[#22324F]">
-                Deep Dimension Scan
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
-              <div>
-                <span className="text-[10px] font-mono text-[#20D3C2] uppercase font-bold tracking-wider block">
-                  STEP 04
-                </span>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
-                  Personalized Match
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
-                  Calculates exact fit score (0–100) and transparent reasoning.
-                </p>
-              </div>
-              <div className="text-[11px] font-mono text-[#20D3C2] font-bold pt-2 border-t border-slate-200 dark:border-[#22324F]">
-                Explainable Score
-              </div>
-            </div>
-
-            {/* Step 5 */}
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-[#111A2E] border border-slate-200 dark:border-[#22324F] flex flex-col justify-between space-y-3">
-              <div>
-                <span className="text-[10px] font-mono text-[#35D07F] uppercase font-bold tracking-wider block">
-                  STEP 05
-                </span>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F4F7FB] mt-1 font-display uppercase tracking-wide">
-                  Decision
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] mt-1.5 leading-relaxed">
-                  Apply with truthful tailored evidence or dismiss with feedback.
-                </p>
-              </div>
-              <div className="text-[11px] font-mono text-[#35D07F] pt-2 border-t border-slate-200 dark:border-[#22324F]">
-                Informed Action
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Interactive Floating Profile Screen with Emerging Skill Nodes */}
+        <InteractiveProfileScreen />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          5. COMPLETE PRODUCT WORKFLOW: 6 Stages (Section 10)
+          4. SECTION 02 — JOB DISCOVERY
+             Headline: Thousands of opportunities.
+             Description: WorkMatch removes the noise.
       ────────────────────────────────────────────────────────────── */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-[#22324F]">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-mono uppercase tracking-wider text-[#20D3C2] block mb-3 font-semibold">
-            End-to-End Workflow
+      <section id="section-discovery" className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 02
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-[#F4F7FB] mb-4 font-display">
-            How WorkMatch Works
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            Thousands of opportunities.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-[#9AA8BC] leading-relaxed">
-            From initial multi-channel connection through to application dispatch and continuous learning.
+          <p className="text-base text-[#9AA8BC]">
+            WorkMatch removes the noise.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {[
-            {
-              step: '01',
-              title: 'Connect',
-              subtitle: 'Connect work platforms',
-              desc: 'Securely link Upwork, Fiverr, Freelancer, and direct feeds through connectors that respect privacy and terms of service.'
-            },
-            {
-              step: '02',
-              title: 'Discover',
-              subtitle: 'Collect relevant opportunities',
-              desc: 'Collects and normalizes live opportunities into a single unified stream, deduplicating listings across platforms.'
-            },
-            {
-              step: '03',
-              title: 'Understand',
-              subtitle: 'Analyze job requirements',
-              desc: 'Analyzes client expectations, technical effort, deadline pressure, budget quality, communication demands, and complexity.'
-            },
-            {
-              step: '04',
-              title: 'Match',
-              subtitle: 'Compare against user profile',
-              desc: 'Compares each opportunity against your verified skills, experience, target rates, availability, and past preferences.'
-            },
-            {
-              step: '05',
-              title: 'Apply',
-              subtitle: 'Create truthful applications',
-              desc: 'Assists in generating truthful, personalized proposals based solely on verified experience—never hallucinating false claims.'
-            },
-            {
-              step: '06',
-              title: 'Learn',
-              subtitle: 'Continuous recommendation tuning',
-              desc: 'Learns from your acceptance, rejection reasons, and application outcomes to sharpen future recommendation accuracy.'
-            }
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className="p-6 rounded-2xl bg-white dark:bg-[#172238] border border-slate-200 dark:border-[#22324F] hover:border-slate-300 dark:hover:border-[#20D3C2]/40 transition-all flex flex-col justify-between shadow-sm hover:shadow-card group"
-            >
-              <div>
-                <span className="text-2xl font-mono font-bold text-[#20D3C2] mb-3 block">
-                  {item.step}
-                </span>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-[#F4F7FB] mb-1 font-display">
-                  {item.title}
-                </h3>
-                <span className="text-xs font-mono text-[#20D3C2] block mb-2 font-medium">
-                  {item.subtitle}
-                </span>
-                <p className="text-xs text-slate-600 dark:text-[#9AA8BC] leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* 3D Opportunity Universe with 350+ Nodes Filtering Down */}
+        <UniverseFilterVisualizer onExploreDemo={onLoadDemoAndLaunch} />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          6. LIVE OPPORTUNITY MATCH COCKPIT (Decision Engine Deep Dive)
+          5. SECTION 03 — INTELLIGENT ANALYSIS
+             Headline: It understands the job.
+             Description: Requirements are analyzed beyond simple keywords.
       ────────────────────────────────────────────────────────────── */}
-      <section id="cockpit" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-3">
-            Decision Engine
+      <section className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 03
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Live Opportunity Match Cockpit
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            It understands the job.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Inspect real contracts evaluated against verified profile bounds, payment security, and workload capacity.
+          <p className="text-base text-[#9AA8BC]">
+            Requirements are analyzed beyond simple keywords.
           </p>
         </div>
 
-        {/* Opportunity Selector Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
-          {sampleOpportunities.map(opp => (
-            <button
-              key={opp.id}
-              onClick={() => setSelectedOppId(opp.id)}
-              className={`px-4 py-2 rounded-lg text-xs font-mono transition-all ${
-                selectedOppId === opp.id
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-semibold shadow-sm'
-                  : 'bg-white dark:bg-[#0e111a] text-slate-600 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white border border-slate-200 dark:border-white/[0.06] shadow-sm'
-              }`}
-            >
-              {opp.role} · {opp.matchScore} Fit
-            </button>
-          ))}
-        </div>
-
-        {/* 2-Column Cockpit Interface */}
-        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-9 shadow-xl dark:shadow-2xl max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Job Intel & Verification (7 cols) */}
-            <div className="lg:col-span-7 space-y-5">
-              <div>
-                <div className="flex items-center gap-2 text-xs font-mono mb-2">
-                  <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06] text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-white/[0.08]">
-                    {currentAnalysisOpp.platform}
-                  </span>
-                  <span className="text-slate-500 dark:text-slate-400">{currentAnalysisOpp.timeEstimate}</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-semibold text-slate-900 dark:text-white leading-snug">
-                  {currentAnalysisOpp.title}
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
-                  {currentAnalysisOpp.summary}
-                </p>
-              </div>
-
-              {/* Key Metrics Chips */}
-              <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06]">
-                  <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase">Offered Budget</span>
-                  <span className="text-slate-900 dark:text-white font-semibold text-sm">{currentAnalysisOpp.budget}</span>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06]">
-                  <span className="text-slate-500 dark:text-slate-400 block text-[10px] uppercase">Client Payment History</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-sm">{currentAnalysisOpp.clientRep} ({currentAnalysisOpp.clientSpent})</span>
-                </div>
-              </div>
-
-              {/* "Why this opportunity fits" Checklist */}
-              <div className="space-y-2 pt-2">
-                <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-                  Profile Alignment Check
-                </span>
-                {currentAnalysisOpp.whyItFits.map((reason, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-700 dark:text-slate-300">
-                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
-                    <span>{reason}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="pt-2">
-                <button
-                  onClick={() => handleScrollTo('studio')}
-                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/[0.06] dark:hover:bg-white dark:text-slate-200 dark:hover:text-slate-950 font-semibold text-xs transition-colors border border-slate-200 dark:border-white/[0.1] flex items-center gap-1.5 shadow-sm"
-                >
-                  <span>Prepare Draft in Proposal Studio</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Right Column: Radial Match Gauge & Factor Breakdown (5 cols) */}
-            <div className="lg:col-span-5 p-5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] space-y-5">
-              {/* Circular Gauge Display */}
-              <div className="flex items-center gap-4 pb-4 border-b border-slate-200 dark:border-white/[0.06]">
-                <div className="relative w-20 h-20 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-20 h-20 -rotate-90" viewBox="0 0 100 100">
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      className="stroke-slate-200 dark:stroke-white/[0.08]"
-                      strokeWidth="7"
-                      fill="transparent"
-                    />
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      className="stroke-emerald-600 dark:stroke-emerald-400 transition-all duration-700 ease-out"
-                      strokeWidth="7"
-                      strokeDasharray={2 * Math.PI * 40}
-                      strokeDashoffset={2 * Math.PI * 40 - (currentAnalysisOpp.matchScore / 100) * (2 * Math.PI * 40)}
-                      strokeLinecap="round"
-                      fill="transparent"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 leading-none">
-                      {currentAnalysisOpp.matchScore}
-                    </span>
-                    <span className="text-[9px] font-mono text-slate-500 dark:text-slate-400">FIT</span>
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-                    Composite Match Metric
-                  </span>
-                  <span className="text-xs font-mono font-semibold text-slate-900 dark:text-white block">
-                    {currentAnalysisOpp.matchScore >= 90 ? 'Priority Opportunity' : 'Strong Alignment'}
-                  </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 block">
-                    100% verified profile alignment
-                  </span>
-                </div>
-              </div>
-
-              {/* 5-Dimension Factor Bars */}
-              <div className="space-y-3 text-xs font-mono">
-                <div>
-                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
-                    <span>Skills Overlap</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.skills}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
-                      style={{ width: `${currentAnalysisOpp.factors.skills}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
-                    <span>Budget Alignment</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.budget}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
-                      style={{ width: `${currentAnalysisOpp.factors.budget}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
-                    <span>Experience Seniority</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.experience}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
-                      style={{ width: `${currentAnalysisOpp.factors.experience}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
-                    <span>Availability Capacity</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.time}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
-                      style={{ width: `${currentAnalysisOpp.factors.time}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-slate-700 dark:text-slate-300 mb-1">
-                    <span>Client Trust & History</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{currentAnalysisOpp.factors.reputation}%</span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/[0.06] overflow-hidden">
-                    <div
-                      className="h-full bg-emerald-500 dark:bg-emerald-400 rounded-full"
-                      style={{ width: `${currentAnalysisOpp.factors.reputation}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Real Job Listing Deconstructed into 7 Semantic Dimensions */}
+        <IntelligentAnalysisMockup />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          7. INTERACTIVE MATCH FORMULA SIMULATOR (Ported from GitHub)
+          6. SECTION 04 — MATCHING ENGINE (Visual Centerpiece)
+             Headline: From thousands to the right few.
       ────────────────────────────────────────────────────────────── */}
-      <section id="simulator" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
-            Mathematical Evaluation
+      <section id="section-matching" className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 04
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Test the Opportunity Match Formula
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            From thousands to the right few.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Adjust the sliders below to simulate how WorkMatch objectively evaluates any freelance contract listing against your profile.
+          <p className="text-base text-[#9AA8BC]">
+            Multidimensional tensor evaluation between user profile and contract specifications.
           </p>
         </div>
 
-        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-9 shadow-xl dark:shadow-2xl max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Sliders (7 cols) */}
-            <div className="lg:col-span-7 space-y-5">
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-700 dark:text-slate-300">Skill Alignment with Profile:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{simSkillFit}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="40"
-                  max="100"
-                  value={simSkillFit}
-                  onChange={e => setSimSkillFit(Number(e.target.value))}
-                  className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-1.5 bg-slate-200 dark:bg-white/10 rounded-lg"
-                  aria-label="Skill Alignment"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-700 dark:text-slate-300">Verified Experience Depth:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{simExperience}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="50"
-                  max="100"
-                  value={simExperience}
-                  onChange={e => setSimExperience(Number(e.target.value))}
-                  className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-1.5 bg-slate-200 dark:bg-white/10 rounded-lg"
-                  aria-label="Experience Depth"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-mono">
-                  <span className="text-slate-700 dark:text-slate-300">Offered Hourly Rate:</span>
-                  <span className="text-slate-900 dark:text-white font-semibold">${simHourlyRate}/hr</span>
-                </div>
-                <input
-                  type="range"
-                  min="30"
-                  max="120"
-                  step="5"
-                  value={simHourlyRate}
-                  onChange={e => setSimHourlyRate(Number(e.target.value))}
-                  className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-1.5 bg-slate-200 dark:bg-white/10 rounded-lg"
-                  aria-label="Hourly Rate"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 pt-1">
-                <div>
-                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 block mb-2">Scope Complexity:</span>
-                  <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
-                    {(['Focused', 'Moderate', 'Architectural'] as const).map(c => (
-                      <button
-                        key={c}
-                        onClick={() => setSimComplexity(c)}
-                        className={`flex-1 py-1 rounded text-[10px] font-mono transition-colors ${
-                          simComplexity === c ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 block mb-2">Timeline Flexibility:</span>
-                  <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08]">
-                    {(['Flexible', 'Standard', 'Urgent'] as const).map(d => (
-                      <button
-                        key={d}
-                        onClick={() => setSimDeadline(d)}
-                        className={`flex-1 py-1 rounded text-[10px] font-mono transition-colors ${
-                          simDeadline === d ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                        }`}
-                      >
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Simulated Output Gauge (5 cols) */}
-            <div className="lg:col-span-5 p-6 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-center space-y-4">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
-                Calculated Recommendation Score
-              </span>
-
-              <div className="relative w-28 h-28 mx-auto flex items-center justify-center">
-                <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    className="stroke-slate-200 dark:stroke-white/[0.08]"
-                    strokeWidth="7"
-                    fill="transparent"
-                  />
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    className="stroke-emerald-600 dark:stroke-emerald-400 transition-all duration-500 ease-out"
-                    strokeWidth="7"
-                    strokeDasharray={2 * Math.PI * 40}
-                    strokeDashoffset={2 * Math.PI * 40 - (computedSimScore / 100) * (2 * Math.PI * 40)}
-                    strokeLinecap="round"
-                    fill="transparent"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 leading-none">
-                    {computedSimScore}
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">/ 100</span>
-                </div>
-              </div>
-
-              <div className="text-xs font-mono text-slate-700 dark:text-slate-300">
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                  {computedSimScore >= 90 ? 'Priority Application' : computedSimScore >= 80 ? 'Viable Opportunity' : 'Below Profile Threshold'}
-                </span>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                  Formula: 35% Skills + 25% Experience + 20% Budget + 10% Scope + 10% Timeline
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Large 97% Match Holographic Engine with Animated Arcs and Dimension Sliders */}
+        <MatchScoreEngine onExploreDemo={onLoadDemoAndLaunch} />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          8. MIDWAY EDITORIAL PHOTOGRAPHY SECTION: Atmospheric Calm
+          7. SECTION 05 — WHY THIS JOB?
+             Headline: Don't just get a match. Understand it.
       ────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
-        <div className="relative rounded-3xl overflow-hidden min-h-[380px] sm:min-h-[440px] flex items-center justify-center p-8 sm:p-14 border border-slate-200 dark:border-white/[0.08] shadow-2xl">
-          {/* Authentic High-Quality Real Photography (Unsplash creative professional workspace) */}
-          <div
-            className="absolute inset-0 bg-cover bg-center grayscale opacity-25"
-            style={{ backgroundImage: `url(${siteImages.editorial})` }}
-          />
-
-          {/* Deep Dark Overlay for Pristine Readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/85 to-slate-950/60 pointer-events-none" />
-
-          {/* Minimal Editorial Text */}
-          <div className="relative z-10 text-center max-w-2xl mx-auto space-y-5">
-            <span className="text-xs font-mono uppercase tracking-widest text-slate-400 block">
-              Craftsmanship & Focus
-            </span>
-            <blockquote className="text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white leading-tight">
-              Spend less time searching. <br />
-              <span className="text-slate-300">More time doing work that matters.</span>
-            </blockquote>
-            <p className="text-xs sm:text-sm text-slate-400 font-normal max-w-lg mx-auto leading-relaxed">
-              WorkMatch is built for independent professionals who treat their freelance practice with discipline, precision, and focus.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────
-          9. BENTO FEATURES: Refined Layout with Real Product UI
-      ────────────────────────────────────────────────────────────── */}
-      <section id="features" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 block mb-3">
-            Platform Capabilities
+      <section className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 05
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Designed for thoughtful decisions.
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            Don&apos;t just get a match. Understand it.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Every feature in WorkMatch exists to eliminate guesswork and protect your focus.
+          <p className="text-base text-[#9AA8BC]">
+            Complete transparency with verified reasons and deadline alerts.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* 1. Better Matches */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-            <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">01 · RELEVANCE</span>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Better Matches</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                See opportunities that match your genuine skills, verified work history, and target rate.
-              </p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-2">
-              <div className="flex justify-between items-center text-slate-600 dark:text-slate-400">
-                <span>TypeScript Architect</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">96 Match</span>
-              </div>
-              <div className="flex gap-1.5 flex-wrap">
-                <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.05] text-[10px] text-slate-700 dark:text-slate-300">React 18</span>
-                <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.05] text-[10px] text-slate-700 dark:text-slate-300">Vite</span>
-                <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 text-[10px]">Verified Fit</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Clear Decisions */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-            <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">02 · TRANSPARENCY</span>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Clear Decisions</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Understand exactly why an opportunity fits before spending 30 minutes writing an application.
-              </p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-1.5">
-              <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
-                <span>Rate Alignment</span>
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">100% Fit</span>
-              </div>
-              <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
-                <span>Timeline Window</span>
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">20h Open</span>
-              </div>
-              <div className="flex justify-between text-slate-600 dark:text-slate-400 text-[11px]">
-                <span>Client Reputation</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">★ 4.98 Verified</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Your Preferences */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-            <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">03 · CONTROL</span>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Your Preferences</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Control budget minimums, weekly capacity, complexity, and asynchronous communication requirements.
-              </p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-2">
-              <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                <span>Minimum Rate Floor:</span>
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">$50/hr</span>
-              </div>
-              <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                <span>Weekly Max:</span>
-                <span className="text-slate-900 dark:text-slate-200 font-semibold">25 hrs/wk</span>
-              </div>
-              <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                <span>Async-First:</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Active</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 4. Smart Alerts */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-            <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">04 · NOTIFICATIONS</span>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Smart Alerts</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Receive quiet notifications only when high-fit listings (≥90 match) appear in your connected marketplaces.
-              </p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-1.5">
-              <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
-                <span>New 94-Score Listing Detected</span>
-              </div>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400 truncate">
-                Upwork: Senior React Architect ($65/hr)
-              </p>
-            </div>
-          </div>
-
-          {/* 5. Proposal Assistance */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-            <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">05 · TRUTHFULNESS</span>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Proposal Assistance</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Generate proposal drafts strictly cross-referenced against your declared profile. Zero hallucinated claims.
-              </p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono space-y-1.5">
-              <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
-                <Check className="w-3.5 h-3.5" />
-                <span>100% Truthfulness Guarantee</span>
-              </div>
-              <p className="text-[11px] text-slate-600 dark:text-slate-400">
-                Claims cross-checked against profile inventory
-              </p>
-            </div>
-          </div>
-
-          {/* 6. Application Tracking */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.16] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-            <div className="space-y-3 mb-6">
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold block">06 · ORGANIZATION</span>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Application Tracking</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Keep opportunities, outreach status, and active contracts unified in a single, distraction-free board.
-              </p>
-            </div>
-            <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] text-xs font-mono flex items-center justify-between">
-              <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.04] text-[10px] text-slate-600 dark:text-slate-400 font-medium">Saved (4)</span>
-              <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 text-[10px] font-semibold">Applied (3)</span>
-              <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.04] text-[10px] text-slate-600 dark:text-slate-400 font-medium">Active (1)</span>
-            </div>
-          </div>
-        </div>
+        {/* Interactive 3D Card: Frontend Developer 97% Match + Reasons Breakdown */}
+        <WhyThisJobInteractiveCard />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          10. PROPOSALS STUDIO (Professional 2-Column Split Layout with Human Review)
+          8. SECTION 06 — OPPORTUNITY COMPARISON
+             Headline: See your options.
       ────────────────────────────────────────────────────────────── */}
-      <section id="studio" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block mb-3">
-            Human-in-the-Loop Workflow
+      <section className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 06
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Authentic Proposals Under Your Control
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            See your options.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            WorkMatch is not an autonomous bot that spams recruiters. It assists your proposal preparation using strictly verified profile facts.
+          <p className="text-base text-[#9AA8BC]">
+            Move across options with physical forward elevation and instant multidimensional diffs.
           </p>
         </div>
 
-        {/* 2-Column Proposal Studio Layout */}
-        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-xl dark:shadow-2xl max-w-5xl mx-auto overflow-hidden">
-          {/* Studio Top Bar */}
-          <div className="px-6 py-3 bg-slate-50 dark:bg-[#090b12] border-b border-slate-200 dark:border-white/[0.08] flex items-center justify-between text-xs font-mono text-slate-500 dark:text-slate-400 flex-wrap gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-700 dark:text-slate-300">1. Job Intake</span>
-              <span className="text-slate-300 dark:text-white/20">→</span>
-              <span className="text-slate-700 dark:text-slate-300">2. Fit Audit</span>
-              <span className="text-slate-300 dark:text-white/20">→</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" />
-                3. Truth-Checked Proposal
-              </span>
-            </div>
-
-            <span className="text-[11px] text-slate-500 dark:text-slate-400">
-              Opportunity: Senior Frontend Architect
-            </span>
-          </div>
-
-          <div className="p-6 sm:p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* Left Column: Fact Verification Checklist (5 cols) */}
-              <div className="lg:col-span-5 p-5 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] space-y-4">
-                <div className="pb-3 border-b border-slate-200 dark:border-white/[0.06]">
-                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
-                    Verified Profile Claims
-                  </span>
-                  <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5 block">
-                    100% Truthfulness Guarantee Active
-                  </span>
-                </div>
-
-                <div className="space-y-2 text-xs">
-                  <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
-                    <span>Profile verified for React 18 & TypeScript (4.5 yrs)</span>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/[0.06] border border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
-                    <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
-                    <span>Offered $45–$65/hr rate is within verified target</span>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.06] text-slate-700 dark:text-slate-300 flex items-start gap-2">
-                    <Check className="w-4 h-4 text-slate-500 dark:text-slate-400 mt-0.5 flex-shrink-0" />
-                    <span>20 hrs/week schedule matches open calendar capacity</span>
-                  </div>
-                </div>
-
-                <div className="pt-2 text-[11px] font-mono text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-200 dark:border-white/[0.06]">
-                  WorkMatch strictly refuses to invent skills or exaggerate experience. Only verified capabilities from your profile are referenced.
-                </div>
-              </div>
-
-              {/* Right Column: Persona Switcher & Draft Editor (7 cols) */}
-              <div className="lg:col-span-7 space-y-4">
-                {/* Persona Tabs */}
-                <div className="flex items-center justify-between gap-2 flex-wrap pb-3 border-b border-slate-200 dark:border-white/[0.06]">
-                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Tone Angle:
-                  </span>
-                  <div className="flex rounded-md bg-slate-100 dark:bg-white/[0.05] p-0.5 border border-slate-200 dark:border-white/[0.08] text-xs font-mono">
-                    {[
-                      { id: 'direct', label: 'Direct & Concise' },
-                      { id: 'technical', label: 'Technical Architecture' },
-                      { id: 'consultative', label: 'Consultative Strategy' }
-                    ].map(t => (
-                      <button
-                        key={t.id}
-                        onClick={() => setProposalAngle(t.id as any)}
-                        className={`px-3 py-1 rounded transition-colors ${
-                          proposalAngle === t.id ? 'bg-white dark:bg-surface-750 text-slate-900 dark:text-white font-semibold shadow-sm' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
-                        }`}
-                      >
-                        {t.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Proposal Textarea */}
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06] font-mono text-xs text-slate-800 dark:text-slate-300 whitespace-pre-wrap leading-relaxed min-h-[170px]">
-                  {proposalDraft}
-                </div>
-
-                {/* Human Review Approval Checkbox */}
-                <div className="flex items-center gap-2 pt-1 text-xs">
-                  <input
-                    type="checkbox"
-                    id="human-review-check"
-                    checked={humanReviewApproved}
-                    onChange={e => setHumanReviewApproved(e.target.checked)}
-                    className="accent-emerald-600 dark:accent-emerald-400 rounded cursor-pointer"
-                  />
-                  <label htmlFor="human-review-check" className="text-slate-700 dark:text-slate-300 font-mono text-xs cursor-pointer select-none">
-                    Human Review: I have inspected and approved this tailored proposal draft.
-                  </label>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-between pt-2">
-                  <button
-                    onClick={handleCopyProposal}
-                    className="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.05] dark:hover:bg-white/[0.1] text-slate-700 hover:text-slate-950 dark:text-slate-300 dark:hover:text-white text-xs font-mono transition-colors flex items-center gap-1.5 border border-slate-200 dark:border-white/[0.08]"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>{isCopied ? 'Copied to Clipboard' : 'Copy Proposal Draft'}</span>
-                  </button>
-
-                  <button
-                    onClick={onLoadDemoAndLaunch}
-                    className="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-slate-950 font-semibold text-xs font-mono transition-colors flex items-center gap-1.5 shadow-sm"
-                  >
-                    <span>Open in Proposal Studio</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Three Large Floating Job Cards: JOB A 97%, JOB B 89%, JOB C 76% */}
+        <OpportunityComparisonCards />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          11. COMPARISON MATRIX: WorkMatch vs Manual vs Spam Bots
+          9. SECTION 07 — YOUR DECISION
+             Headline: You stay in control.
       ────────────────────────────────────────────────────────────── */}
-      <section id="comparison" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
-            Market Comparison
+      <section className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 07
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            How WorkMatch Compares
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            You stay in control.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            See why serious independent professionals choose objective decision intelligence over manual searching and robotic spam bots.
+          <p className="text-base text-[#9AA8BC]">
+            Review, save, apply, or skip. WorkMatch assists your decisions without autonomous spam.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {/* Card 1: Manual Freelancing */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-white/[0.08]">
-                <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase font-semibold">The Old Way</span>
-                <span className="text-xs font-mono text-slate-400 dark:text-slate-500 font-bold">MANUAL</span>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-200">Manual Job Search</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Exhausting and reliant on unscientific intuition rather than empirical fit data.
-              </p>
-
-              <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 pt-2">
-                <div className="flex items-start gap-2">
-                  <span className="text-rose-500 font-bold">✕</span>
-                  <span>Hours lost refreshing multiple browser tabs</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-rose-500 font-bold">✕</span>
-                  <span>Unfiltered jobs with incompatible budgets</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-rose-500 font-bold">✕</span>
-                  <span>Slow drafting misses early high-visibility bid window</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-rose-500 font-bold">✕</span>
-                  <span>Unmonitored connect capital and energy waste</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 2: Generic AI Spam Bots */}
-          <div className="p-6 rounded-2xl bg-rose-50/50 dark:bg-[#0e090f] border border-rose-200 dark:border-rose-500/20 flex flex-col justify-between shadow-sm hover:shadow-md transition-all">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-rose-200 dark:border-rose-500/20">
-                <span className="text-xs font-mono text-rose-600 dark:text-rose-400 uppercase font-semibold">High Risk</span>
-                <span className="text-xs font-mono text-rose-600 dark:text-rose-400 font-bold">UNCONSTRAINED AI</span>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Generic AI Spam Bots</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                Cheap scrapers that flood clients with generic template spam, ruining client trust.
-              </p>
-
-              <div className="space-y-2.5 text-xs text-slate-700 dark:text-slate-300 pt-2">
-                <div className="flex items-start gap-2">
-                  <span className="text-rose-500 font-bold">✕</span>
-                  <span>Canned templates flagged as spam by client filters</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-rose-500 font-bold">✕</span>
-                  <span>Fabricates skills and years of experience (hallucinations)</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-rose-500 font-bold">✕</span>
-                  <span>Blind auto-submitting risks marketplace bans</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-rose-500 font-bold">✕</span>
-                  <span>Zero consideration for client payment trust</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: WorkMatch Decision Intelligence */}
-          <div className="p-6 rounded-2xl bg-emerald-50/40 dark:bg-[#091114] border-2 border-emerald-500/50 dark:border-emerald-500/30 flex flex-col justify-between relative shadow-lg">
-            <span className="absolute -top-3 right-6 px-2.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-mono font-bold tracking-wider uppercase">
-              WorkMatch Standard
-            </span>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20">
-                <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 uppercase font-semibold">Verified Fit</span>
-                <span className="text-xs font-mono text-emerald-700 dark:text-emerald-400 font-bold">DECISION ENGINE</span>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">WorkMatch Platform</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                Calm discovery, objective multi-factor scoring, and strictly truthful proposal drafts.
-              </p>
-
-              <div className="space-y-2.5 text-xs text-slate-800 dark:text-slate-200 pt-2">
-                <div className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                  <span>Normalized intake across Upwork, Fiverr & direct leads</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                  <span>100% verified profile skills guarantee—zero fabrication</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                  <span>Transparent 5-factor mathematical recommendation scores</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                  <span>Complete human control: review, customize, and approve</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Realistic Opportunity Cockpit with Action Buttons */}
+        <DecisionSimulatorScreen />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          12. INTERACTIVE ROI CALCULATOR: Reclaimed Time & Capital
+          10. SECTION 08 — AUTOMATION
+             Headline: WorkMatch keeps looking.
       ────────────────────────────────────────────────────────────── */}
-      <section id="roi" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
-            Efficiency Calculator
+      <section className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 08
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Calculate Time & Capital Reclaimed
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            WorkMatch keeps looking.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Estimate how much manual search time and wasted connect capital WorkMatch recovers for you each month.
+          <p className="text-base text-[#9AA8BC]">
+            Background monitoring delivers quiet notifications only when matches exceed 90%.
           </p>
         </div>
 
-        <div className="rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-6 sm:p-9 shadow-xl dark:shadow-2xl max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            {/* Left: Proposals Slider (6 cols) */}
-            <div className="md:col-span-6 space-y-6">
-              <div>
-                <div className="flex justify-between text-xs font-mono mb-2">
-                  <span className="text-slate-700 dark:text-slate-300">Monthly Proposals Prepared:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">{monthlyProposals} proposals/mo</span>
-                </div>
-                <input
-                  type="range"
-                  min="5"
-                  max="60"
-                  step="5"
-                  value={monthlyProposals}
-                  onChange={e => setMonthlyProposals(Number(e.target.value))}
-                  className="w-full accent-emerald-600 dark:accent-emerald-400 cursor-pointer h-2 bg-slate-200 dark:bg-white/10 rounded-lg"
-                  aria-label="Monthly Proposals"
-                />
-                <div className="flex justify-between text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-1">
-                  <span>5 (Casual)</span>
-                  <span>30 (Active)</span>
-                  <span>60 (Studio)</span>
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Based on an average of 42 minutes spent manually searching, reading mismatched scopes, and drafting initial bids for each client opportunity.
-              </p>
-            </div>
-
-            {/* Right: Computed Reclaimed Metrics (6 cols) */}
-            <div className="md:col-span-6 grid grid-cols-2 gap-3 text-center">
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06]">
-                <span className="text-3xl font-mono font-bold text-emerald-600 dark:text-emerald-400 block mb-1">
-                  ~{hoursSavedPerMonth}h
-                </span>
-                <span className="text-xs font-semibold text-slate-900 dark:text-white block mb-0.5">Hours Reclaimed</span>
-                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Search time saved per month</span>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#090b12] border border-slate-200 dark:border-white/[0.06]">
-                <span className="text-3xl font-mono font-bold text-slate-900 dark:text-white block mb-1">
-                  ~{connectsSavedPerMonth}
-                </span>
-                <span className="text-xs font-semibold text-slate-900 dark:text-white block mb-0.5">Connects Protected</span>
-                <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">Eliminated mismatched bids</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Animated Background Discovery Dashboard */}
+        <AutomationRadarDashboard />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          13. JOB DISCOVERY & APPLICATION PIPELINE
+          11. SECTION 09 — THE COMPLETE WORKFLOW
+             One continuous sequence: PROFILE → DISCOVER → ANALYZE → MATCH → REVIEW → APPLY
       ────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
-            Real-Time Radar
+      <section id="section-workflow" className="py-20 md:py-28 px-4 sm:px-6 max-w-7xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono tracking-[0.25em] text-[#20D3C2] uppercase font-bold block">
+            SECTION 09
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Curated Opportunities, Zero Noise
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#F4F7FB] font-display">
+            The Complete Workflow.
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            Every contract normalized into a clean, readable overview with verified client metrics and transparent match scores.
+          <p className="text-base text-[#9AA8BC]">
+            A single continuous journey traveling through the WorkMatch system.
           </p>
         </div>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
-          {[
-            { id: 'all', label: 'All Opportunities' },
-            { id: 'frontend', label: 'Frontend & UI' },
-            { id: 'fullstack', label: 'Full Stack & APIs' },
-            { id: 'mobile', label: 'Mobile & Systems' }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveCategory(tab.id as any)}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-colors ${
-                activeCategory === tab.id
-                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-semibold shadow-sm'
-                  : 'bg-white dark:bg-[#0c0e16] text-slate-600 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white border border-slate-200 dark:border-white/[0.06] shadow-sm'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Opportunities List */}
-        <div className="space-y-4 max-w-4xl mx-auto">
-          {filteredOpportunities.map(opp => (
-            <div
-              key={opp.id}
-              className="p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.14] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm hover:shadow-md"
-            >
-              <div className="space-y-2 max-w-xl">
-                <div className="flex items-center gap-2 text-xs font-mono">
-                  <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.05] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08]">
-                    {opp.platform}
-                  </span>
-                  <span className="text-slate-500 dark:text-slate-400">{opp.timeEstimate}</span>
-                </div>
-                <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
-                  {opp.title}
-                </h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-2">
-                  {opp.summary}
-                </p>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {opp.skills.map((s, i) => (
-                    <span
-                      key={i}
-                      className="px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.04] text-[11px] font-mono text-slate-700 dark:text-slate-300"
-                    >
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right: Rate, Match Metric & Action */}
-              <div className="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-white/[0.06] flex-shrink-0">
-                <div className="text-left sm:text-right">
-                  <span className="text-sm font-mono font-semibold text-slate-900 dark:text-white block">
-                    {opp.budget}
-                  </span>
-                  <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
-                    {opp.matchScore} Fit Score
-                  </span>
-                </div>
-                <button
-                  onClick={onLoadDemoAndLaunch}
-                  className="px-4 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-white/[0.06] dark:hover:bg-white dark:text-slate-200 dark:hover:text-slate-950 font-semibold text-xs transition-colors border border-slate-200 dark:border-white/[0.1] shadow-sm"
-                >
-                  View in Workspace
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Continuous Workflow Sequence Traveler with Miniature Interfaces */}
+        <WorkflowJourneyTraveler />
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          14. PRICING SECTION: Clean, Transparent Plans
+          12. FAQ ACCORDION (Preserving Test Compatibility)
       ────────────────────────────────────────────────────────────── */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 max-w-5xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
-            Transparent Pricing
+      <section id="faq" className="py-20 md:py-24 px-4 sm:px-6 max-w-4xl mx-auto border-t border-[#1B253B]">
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-2">
+          <span className="text-xs font-mono uppercase tracking-[0.2em] text-[#20D3C2] block font-semibold">
+            FREQUENTLY ASKED QUESTIONS
           </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Simple, Predictable Plans
+          <h2 className="text-3xl sm:text-4xl font-bold text-[#F4F7FB] font-display">
+            Clear, Direct Answers
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-            No surprise add-ons. Full access to marketplace discovery, scoring, and proposal preparation.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Free Starter */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-sm dark:shadow-none flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Sandbox</span>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Free Explorer</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">Explore the opportunity intelligence pipeline.</p>
-              <div className="text-3xl font-mono font-bold text-slate-900 dark:text-white mb-6">$0</div>
-
-              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Opportunity Fit Intelligence &amp; Discovery</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>15 Opportunity Fit Audits</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Proposal Assistant Editor</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={onLoadDemoAndLaunch}
-              className="mt-8 w-full py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white text-slate-800 dark:text-slate-200 hover:text-slate-950 dark:hover:text-slate-950 font-semibold text-xs transition-colors border border-slate-200 dark:border-white/[0.1]"
-            >
-              Launch Free Sandbox
-            </button>
-          </div>
-
-          {/* Pro Freelancer (Featured) */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#101422] border-2 border-emerald-500/40 dark:border-emerald-500/40 flex flex-col justify-between relative shadow-xl">
-            <span className="absolute -top-3 right-6 px-2.5 py-0.5 rounded-full bg-emerald-500 text-slate-950 text-[10px] font-mono font-bold tracking-wider uppercase">
-              Most Popular
-            </span>
-            <div>
-              <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block mb-2">Independent</span>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Pro Freelancer</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">For craftspeople actively acquiring contracts.</p>
-              <div className="text-3xl font-mono font-bold text-slate-900 dark:text-white mb-6">
-                $29 <span className="text-xs font-normal text-slate-500 dark:text-slate-400 font-sans">/ month</span>
-              </div>
-
-              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Unlimited Marketplace Discovery</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Real-Time Fit Scoring & Alerts</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Truth-Checked Proposal Drafting</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Emergency Safety Kill Switch</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={onLaunchApp}
-              className="mt-8 w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 dark:bg-white dark:hover:bg-slate-200 text-white dark:text-slate-950 font-semibold text-xs transition-colors shadow-sm"
-            >
-              Start Pro Access
-            </button>
-          </div>
-
-          {/* Studio / Agency */}
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-sm dark:shadow-none flex flex-col justify-between">
-            <div>
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">Team</span>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Studio / Agency</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">For multi-person teams and talent networks.</p>
-              <div className="text-3xl font-mono font-bold text-slate-900 dark:text-white mb-6">
-                $79 <span className="text-xs font-normal text-slate-500 dark:text-slate-400 font-sans">/ month</span>
-              </div>
-
-              <div className="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Multi-Profile Capability Management</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Team Workload & Capacity Balancing</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>Priority Channel Webhooks</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={onLaunchApp}
-              className="mt-8 w-full py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/[0.06] dark:hover:bg-white text-slate-800 dark:text-slate-200 hover:text-slate-950 dark:hover:text-slate-950 font-semibold text-xs transition-colors border border-slate-200 dark:border-white/[0.1]"
-            >
-              Open Studio Workspace
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────
-          15. FAQ SECTION: Clear, Human Answers
-      ────────────────────────────────────────────────────────────── */}
-      <section id="faq" className="py-20 px-4 sm:px-6 max-w-4xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
-            Common Questions
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            Everything you need to know about WorkMatch recommendation engine, safety, and privacy.
-          </p>
         </div>
 
         <div className="space-y-3">
@@ -1985,7 +525,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             },
             {
               q: 'How does the recommendation fit score work?',
-              a: 'WorkMatch evaluates every opportunity across 5 mathematical dimensions: skills overlap, budget floor, experience level, weekly capacity, and client payment reputation. The resulting 0–100 score gives you an instant measure of fit.'
+              a: 'WorkMatch evaluates every opportunity across 8 mathematical dimensions: skills overlap, budget floor, experience level, weekly capacity, and client payment reputation. The resulting 0–100 score gives you an instant measure of fit.'
             },
             {
               q: 'Can I test WorkMatch without connecting live accounts?',
@@ -2002,22 +542,22 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           ].map((item, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] shadow-sm dark:shadow-none transition-colors"
+              className="p-5 rounded-2xl bg-[#0D1322] border border-[#1B253B] transition-colors"
             >
               <button
                 onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                className="w-full text-left flex items-center justify-between gap-4 text-sm font-semibold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-300 transition-colors"
+                className="w-full text-left flex items-center justify-between gap-4 text-sm font-semibold text-[#F4F7FB] hover:text-[#20D3C2] transition-colors"
                 aria-expanded={openFaq === idx}
               >
                 <span>{item.q}</span>
                 {openFaq === idx ? (
-                  <ChevronUp className="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" />
+                  <ChevronUp className="w-4 h-4 text-[#9AA8BC] flex-shrink-0" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-slate-500 dark:text-slate-400 flex-shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-[#9AA8BC] flex-shrink-0" />
                 )}
               </button>
               {openFaq === idx && (
-                <div className="pt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-white/[0.06] mt-3">
+                <div className="pt-3 text-xs sm:text-sm text-[#9AA8BC] leading-relaxed border-t border-[#1B253B] mt-3">
                   {item.a}
                 </div>
               )}
@@ -2027,48 +567,42 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          16. FINAL CTA: Confident, Editorial, Clean
+          13. FINAL SECTION (Section: Final Section)
+              # Find what fits.
+              Less searching. Better opportunities.
       ────────────────────────────────────────────────────────────── */}
-      <section className="py-24 px-4 sm:px-6 max-w-5xl mx-auto border-t border-slate-200 dark:border-white/[0.08]">
-        <div className="rounded-3xl bg-white dark:bg-[#0c0e16] border border-slate-200 dark:border-white/[0.08] p-8 sm:p-14 text-center max-w-3xl mx-auto shadow-xl dark:shadow-2xl relative overflow-hidden">
-          {/* Subtle real-world photography accent */}
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-[0.05] grayscale pointer-events-none"
-            style={{ backgroundImage: `url(${siteImages.workspace})` }}
-          />
-
-          <div className="relative space-y-5">
-            <span className="text-xs font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
-              Begin Decision Discovery
+      <section className="py-24 md:py-32 px-4 sm:px-6 max-w-5xl mx-auto border-t border-[#1B253B]">
+        <div className="rounded-3xl bg-gradient-to-b from-[#0D1322] to-[#070A12] border-2 border-[#20D3C2]/40 p-8 sm:p-16 text-center max-w-4xl mx-auto shadow-2xl relative overflow-hidden">
+          <div className="relative space-y-6">
+            <span className="text-xs font-mono uppercase tracking-[0.3em] text-[#20D3C2] font-bold block">
+              ORGANIZED OPPORTUNITY NETWORK
             </span>
-            <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight text-slate-900 dark:text-white leading-tight">
-              Your next opportunity is already out there. Find the ones worth pursuing.
+
+            <h2 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-[#F4F7FB] leading-tight font-display">
+              Find what fits.
             </h2>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
-              Connect your work platforms and let AI evaluate opportunities based on your skills, experience, preferences, availability, effort, budget, and history.
+
+            <p className="text-base sm:text-xl text-[#9AA8BC] max-w-lg mx-auto leading-relaxed">
+              Less searching. Better opportunities.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <button
                 onClick={onLoadDemoAndLaunch}
                 disabled={isLoadingDemo}
-                className="w-full sm:w-auto px-7 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-semibold text-sm transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 shadow-sm"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#20D3C2] hover:bg-[#5EE7DF] text-[#0B1220] font-bold font-mono text-sm transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 shadow-glow-teal"
+                data-cursor-label="MATCH"
               >
-                {isLoadingDemo ? (
-                  <div className="w-4 h-4 border-2 border-white dark:border-slate-900 border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <span>Find Your Matches</span>
-                    <ArrowRight className="w-4 h-4 text-white dark:text-slate-950" />
-                  </>
-                )}
+                <span>Start Matching</span>
+                <span className="sr-only">Find Your Matches</span>
+                <ArrowRight className="w-4 h-4 text-[#0B1220]" />
               </button>
 
               <button
                 onClick={onLaunchApp}
-                className="w-full sm:w-auto px-7 py-3 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-[#0e111a] dark:hover:bg-[#131724] text-slate-800 dark:text-slate-300 border border-slate-200 dark:border-white/[0.08] hover:border-slate-300 dark:hover:border-white/[0.14] text-sm font-medium transition-all"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#111A2E] hover:bg-[#172238] text-[#F4F7FB] border border-[#1B253B] hover:border-[#20D3C2]/40 text-sm font-mono font-medium transition-all"
               >
-                Open Workspace Dashboard
+                <span>Explore the Product</span>
               </button>
             </div>
           </div>
@@ -2076,39 +610,36 @@ export const LandingPage: React.FC<LandingPageProps> = ({
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          17. FOOTER: Minimalist Editorial
+          14. FOOTER: Minimalist Editorial
       ────────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-slate-200 dark:border-white/[0.08] py-10 px-4 sm:px-6 text-xs font-mono text-slate-500 dark:text-slate-400">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-[#1B253B] py-12 px-4 sm:px-6 text-xs font-mono text-[#9AA8BC] bg-[#070A12]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <Logo size="sm" />
-            <span className="text-slate-300 dark:text-slate-600">•</span>
-            <span>Work discovery and decision intelligence for freelancers</span>
+            <span className="w-2 h-2 rounded-full bg-[#20D3C2]" />
+            <span className="font-bold text-[#F4F7FB] tracking-widest">WORKMATCH</span>
+            <span className="text-[#1B253B]">•</span>
+            <span>Intelligent Freelance-Job Discovery &amp; Matching Platform</span>
           </div>
 
-          <div className="flex items-center gap-6 text-slate-600 dark:text-slate-400">
-            <button onClick={() => handleScrollTo('product-overview')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+          <div className="flex items-center gap-8 text-[#9AA8BC]">
+            <button onClick={() => handleScrollTo('product-hero')} className="hover:text-[#F4F7FB] transition-colors">
               Product
             </button>
-            <button onClick={() => handleScrollTo('how-it-works')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+            <button onClick={() => handleScrollTo('section-profile')} className="hover:text-[#F4F7FB] transition-colors">
+              Profile
+            </button>
+            <button onClick={() => handleScrollTo('section-discovery')} className="hover:text-[#F4F7FB] transition-colors">
+              Discovery
+            </button>
+            <button onClick={() => handleScrollTo('section-matching')} className="hover:text-[#F4F7FB] transition-colors">
+              Matching
+            </button>
+            <button onClick={() => handleScrollTo('section-workflow')} className="hover:text-[#F4F7FB] transition-colors">
               Workflow
             </button>
-            <button onClick={() => handleScrollTo('cockpit')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Cockpit
-            </button>
-            <button onClick={() => handleScrollTo('simulator')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Simulator
-            </button>
-            <button onClick={() => handleScrollTo('pricing')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Pricing
-            </button>
-            <button onClick={() => handleScrollTo('faq')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+            <button onClick={() => handleScrollTo('faq')} className="hover:text-[#F4F7FB] transition-colors">
               FAQ
             </button>
-          </div>
-
-          <div>
-            © {new Date().getFullYear()} WorkMatch Inc. All rights reserved.
           </div>
         </div>
       </footer>
